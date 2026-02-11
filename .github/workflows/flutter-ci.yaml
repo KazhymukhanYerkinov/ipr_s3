@@ -34,6 +34,8 @@ jobs:
     steps:
       # Клонирует репозиторий на раннер
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # SonarCloud нужна полная git-история
 
       # Устанавливает и кэширует Flutter SDK нужной версии
       - name: Setup Flutter
@@ -65,6 +67,12 @@ jobs:
           name: coverage-report-${{ github.sha }}
           path: coverage/lcov.info
           retention-days: 7
+
+      # ── SonarCloud: Анализ качества кода ──
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 
   # ─── Job 2: Build Android ───
