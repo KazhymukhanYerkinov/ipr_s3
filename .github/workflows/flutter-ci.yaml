@@ -26,10 +26,11 @@ env:
   JAVA_VERSION: '17'
 
 jobs:
-  # ─── Job 1: Качество кода + Android ───
-  quality-and-android:
-    name: Quality & Android Build
+  # ─── Job 1: Качество кода ───
+  quality:
+    name: Quality
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       # Клонирует репозиторий на раннер
       - uses: actions/checkout@v4
@@ -57,12 +58,42 @@ jobs:
       - name: Run tests with coverage
         run: flutter test --coverage
 
+      # Сохраняет отчёт о покрытии как артефакт
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ github.sha }}
+          path: coverage/lcov.info
+          retention-days: 7
+
+
+  # ─── Job 2: Build Android ───
+  build-android:
+    name: Build Android
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      # Клонирует репозиторий на раннер
+      - uses: actions/checkout@v4
+
+      # Устанавливает и кэширует Flutter SDK нужной версии
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
       # Устанавливает JDK (нужен для сборки Android через Gradle)
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Install dependencies
+        run: flutter pub get
 
       # Собирает релизный APK для Android
       - name: Build APK
@@ -76,10 +107,10 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 14
 
-  # ─── Job 2: iOS ───
+  # ─── Job 3: Build iOS ───
   build-ios:
     name: Build iOS
-    needs: quality-and-android
+    needs: quality
     runs-on: macos-latest
     steps:
       # Клонирует репозиторий на раннер
