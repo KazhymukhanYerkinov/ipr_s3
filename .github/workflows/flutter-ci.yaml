@@ -22,10 +22,11 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FLUTTER_VERSION: '3.38.5'
+  FLUTTER_VERSION: '3.38.9'
   JAVA_VERSION: '17'
 
 jobs:
+  # ─── Job 1: Качество кода + Android ───
   quality-and-android:
     name: Quality & Android Build
     runs-on: ubuntu-latest
@@ -75,3 +76,34 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 14
 
+  # ─── Job 2: iOS ───
+  build-ios:
+    name: Build iOS
+    needs: quality-and-android
+    runs-on: macos-latest
+    steps:
+      # Клонирует репозиторий на раннер
+      - uses: actions/checkout@v4
+
+      # Устанавливает и кэширует Flutter SDK нужной версии
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Собирает релизный iOS-билд без подписи
+      - name: Build iOS (no codesign)
+        run: flutter build ios --release --no-codesign
+
+      # Сохраняет iOS-билд как артефакт сборки (хранится 14 дней)
+      - name: Upload iOS build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-${{ github.sha }}
+          path: build/ios/iphoneos/Runner.app
+          retention-days: 14
