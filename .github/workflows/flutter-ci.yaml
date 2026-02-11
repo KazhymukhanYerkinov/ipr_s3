@@ -3,99 +3,75 @@ name: Flutter CI/CD (IPR S3)
 on:
   push:
     branches: [ main ]
+    # Игнорируем пуши, затрагивающие только документацию и .gitignore
     paths-ignore:
       - '**.md'
       - 'docs/**'
       - '.gitignore'
   pull_request:
     branches: [ main ]
+    # Игнорируем пуши, затрагивающие только документацию и .gitignore
     paths-ignore:
       - '**.md'
       - 'docs/**'
       - '.gitignore'
 
+# Отменяет предыдущие pipeline-ы на той же ветке
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
   FLUTTER_VERSION: '3.29.0'
+  JAVA_VERSION: '17'
 
 jobs:
-  # ─── Job 1: Анализ и тесты ───
-  test:
-    name: Analyze & Test
+  quality-and-android:
+    name: Quality & Android Build
     runs-on: ubuntu-latest
     steps:
+      # Клонирует репозиторий на раннер
       - uses: actions/checkout@v4
 
+      # Устанавливает и кэширует Flutter SDK нужной версии
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
+          cache: true
 
       - name: Install dependencies
         run: flutter pub get
 
+      # Проверяет форматирование кода; падает, если есть неотформатированные файлы
+      - name: Check formatting
+        run: dart format --set-exit-if-changed .
+
+      # Статический анализ кода; падает даже на info-уровне предупреждений
       - name: Run analyzer
-        run: flutter analyze
+        run: flutter analyze --fatal-infos
 
-      - name: Run tests
-        run: flutter test
+      # Запускает unit-тесты и генерирует отчёт о покрытии кода
+      - name: Run tests with coverage
+        run: flutter test --coverage
 
-  # ─── Job 2: Сборка Android APK ───
-  build-android:
-    name: Build Android
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
+      # Устанавливает JDK (нужен для сборки Android через Gradle)
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: Install dependencies
-        run: flutter pub get
-
+      # Собирает релизный APK для Android
       - name: Build APK
         run: flutter build apk --release
 
+      # Сохраняет APK как артефакт сборки (хранится 14 дней)
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
+          name: android-apk-${{ github.sha }}
           path: build/app/outputs/flutter-apk/app-release.apk
-
-  # ─── Job 3: Сборка iOS ───
-  build-ios:
-    name: Build iOS
-    needs: test
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Build iOS (no codesign)
-        run: flutter build ios --release --no-codesign
-
-      - name: Upload iOS build
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-build
-          path: build/ios/iphoneos/Runner.app
+          retention-days: 14
 
