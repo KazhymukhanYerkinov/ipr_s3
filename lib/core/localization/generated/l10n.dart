@@ -18,17 +18,20 @@ class GeneratedLocalization {
   static GeneratedLocalization? _current;
 
   static GeneratedLocalization get current {
-    assert(_current != null,
-        'No instance of GeneratedLocalization was loaded. Try to initialize the GeneratedLocalization delegate before accessing GeneratedLocalization.current.');
+    assert(
+      _current != null,
+      'No instance of GeneratedLocalization was loaded. Try to initialize the GeneratedLocalization delegate before accessing GeneratedLocalization.current.',
+    );
     return _current!;
   }
 
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<GeneratedLocalization> load(Locale locale) {
-    final name = (locale.countryCode?.isEmpty ?? false)
-        ? locale.languageCode
-        : locale.toString();
+    final name =
+        (locale.countryCode?.isEmpty ?? false)
+            ? locale.languageCode
+            : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -41,14 +44,18 @@ class GeneratedLocalization {
 
   static GeneratedLocalization of(BuildContext context) {
     final instance = GeneratedLocalization.maybeOf(context);
-    assert(instance != null,
-        'No instance of GeneratedLocalization present in the widget tree. Did you add GeneratedLocalization.delegate in localizationsDelegates?');
+    assert(
+      instance != null,
+      'No instance of GeneratedLocalization present in the widget tree. Did you add GeneratedLocalization.delegate in localizationsDelegates?',
+    );
     return instance!;
   }
 
   static GeneratedLocalization? maybeOf(BuildContext context) {
     return Localizations.of<GeneratedLocalization>(
-        context, GeneratedLocalization);
+      context,
+      GeneratedLocalization,
+    );
   }
 
   /// `Secure App`
@@ -157,9 +164,7 @@ class AppLocalizationDelegate
   const AppLocalizationDelegate();
 
   List<Locale> get supportedLocales {
-    return const <Locale>[
-      Locale.fromSubtags(languageCode: 'en'),
-    ];
+    return const <Locale>[Locale.fromSubtags(languageCode: 'en')];
   }
 
   @override

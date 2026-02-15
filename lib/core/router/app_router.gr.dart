@@ -17,13 +17,10 @@ class AuthHomeRoute extends PageRouteInfo<AuthHomeRouteArgs> {
     required UserEntity user,
     List<PageRouteInfo>? children,
   }) : super(
-          AuthHomeRoute.name,
-          args: AuthHomeRouteArgs(
-            key: key,
-            user: user,
-          ),
-          initialChildren: children,
-        );
+         AuthHomeRoute.name,
+         args: AuthHomeRouteArgs(key: key, user: user),
+         initialChildren: children,
+       );
 
   static const String name = 'AuthHomeRoute';
 
@@ -31,19 +28,13 @@ class AuthHomeRoute extends PageRouteInfo<AuthHomeRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<AuthHomeRouteArgs>();
-      return AuthHomeScreen(
-        key: args.key,
-        user: args.user,
-      );
+      return AuthHomeScreen(key: args.key, user: args.user);
     },
   );
 }
 
 class AuthHomeRouteArgs {
-  const AuthHomeRouteArgs({
-    this.key,
-    required this.user,
-  });
+  const AuthHomeRouteArgs({this.key, required this.user});
 
   final Key? key;
 
@@ -59,10 +50,7 @@ class AuthHomeRouteArgs {
 /// [AuthSignInScreen]
 class AuthSignInRoute extends PageRouteInfo<void> {
   const AuthSignInRoute({List<PageRouteInfo>? children})
-      : super(
-          AuthSignInRoute.name,
-          initialChildren: children,
-        );
+    : super(AuthSignInRoute.name, initialChildren: children);
 
   static const String name = 'AuthSignInRoute';
 

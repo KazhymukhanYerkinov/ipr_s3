@@ -22,8 +22,10 @@ class Localization extends GeneratedLocalization {
   }
 
   static Localization of(BuildContext context) {
-    final instance =
-        Localizations.of<GeneratedLocalization>(context, GeneratedLocalization);
+    final instance = Localizations.of<GeneratedLocalization>(
+      context,
+      GeneratedLocalization,
+    );
     assert(
       instance != null,
       'No Localization found in context. '
@@ -42,9 +44,7 @@ class LocalizationDelegate
   /// Supported locales for the app.
   ///
   /// When adding a new language, add the corresponding [Locale] here.
-  List<Locale> get supportedLocales => const [
-        Locale('en'),
-      ];
+  List<Locale> get supportedLocales => const [Locale('en')];
 
   @override
   bool isSupported(Locale locale) {

@@ -31,44 +31,52 @@ import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_out_use_case.dar
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_bloc.dart' as _i541;
 
 extension GetItInjectableX on _i174.GetIt {
-// initializes the registration of main-scope dependencies inside of GetIt
+  // initializes the registration of main-scope dependencies inside of GetIt
   _i174.GetIt init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
   }) {
-    final gh = _i526.GetItHelper(
-      this,
-      environment,
-      environmentFilter,
-    );
+    final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
     gh.lazySingleton<_i59.FirebaseAuth>(() => registerModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => registerModule.googleSignIn);
     gh.lazySingleton<_i558.FlutterSecureStorage>(
-        () => registerModule.secureStorage);
+      () => registerModule.secureStorage,
+    );
     gh.lazySingleton<_i564.EncryptionHelper>(
-        () => _i564.EncryptionHelper(gh<_i558.FlutterSecureStorage>()));
+      () => _i564.EncryptionHelper(gh<_i558.FlutterSecureStorage>()),
+    );
     gh.lazySingleton<_i910.AuthLocalSource>(
-        () => _i910.AuthLocalSourceImpl(gh<_i558.FlutterSecureStorage>()));
-    gh.lazySingleton<_i1012.AuthRemoteSource>(() => _i1012.AuthRemoteSourceImpl(
-          gh<_i59.FirebaseAuth>(),
-          gh<_i116.GoogleSignIn>(),
-        ));
-    gh.lazySingleton<_i514.AuthBehavior>(() => _i77.AuthService(
-          gh<_i1012.AuthRemoteSource>(),
-          gh<_i910.AuthLocalSource>(),
-        ));
+      () => _i910.AuthLocalSourceImpl(gh<_i558.FlutterSecureStorage>()),
+    );
+    gh.lazySingleton<_i1012.AuthRemoteSource>(
+      () => _i1012.AuthRemoteSourceImpl(
+        gh<_i59.FirebaseAuth>(),
+        gh<_i116.GoogleSignIn>(),
+      ),
+    );
+    gh.lazySingleton<_i514.AuthBehavior>(
+      () => _i77.AuthService(
+        gh<_i1012.AuthRemoteSource>(),
+        gh<_i910.AuthLocalSource>(),
+      ),
+    );
     gh.lazySingleton<_i188.AuthSignInWithGoogleUseCase>(
-        () => _i188.AuthSignInWithGoogleUseCase(gh<_i514.AuthBehavior>()));
+      () => _i188.AuthSignInWithGoogleUseCase(gh<_i514.AuthBehavior>()),
+    );
     gh.lazySingleton<_i296.AuthSignOutUseCase>(
-        () => _i296.AuthSignOutUseCase(gh<_i514.AuthBehavior>()));
+      () => _i296.AuthSignOutUseCase(gh<_i514.AuthBehavior>()),
+    );
     gh.lazySingleton<_i254.AuthGetCurrentUserUseCase>(
-        () => _i254.AuthGetCurrentUserUseCase(gh<_i514.AuthBehavior>()));
-    gh.factory<_i541.AuthBloc>(() => _i541.AuthBloc(
-          gh<_i296.AuthSignOutUseCase>(),
-          gh<_i188.AuthSignInWithGoogleUseCase>(),
-          gh<_i254.AuthGetCurrentUserUseCase>(),
-        ));
+      () => _i254.AuthGetCurrentUserUseCase(gh<_i514.AuthBehavior>()),
+    );
+    gh.factory<_i541.AuthBloc>(
+      () => _i541.AuthBloc(
+        gh<_i296.AuthSignOutUseCase>(),
+        gh<_i188.AuthSignInWithGoogleUseCase>(),
+        gh<_i254.AuthGetCurrentUserUseCase>(),
+      ),
+    );
     return this;
   }
 }

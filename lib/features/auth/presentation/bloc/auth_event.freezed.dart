@@ -12,7 +12,8 @@ part of 'auth_event.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$AuthEvent {
@@ -21,46 +22,40 @@ mixin _$AuthEvent {
     required TResult Function() googleSignInRequested,
     required TResult Function() signOutRequested,
     required TResult Function() authCheckRequested,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? googleSignInRequested,
     TResult? Function()? signOutRequested,
     TResult? Function()? authCheckRequested,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? googleSignInRequested,
     TResult Function()? signOutRequested,
     TResult Function()? authCheckRequested,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(GoogleSignInRequested value)
-        googleSignInRequested,
+    googleSignInRequested,
     required TResult Function(SignOutRequested value) signOutRequested,
     required TResult Function(AuthCheckRequested value) authCheckRequested,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(GoogleSignInRequested value)? googleSignInRequested,
     TResult? Function(SignOutRequested value)? signOutRequested,
     TResult? Function(AuthCheckRequested value)? authCheckRequested,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(GoogleSignInRequested value)? googleSignInRequested,
     TResult Function(SignOutRequested value)? signOutRequested,
     TResult Function(AuthCheckRequested value)? authCheckRequested,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -83,18 +78,19 @@ class _$AuthEventCopyWithImpl<$Res, $Val extends AuthEvent>
 /// @nodoc
 abstract class _$$GoogleSignInRequestedImplCopyWith<$Res> {
   factory _$$GoogleSignInRequestedImplCopyWith(
-          _$GoogleSignInRequestedImpl value,
-          $Res Function(_$GoogleSignInRequestedImpl) then) =
-      __$$GoogleSignInRequestedImplCopyWithImpl<$Res>;
+    _$GoogleSignInRequestedImpl value,
+    $Res Function(_$GoogleSignInRequestedImpl) then,
+  ) = __$$GoogleSignInRequestedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
 class __$$GoogleSignInRequestedImplCopyWithImpl<$Res>
     extends _$AuthEventCopyWithImpl<$Res, _$GoogleSignInRequestedImpl>
     implements _$$GoogleSignInRequestedImplCopyWith<$Res> {
-  __$$GoogleSignInRequestedImplCopyWithImpl(_$GoogleSignInRequestedImpl _value,
-      $Res Function(_$GoogleSignInRequestedImpl) _then)
-      : super(_value, _then);
+  __$$GoogleSignInRequestedImplCopyWithImpl(
+    _$GoogleSignInRequestedImpl _value,
+    $Res Function(_$GoogleSignInRequestedImpl) _then,
+  ) : super(_value, _then);
 }
 
 /// @nodoc
@@ -155,7 +151,7 @@ class _$GoogleSignInRequestedImpl implements GoogleSignInRequested {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(GoogleSignInRequested value)
-        googleSignInRequested,
+    googleSignInRequested,
     required TResult Function(SignOutRequested value) signOutRequested,
     required TResult Function(AuthCheckRequested value) authCheckRequested,
   }) {
@@ -193,18 +189,20 @@ abstract class GoogleSignInRequested implements AuthEvent {
 
 /// @nodoc
 abstract class _$$SignOutRequestedImplCopyWith<$Res> {
-  factory _$$SignOutRequestedImplCopyWith(_$SignOutRequestedImpl value,
-          $Res Function(_$SignOutRequestedImpl) then) =
-      __$$SignOutRequestedImplCopyWithImpl<$Res>;
+  factory _$$SignOutRequestedImplCopyWith(
+    _$SignOutRequestedImpl value,
+    $Res Function(_$SignOutRequestedImpl) then,
+  ) = __$$SignOutRequestedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
 class __$$SignOutRequestedImplCopyWithImpl<$Res>
     extends _$AuthEventCopyWithImpl<$Res, _$SignOutRequestedImpl>
     implements _$$SignOutRequestedImplCopyWith<$Res> {
-  __$$SignOutRequestedImplCopyWithImpl(_$SignOutRequestedImpl _value,
-      $Res Function(_$SignOutRequestedImpl) _then)
-      : super(_value, _then);
+  __$$SignOutRequestedImplCopyWithImpl(
+    _$SignOutRequestedImpl _value,
+    $Res Function(_$SignOutRequestedImpl) _then,
+  ) : super(_value, _then);
 }
 
 /// @nodoc
@@ -264,7 +262,7 @@ class _$SignOutRequestedImpl implements SignOutRequested {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(GoogleSignInRequested value)
-        googleSignInRequested,
+    googleSignInRequested,
     required TResult Function(SignOutRequested value) signOutRequested,
     required TResult Function(AuthCheckRequested value) authCheckRequested,
   }) {
@@ -302,18 +300,20 @@ abstract class SignOutRequested implements AuthEvent {
 
 /// @nodoc
 abstract class _$$AuthCheckRequestedImplCopyWith<$Res> {
-  factory _$$AuthCheckRequestedImplCopyWith(_$AuthCheckRequestedImpl value,
-          $Res Function(_$AuthCheckRequestedImpl) then) =
-      __$$AuthCheckRequestedImplCopyWithImpl<$Res>;
+  factory _$$AuthCheckRequestedImplCopyWith(
+    _$AuthCheckRequestedImpl value,
+    $Res Function(_$AuthCheckRequestedImpl) then,
+  ) = __$$AuthCheckRequestedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
 class __$$AuthCheckRequestedImplCopyWithImpl<$Res>
     extends _$AuthEventCopyWithImpl<$Res, _$AuthCheckRequestedImpl>
     implements _$$AuthCheckRequestedImplCopyWith<$Res> {
-  __$$AuthCheckRequestedImplCopyWithImpl(_$AuthCheckRequestedImpl _value,
-      $Res Function(_$AuthCheckRequestedImpl) _then)
-      : super(_value, _then);
+  __$$AuthCheckRequestedImplCopyWithImpl(
+    _$AuthCheckRequestedImpl _value,
+    $Res Function(_$AuthCheckRequestedImpl) _then,
+  ) : super(_value, _then);
 }
 
 /// @nodoc
@@ -373,7 +373,7 @@ class _$AuthCheckRequestedImpl implements AuthCheckRequested {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(GoogleSignInRequested value)
-        googleSignInRequested,
+    googleSignInRequested,
     required TResult Function(SignOutRequested value) signOutRequested,
     required TResult Function(AuthCheckRequested value) authCheckRequested,
   }) {

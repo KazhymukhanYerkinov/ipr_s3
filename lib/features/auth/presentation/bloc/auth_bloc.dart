@@ -53,9 +53,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _getCurrentUserUseCase();
     result.fold(
       (_) => emit(const AuthState.unauthenticated()),
-      (user) => user != null
-          ? emit(AuthState.authenticated(user: user))
-          : emit(const AuthState.unauthenticated()),
+      (user) =>
+          user != null
+              ? emit(AuthState.authenticated(user: user))
+              : emit(const AuthState.unauthenticated()),
     );
   }
 }
