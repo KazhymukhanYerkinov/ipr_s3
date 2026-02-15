@@ -1,0 +1,53 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Secure App",
+  "@appTitle": {
+    "description": "Application title"
+  },
+
+  "signInSubtitle": "Protected with OWASP standards",
+  "@signInSubtitle": {
+    "description": "Subtitle on the sign-in screen"
+  },
+
+  "signInWithGoogle": "Sign in with Google",
+  "@signInWithGoogle": {
+    "description": "Google sign-in button label"
+  },
+
+  "home": "Home",
+  "@home": {
+    "description": "Home screen app bar title"
+  },
+
+  "securityFeatures": "Security Features",
+  "@securityFeatures": {
+    "description": "Security features card title"
+  },
+
+  "securityTokenStorage": "✓ Token in Secure Storage (Keychain/EncryptedSP)",
+  "@securityTokenStorage": {
+    "description": "Security feature: token storage"
+  },
+
+  "securityHttpsOnly": "✓ HTTPS only (Firebase SDK)",
+  "@securityHttpsOnly": {
+    "description": "Security feature: HTTPS"
+  },
+
+  "securityOAuth": "✓ OAuth 2.0 via Google Sign-In",
+  "@securityOAuth": {
+    "description": "Security feature: OAuth"
+  },
+
+  "securityMaskedLogs": "✓ Sensitive data masked in logs",
+  "@securityMaskedLogs": {
+    "description": "Security feature: masked logs"
+  },
+
+  "securityEncryptedData": "✓ Local data encrypted (Hive + AES-256)",
+  "@securityEncryptedData": {
+    "description": "Security feature: encrypted data"
+  }
+}

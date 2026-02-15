@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "377859968173",
+    "project_id": "ipr-s3-app",
+    "storage_bucket": "ipr-s3-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377859968173:android:d04bdf0e32912f2e3a0a24",
+        "android_client_info": {
+          "package_name": "com.example.ipr_s3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCabKuxl_3wNTbsxikhP9GsU7kBEm4pTIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
