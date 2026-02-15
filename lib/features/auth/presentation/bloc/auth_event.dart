@@ -1,10 +1,7 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+sealed class AuthEvent {}
 
-part 'auth_event.freezed.dart';
+final class GoogleSignInRequested extends AuthEvent {}
 
-@freezed
-class AuthEvent with _$AuthEvent {
-  const factory AuthEvent.googleSignInRequested() = GoogleSignInRequested;
-  const factory AuthEvent.signOutRequested() = SignOutRequested;
-  const factory AuthEvent.authCheckRequested() = AuthCheckRequested;
-}
+final class SignOutRequested extends AuthEvent {}
+
+final class AuthCheckRequested extends AuthEvent {}

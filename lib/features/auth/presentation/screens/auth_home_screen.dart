@@ -2,11 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
+import 'package:ipr_s3/core/router/app_router.dart';
 import 'package:ipr_s3/features/auth/domain/entities/user.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_state.dart';
-import 'package:ipr_s3/core/router/app_router.dart';
 
 @RoutePage()
 class AuthHomeScreen extends StatelessWidget {
@@ -27,7 +27,7 @@ class AuthHomeScreen extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () {
-                context.read<AuthBloc>().add(const SignOutRequested());
+                context.read<AuthBloc>().add(SignOutRequested());
               },
               icon: const Icon(Icons.logout),
             ),

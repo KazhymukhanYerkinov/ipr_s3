@@ -4,9 +4,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/di/injection.dart';
 import 'core/localization/localization.dart';
+import 'core/localization/localization_x.dart';
+import 'core/router/app_router.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
-import 'core/router/app_router.dart';
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
@@ -16,9 +17,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<AuthBloc>()..add(const AuthCheckRequested()),
+      create: (_) => getIt<AuthBloc>()..add(AuthCheckRequested()),
       child: MaterialApp.router(
-        title: 'Secure App',
+        title: context.locale.appTitle,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
         locale: const Locale('en'),

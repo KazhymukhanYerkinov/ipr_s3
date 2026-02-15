@@ -2,10 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
+import 'package:ipr_s3/core/router/app_router.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_state.dart';
-import 'package:ipr_s3/core/router/app_router.dart';
 
 @RoutePage()
 class AuthSignInScreen extends StatelessWidget {
@@ -54,9 +54,7 @@ class AuthSignInScreen extends StatelessWidget {
                   const SizedBox(height: 48),
                   ElevatedButton.icon(
                     onPressed: () {
-                      context.read<AuthBloc>().add(
-                        const GoogleSignInRequested(),
-                      );
+                      context.read<AuthBloc>().add(GoogleSignInRequested());
                     },
                     icon: const Icon(Icons.login),
                     label: Text(context.locale.signInWithGoogle),
