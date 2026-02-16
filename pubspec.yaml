@@ -70,6 +70,9 @@ dependencies:
   # Functional programming
   dartz: ^0.10.1
 
+  # Secure logging
+  logger: ^2.5.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
