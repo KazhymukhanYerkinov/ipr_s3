@@ -48,6 +48,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      # Проверяет форматирование кода; падает если есть неотформатированные файлы
+      - name: Check formatting
+        run: dart format --set-exit-if-changed .
+
       # Статический анализ кода; падает даже на info-уровне предупреждений
       - name: Run analyzer
         run: flutter analyze --fatal-infos
@@ -103,12 +107,24 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
+      # Собирает релизный AAB (Android App Bundle) для публикации в Google Play
+      - name: Build AAB
+        run: flutter build appbundle --release
+
       # Сохраняет APK как артефакт сборки (хранится 14 дней)
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: android-apk-${{ github.sha }}
           path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
+
+      # Сохраняет AAB как артефакт сборки (хранится 14 дней)
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-aab-${{ github.sha }}
+          path: build/app/outputs/bundle/release/app-release.aab
           retention-days: 14
 
   # ─── Job 3: Build iOS ───
