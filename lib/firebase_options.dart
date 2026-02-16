@@ -64,6 +64,7 @@ class DefaultFirebaseOptions {
     projectId: 'ipr-s3-app',
     storageBucket: 'ipr-s3-app.firebasestorage.app',
     iosBundleId: 'com.example.iprS3',
+    iosClientId: '377859968173-6u55l5p6hpoe4lvkkjudjmmn4c72e01k.apps.googleusercontent.com',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

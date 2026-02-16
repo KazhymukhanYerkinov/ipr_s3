@@ -4,7 +4,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/di/injection.dart';
 import 'core/localization/localization.dart';
-import 'core/localization/localization_x.dart';
 import 'core/router/app_router.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (_) => getIt<AuthBloc>()..add(AuthCheckRequested()),
       child: MaterialApp.router(
-        title: context.locale.appTitle,
+        title: 'IPR',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
         locale: const Locale('en'),
