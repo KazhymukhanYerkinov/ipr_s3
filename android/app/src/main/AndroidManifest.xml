@@ -1,7 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- usesCleartextTraffic="false" — запрещает HTTP на уровне Android OS.
+         Даже если в коде случайно будет http:// URL — ОС заблокирует запрос.
+         Это дополнительный уровень защиты поверх SecurityInterceptor. -->
     <application
         android:label="ipr_s3"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="false"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

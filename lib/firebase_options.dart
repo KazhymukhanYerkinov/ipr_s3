@@ -63,8 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '377859968173',
     projectId: 'ipr-s3-app',
     storageBucket: 'ipr-s3-app.firebasestorage.app',
-    iosBundleId: 'com.example.iprS3',
     iosClientId: '377859968173-6u55l5p6hpoe4lvkkjudjmmn4c72e01k.apps.googleusercontent.com',
+    iosBundleId: 'com.example.iprS3',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,6 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '377859968173',
     projectId: 'ipr-s3-app',
     storageBucket: 'ipr-s3-app.firebasestorage.app',
+    iosClientId: '377859968173-6u55l5p6hpoe4lvkkjudjmmn4c72e01k.apps.googleusercontent.com',
     iosBundleId: 'com.example.iprS3',
   );
 
@@ -84,4 +85,5 @@ class DefaultFirebaseOptions {
     authDomain: 'ipr-s3-app.firebaseapp.com',
     storageBucket: 'ipr-s3-app.firebasestorage.app',
   );
+
 }

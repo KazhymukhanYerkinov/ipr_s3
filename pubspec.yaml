@@ -73,6 +73,9 @@ dependencies:
   # Secure logging
   logger: ^2.5.0
 
+  # HTTP client
+  dio: ^5.7.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
