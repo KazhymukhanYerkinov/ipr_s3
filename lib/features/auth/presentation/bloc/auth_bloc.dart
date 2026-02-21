@@ -48,11 +48,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _signInWithGoogleUseCase();
     result.fold(
       (failure) => emit(AuthState.error(message: failure.message)),
-      (user) {
-        _currentUser = user;
-        _checkPinStatus(user, emit);
-      },
+      (user) => _currentUser = user,
     );
+    if (_currentUser != null && result.isRight()) {
+      await _checkPinStatus(_currentUser!, emit);
+    }
   }
 
   Future<void> _onSignOut(
@@ -75,17 +75,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     final result = await _getCurrentUserUseCase();
+    UserEntity? user;
     result.fold(
       (_) => emit(const AuthState.unauthenticated()),
-      (user) {
-        if (user == null) {
-          emit(const AuthState.unauthenticated());
-          return;
-        }
-        _currentUser = user;
-        _checkPinStatus(user, emit);
-      },
+      (u) => user = u,
     );
+    if (result.isLeft()) return;
+    if (user == null) {
+      emit(const AuthState.unauthenticated());
+      return;
+    }
+    _currentUser = user;
+    await _checkPinStatus(user!, emit);
   }
 
   Future<void> _onPinSubmitted(

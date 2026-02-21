@@ -7,6 +7,10 @@ import 'package:ipr_s3/features/auth/domain/entities/user.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_get_current_user_use_case.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_in_with_google_use_case.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_out_use_case.dart';
+import 'package:ipr_s3/features/auth/domain/use_cases/has_pin_use_case.dart';
+import 'package:ipr_s3/features/auth/domain/use_cases/set_pin_use_case.dart';
+import 'package:ipr_s3/features/auth/domain/use_cases/verify_pin_use_case.dart';
+import 'package:ipr_s3/features/auth/domain/use_cases/authenticate_biometrics_use_case.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_state.dart';
@@ -18,11 +22,24 @@ class MockSignOut extends Mock implements AuthSignOutUseCase {}
 
 class MockGetCurrentUser extends Mock implements AuthGetCurrentUserUseCase {}
 
+class MockHasPin extends Mock implements HasPinUseCase {}
+
+class MockSetPin extends Mock implements SetPinUseCase {}
+
+class MockVerifyPin extends Mock implements VerifyPinUseCase {}
+
+class MockAuthenticateBiometrics extends Mock
+    implements AuthenticateBiometricsUseCase {}
+
 void main() {
   late AuthBloc authBloc;
   late MockSignInWithGoogle mockSignIn;
   late MockSignOut mockSignOut;
   late MockGetCurrentUser mockGetCurrentUser;
+  late MockHasPin mockHasPin;
+  late MockSetPin mockSetPin;
+  late MockVerifyPin mockVerifyPin;
+  late MockAuthenticateBiometrics mockBiometrics;
 
   const testUser = UserEntity(
     uid: '123',
@@ -35,7 +52,20 @@ void main() {
     mockSignIn = MockSignInWithGoogle();
     mockSignOut = MockSignOut();
     mockGetCurrentUser = MockGetCurrentUser();
-    authBloc = AuthBloc(mockSignOut, mockSignIn, mockGetCurrentUser);
+    mockHasPin = MockHasPin();
+    mockSetPin = MockSetPin();
+    mockVerifyPin = MockVerifyPin();
+    mockBiometrics = MockAuthenticateBiometrics();
+
+    authBloc = AuthBloc(
+      mockSignOut,
+      mockSignIn,
+      mockGetCurrentUser,
+      mockHasPin,
+      mockSetPin,
+      mockVerifyPin,
+      mockBiometrics,
+    );
   });
 
   tearDown(() {
@@ -48,11 +78,48 @@ void main() {
 
   group('GoogleSignInRequested', () {
     blocTest<AuthBloc, AuthState>(
-      'emits [loading, authenticated] when sign-in succeeds',
+      'emits [loading, pinRequired] when sign-in succeeds and PIN exists',
       build: () {
-        when(() => mockSignIn()).thenAnswer(
-          (_) async => const Right(testUser),
-        );
+        when(() => mockSignIn())
+            .thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin())
+            .thenAnswer((_) async => const Right(true));
+        return authBloc;
+      },
+      act: (bloc) => bloc.add(GoogleSignInRequested()),
+      expect: () => [
+        const AuthState.loading(),
+        const AuthState.pinRequired(user: testUser),
+      ],
+      verify: (_) {
+        verify(() => mockSignIn()).called(1);
+        verify(() => mockHasPin()).called(1);
+      },
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [loading, pinSetupRequired] when sign-in succeeds and no PIN',
+      build: () {
+        when(() => mockSignIn())
+            .thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin())
+            .thenAnswer((_) async => const Right(false));
+        return authBloc;
+      },
+      act: (bloc) => bloc.add(GoogleSignInRequested()),
+      expect: () => [
+        const AuthState.loading(),
+        const AuthState.pinSetupRequired(user: testUser),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [loading, authenticated] when sign-in succeeds and hasPin fails',
+      build: () {
+        when(() => mockSignIn())
+            .thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin()).thenAnswer(
+            (_) async => const Left(CacheFailure(message: 'no pin data')));
         return authBloc;
       },
       act: (bloc) => bloc.add(GoogleSignInRequested()),
@@ -60,9 +127,6 @@ void main() {
         const AuthState.loading(),
         const AuthState.authenticated(user: testUser),
       ],
-      verify: (_) {
-        verify(() => mockSignIn()).called(1);
-      },
     );
 
     blocTest<AuthBloc, AuthState>(
@@ -118,20 +182,37 @@ void main() {
 
   group('AuthCheckRequested', () {
     blocTest<AuthBloc, AuthState>(
-      'emits [authenticated] when user exists',
+      'emits [pinRequired] when user exists and has PIN',
       build: () {
-        when(() => mockGetCurrentUser()).thenAnswer(
-          (_) async => const Right(testUser),
-        );
+        when(() => mockGetCurrentUser())
+            .thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin())
+            .thenAnswer((_) async => const Right(true));
         return authBloc;
       },
       act: (bloc) => bloc.add(AuthCheckRequested()),
       expect: () => [
-        const AuthState.authenticated(user: testUser),
+        const AuthState.pinRequired(user: testUser),
       ],
       verify: (_) {
         verify(() => mockGetCurrentUser()).called(1);
+        verify(() => mockHasPin()).called(1);
       },
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [pinSetupRequired] when user exists but no PIN',
+      build: () {
+        when(() => mockGetCurrentUser())
+            .thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin())
+            .thenAnswer((_) async => const Right(false));
+        return authBloc;
+      },
+      act: (bloc) => bloc.add(AuthCheckRequested()),
+      expect: () => [
+        const AuthState.pinSetupRequired(user: testUser),
+      ],
     );
 
     blocTest<AuthBloc, AuthState>(
@@ -158,6 +239,165 @@ void main() {
         return authBloc;
       },
       act: (bloc) => bloc.add(AuthCheckRequested()),
+      expect: () => [
+        const AuthState.unauthenticated(),
+      ],
+    );
+  });
+
+  group('PinSubmitted', () {
+    blocTest<AuthBloc, AuthState>(
+      'emits [loading, authenticated] when PIN is correct',
+      build: () {
+        when(() => mockSignIn())
+            .thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin())
+            .thenAnswer((_) async => const Right(true));
+        when(() => mockVerifyPin('1234'))
+            .thenAnswer((_) async => const Right(true));
+        return authBloc;
+      },
+      act: (bloc) async {
+        bloc.add(GoogleSignInRequested());
+        await Future.delayed(const Duration(milliseconds: 100));
+        bloc.add(PinSubmitted('1234'));
+      },
+      expect: () => [
+        const AuthState.loading(),
+        const AuthState.pinRequired(user: testUser),
+        const AuthState.loading(),
+        const AuthState.authenticated(user: testUser),
+      ],
+      verify: (_) {
+        verify(() => mockVerifyPin('1234')).called(1);
+      },
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [loading, error] when PIN is wrong',
+      build: () {
+        when(() => mockSignIn())
+            .thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin())
+            .thenAnswer((_) async => const Right(true));
+        when(() => mockVerifyPin('0000'))
+            .thenAnswer((_) async => const Right(false));
+        return authBloc;
+      },
+      act: (bloc) async {
+        bloc.add(GoogleSignInRequested());
+        await Future.delayed(const Duration(milliseconds: 100));
+        bloc.add(PinSubmitted('0000'));
+      },
+      expect: () => [
+        const AuthState.loading(),
+        const AuthState.pinRequired(user: testUser),
+        const AuthState.loading(),
+        const AuthState.error(message: 'Wrong PIN'),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [unauthenticated] when no current user',
+      build: () => authBloc,
+      act: (bloc) => bloc.add(PinSubmitted('1234')),
+      expect: () => [
+        const AuthState.unauthenticated(),
+      ],
+    );
+  });
+
+  group('PinSetupSubmitted', () {
+    blocTest<AuthBloc, AuthState>(
+      'emits [loading, authenticated] when PIN setup succeeds',
+      build: () {
+        when(() => mockSignIn())
+            .thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin())
+            .thenAnswer((_) async => const Right(false));
+        when(() => mockSetPin('1234'))
+            .thenAnswer((_) async => const Right(null));
+        return authBloc;
+      },
+      act: (bloc) async {
+        bloc.add(GoogleSignInRequested());
+        await Future.delayed(const Duration(milliseconds: 100));
+        bloc.add(PinSetupSubmitted('1234'));
+      },
+      expect: () => [
+        const AuthState.loading(),
+        const AuthState.pinSetupRequired(user: testUser),
+        const AuthState.loading(),
+        const AuthState.authenticated(user: testUser),
+      ],
+      verify: (_) {
+        verify(() => mockSetPin('1234')).called(1);
+      },
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [unauthenticated] when no current user',
+      build: () => authBloc,
+      act: (bloc) => bloc.add(PinSetupSubmitted('1234')),
+      expect: () => [
+        const AuthState.unauthenticated(),
+      ],
+    );
+  });
+
+  group('BiometricRequested', () {
+    blocTest<AuthBloc, AuthState>(
+      'emits [authenticated] when biometric succeeds',
+      build: () {
+        when(() => mockSignIn())
+            .thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin())
+            .thenAnswer((_) async => const Right(true));
+        when(() => mockBiometrics())
+            .thenAnswer((_) async => const Right(true));
+        return authBloc;
+      },
+      act: (bloc) async {
+        bloc.add(GoogleSignInRequested());
+        await Future.delayed(const Duration(milliseconds: 100));
+        bloc.add(BiometricRequested());
+      },
+      expect: () => [
+        const AuthState.loading(),
+        const AuthState.pinRequired(user: testUser),
+        const AuthState.authenticated(user: testUser),
+      ],
+      verify: (_) {
+        verify(() => mockBiometrics()).called(1);
+      },
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'stays pinRequired when biometric fails',
+      build: () {
+        when(() => mockSignIn())
+            .thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin())
+            .thenAnswer((_) async => const Right(true));
+        when(() => mockBiometrics())
+            .thenAnswer((_) async => const Right(false));
+        return authBloc;
+      },
+      act: (bloc) async {
+        bloc.add(GoogleSignInRequested());
+        await Future.delayed(const Duration(milliseconds: 100));
+        bloc.add(BiometricRequested());
+      },
+      expect: () => [
+        const AuthState.loading(),
+        const AuthState.pinRequired(user: testUser),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [unauthenticated] when no current user',
+      build: () => authBloc,
+      act: (bloc) => bloc.add(BiometricRequested()),
       expect: () => [
         const AuthState.unauthenticated(),
       ],

@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/security/pin_manager.dart';
 import 'package:ipr_s3/features/auth/data/dtos/user_dto.dart';
 import 'package:ipr_s3/features/auth/data/services/auth_service.dart';
 import 'package:ipr_s3/features/auth/data/sources/auth_local_source.dart';
@@ -12,15 +13,19 @@ class MockAuthRemoteSource extends Mock implements AuthRemoteSource {}
 
 class MockAuthLocalSource extends Mock implements AuthLocalSource {}
 
+class MockPinManager extends Mock implements PinManager {}
+
 void main() {
   late AuthService authService;
   late MockAuthRemoteSource mockRemoteSource;
   late MockAuthLocalSource mockLocalSource;
+  late MockPinManager mockPinManager;
 
   setUp(() {
     mockRemoteSource = MockAuthRemoteSource();
     mockLocalSource = MockAuthLocalSource();
-    authService = AuthService(mockRemoteSource, mockLocalSource);
+    mockPinManager = MockPinManager();
+    authService = AuthService(mockRemoteSource, mockLocalSource, mockPinManager);
   });
 
   const testUserDto = UserDto(
@@ -176,6 +181,130 @@ void main() {
           expect(failure, isA<AuthFailure>());
           expect(failure.message, 'Failed to get current user');
         },
+        (_) => fail('Should be Left'),
+      );
+    });
+  });
+
+  group('hasPin', () {
+    test('should return true when PIN exists', () async {
+      when(() => mockPinManager.hasPin()).thenAnswer((_) async => true);
+
+      final result = await authService.hasPin();
+
+      expect(result, const Right(true));
+      verify(() => mockPinManager.hasPin()).called(1);
+    });
+
+    test('should return false when no PIN', () async {
+      when(() => mockPinManager.hasPin()).thenAnswer((_) async => false);
+
+      final result = await authService.hasPin();
+
+      expect(result, const Right(false));
+    });
+
+    test('should return AuthFailure when PinManager throws', () async {
+      when(() => mockPinManager.hasPin()).thenThrow(Exception('Storage error'));
+
+      final result = await authService.hasPin();
+
+      expect(result.isLeft(), true);
+      result.fold(
+        (failure) => expect(failure.message, 'Failed to check PIN'),
+        (_) => fail('Should be Left'),
+      );
+    });
+  });
+
+  group('setPin', () {
+    test('should return Right(void) on success', () async {
+      when(() => mockPinManager.setPin('1234')).thenAnswer((_) async {});
+
+      final result = await authService.setPin('1234');
+
+      expect(result.isRight(), true);
+      verify(() => mockPinManager.setPin('1234')).called(1);
+    });
+
+    test('should return AuthFailure when PinManager throws', () async {
+      when(() => mockPinManager.setPin('1234'))
+          .thenThrow(Exception('Write error'));
+
+      final result = await authService.setPin('1234');
+
+      expect(result.isLeft(), true);
+      result.fold(
+        (failure) => expect(failure.message, 'Failed to set PIN'),
+        (_) => fail('Should be Left'),
+      );
+    });
+  });
+
+  group('verifyPin', () {
+    test('should return true when PIN is correct', () async {
+      when(() => mockPinManager.verifyPin('1234'))
+          .thenAnswer((_) async => true);
+
+      final result = await authService.verifyPin('1234');
+
+      expect(result, const Right(true));
+      verify(() => mockPinManager.verifyPin('1234')).called(1);
+    });
+
+    test('should return false when PIN is wrong', () async {
+      when(() => mockPinManager.verifyPin('0000'))
+          .thenAnswer((_) async => false);
+
+      final result = await authService.verifyPin('0000');
+
+      expect(result, const Right(false));
+    });
+
+    test('should return AuthFailure when PinManager throws', () async {
+      when(() => mockPinManager.verifyPin('1234'))
+          .thenThrow(Exception('Read error'));
+
+      final result = await authService.verifyPin('1234');
+
+      expect(result.isLeft(), true);
+      result.fold(
+        (failure) => expect(failure.message, 'Failed to verify PIN'),
+        (_) => fail('Should be Left'),
+      );
+    });
+  });
+
+  group('authenticateWithBiometrics', () {
+    test('should return true when biometric succeeds', () async {
+      when(() => mockLocalSource.authenticateWithBiometrics())
+          .thenAnswer((_) async => true);
+
+      final result = await authService.authenticateWithBiometrics();
+
+      expect(result, const Right(true));
+      verify(() => mockLocalSource.authenticateWithBiometrics()).called(1);
+    });
+
+    test('should return false when biometric is rejected', () async {
+      when(() => mockLocalSource.authenticateWithBiometrics())
+          .thenAnswer((_) async => false);
+
+      final result = await authService.authenticateWithBiometrics();
+
+      expect(result, const Right(false));
+    });
+
+    test('should return AuthFailure when biometric throws', () async {
+      when(() => mockLocalSource.authenticateWithBiometrics())
+          .thenThrow(Exception('Biometric unavailable'));
+
+      final result = await authService.authenticateWithBiometrics();
+
+      expect(result.isLeft(), true);
+      result.fold(
+        (failure) =>
+            expect(failure.message, 'Biometric authentication failed'),
         (_) => fail('Should be Left'),
       );
     });
