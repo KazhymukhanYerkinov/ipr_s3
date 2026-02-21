@@ -49,5 +49,45 @@
   "securityEncryptedData": "✓ Local data encrypted (Hive + AES-256)",
   "@securityEncryptedData": {
     "description": "Security feature: encrypted data"
+  },
+
+  "enterPin": "Enter PIN",
+  "@enterPin": {
+    "description": "Lock screen title"
+  },
+
+  "setupPin": "Set up PIN",
+  "@setupPin": {
+    "description": "Set PIN screen title — first step"
+  },
+
+  "confirmPin": "Confirm PIN",
+  "@confirmPin": {
+    "description": "Set PIN screen title — confirmation step"
+  },
+
+  "enterPinAgain": "Enter PIN again",
+  "@enterPinAgain": {
+    "description": "Set PIN screen subtitle — confirmation step"
+  },
+
+  "createFourDigitCode": "Create a 4-digit code",
+  "@createFourDigitCode": {
+    "description": "Set PIN screen subtitle — first step"
+  },
+
+  "wrongPin": "Wrong PIN",
+  "@wrongPin": {
+    "description": "Error message when PIN is incorrect"
+  },
+
+  "pinMismatch": "PINs don't match. Try again",
+  "@pinMismatch": {
+    "description": "Error when confirmation PIN doesn't match"
+  },
+
+  "biometricReason": "Confirm to unlock File Secure",
+  "@biometricReason": {
+    "description": "Reason string shown during biometric prompt"
   }
 }

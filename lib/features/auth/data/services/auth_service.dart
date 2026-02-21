@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/security/pin_manager.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/auth/data/sources/auth_local_source.dart';
 import 'package:ipr_s3/features/auth/data/sources/auth_remote_source.dart';
@@ -11,12 +12,10 @@ import 'package:ipr_s3/features/auth/domain/entities/user.dart';
 class AuthService implements AuthBehavior {
   final AuthLocalSource _authLocalSource;
   final AuthRemoteSource _authRemoteSource;
-
-  /// SecureLogger — безопасный логгер, который маскирует чувствительные данные.
-  /// Используем его вместо print(), чтобы токены и email не попали в logcat.
+  final PinManager _pinManager;
   final _logger = SecureLogger();
 
-  AuthService(this._authRemoteSource, this._authLocalSource);
+  AuthService(this._authRemoteSource, this._authLocalSource, this._pinManager);
 
   @override
   Future<Either<Failure, UserEntity>> signInWithGoogle() async {
@@ -25,9 +24,6 @@ class AuthService implements AuthBehavior {
       _logger.info('User signed in successfully');
       return Right(user);
     } catch (e, stackTrace) {
-      // Логируем ошибку через SecureLogger — он замаскирует токены/email.
-      // В UI отдаём только общее сообщение без e.toString(),
-      // потому что e.toString() может содержать accessToken/idToken от Google.
       _logger.error('Google sign-in failed', e, stackTrace);
       return Left(AuthFailure(message: 'Failed to sign in'));
     }
@@ -54,6 +50,51 @@ class AuthService implements AuthBehavior {
     } catch (e, stackTrace) {
       _logger.error('Get current user failed', e, stackTrace);
       return Left(AuthFailure(message: 'Failed to get current user'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> hasPin() async {
+    try {
+      final result = await _pinManager.hasPin();
+      return Right(result);
+    } catch (e, stackTrace) {
+      _logger.error('Check PIN failed', e, stackTrace);
+      return Left(AuthFailure(message: 'Failed to check PIN'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> setPin(String pin) async {
+    try {
+      await _pinManager.setPin(pin);
+      _logger.info('PIN set successfully');
+      return const Right(null);
+    } catch (e, stackTrace) {
+      _logger.error('Set PIN failed', e, stackTrace);
+      return Left(AuthFailure(message: 'Failed to set PIN'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> verifyPin(String pin) async {
+    try {
+      final result = await _pinManager.verifyPin(pin);
+      return Right(result);
+    } catch (e, stackTrace) {
+      _logger.error('Verify PIN failed', e, stackTrace);
+      return Left(AuthFailure(message: 'Failed to verify PIN'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> authenticateWithBiometrics() async {
+    try {
+      final result = await _authLocalSource.authenticateWithBiometrics();
+      return Right(result);
+    } catch (e, stackTrace) {
+      _logger.error('Biometric auth failed', e, stackTrace);
+      return Left(AuthFailure(message: 'Biometric authentication failed'));
     }
   }
 }

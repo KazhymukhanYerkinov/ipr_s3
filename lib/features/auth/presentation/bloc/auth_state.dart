@@ -10,5 +10,9 @@ class AuthState with _$AuthState {
   const factory AuthState.authenticated({required UserEntity user}) =
       Authenticated;
   const factory AuthState.unauthenticated() = Unauthenticated;
+  const factory AuthState.pinRequired({required UserEntity user}) =
+      PinRequired;
+  const factory AuthState.pinSetupRequired({required UserEntity user}) =
+      PinSetupRequired;
   const factory AuthState.error({required String message}) = AuthError;
 }

@@ -14,7 +14,9 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:ipr_s3/core/di/register_module.dart' as _i345;
+import 'package:ipr_s3/core/network/api_client.dart' as _i140;
 import 'package:ipr_s3/core/security/encryption_helper.dart' as _i564;
+import 'package:ipr_s3/core/security/pin_manager.dart' as _i107;
 import 'package:ipr_s3/features/auth/data/services/auth_service.dart' as _i77;
 import 'package:ipr_s3/features/auth/data/sources/auth_local_source.dart'
     as _i910;
@@ -28,55 +30,76 @@ import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_in_with_google_u
     as _i188;
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_out_use_case.dart'
     as _i296;
+import 'package:ipr_s3/features/auth/domain/use_cases/authenticate_biometrics_use_case.dart'
+    as _i139;
+import 'package:ipr_s3/features/auth/domain/use_cases/has_pin_use_case.dart'
+    as _i411;
+import 'package:ipr_s3/features/auth/domain/use_cases/set_pin_use_case.dart'
+    as _i712;
+import 'package:ipr_s3/features/auth/domain/use_cases/verify_pin_use_case.dart'
+    as _i262;
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_bloc.dart' as _i541;
+import 'package:local_auth/local_auth.dart' as _i152;
 
 extension GetItInjectableX on _i174.GetIt {
-  // initializes the registration of main-scope dependencies inside of GetIt
+// initializes the registration of main-scope dependencies inside of GetIt
   _i174.GetIt init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
   }) {
-    final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    final gh = _i526.GetItHelper(
+      this,
+      environment,
+      environmentFilter,
+    );
     final registerModule = _$RegisterModule();
     gh.lazySingleton<_i59.FirebaseAuth>(() => registerModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => registerModule.googleSignIn);
     gh.lazySingleton<_i558.FlutterSecureStorage>(
-      () => registerModule.secureStorage,
-    );
+        () => registerModule.secureStorage);
+    gh.lazySingleton<_i152.LocalAuthentication>(() => registerModule.localAuth);
+    gh.lazySingleton<_i910.AuthLocalSource>(() => _i910.AuthLocalSourceImpl(
+          gh<_i558.FlutterSecureStorage>(),
+          gh<_i152.LocalAuthentication>(),
+        ));
+    gh.lazySingleton<_i107.PinManager>(
+        () => _i107.PinManager(gh<_i558.FlutterSecureStorage>()));
     gh.lazySingleton<_i564.EncryptionHelper>(
-      () => _i564.EncryptionHelper(gh<_i558.FlutterSecureStorage>()),
-    );
-    gh.lazySingleton<_i910.AuthLocalSource>(
-      () => _i910.AuthLocalSourceImpl(gh<_i558.FlutterSecureStorage>()),
-    );
-    gh.lazySingleton<_i1012.AuthRemoteSource>(
-      () => _i1012.AuthRemoteSourceImpl(
-        gh<_i59.FirebaseAuth>(),
-        gh<_i116.GoogleSignIn>(),
-      ),
-    );
-    gh.lazySingleton<_i514.AuthBehavior>(
-      () => _i77.AuthService(
-        gh<_i1012.AuthRemoteSource>(),
-        gh<_i910.AuthLocalSource>(),
-      ),
-    );
+        () => _i564.EncryptionHelper(gh<_i558.FlutterSecureStorage>()));
+    gh.lazySingleton<_i140.ApiClient>(
+        () => _i140.ApiClient(gh<_i910.AuthLocalSource>()));
+    gh.lazySingleton<_i1012.AuthRemoteSource>(() => _i1012.AuthRemoteSourceImpl(
+          gh<_i59.FirebaseAuth>(),
+          gh<_i116.GoogleSignIn>(),
+        ));
+    gh.lazySingleton<_i514.AuthBehavior>(() => _i77.AuthService(
+          gh<_i1012.AuthRemoteSource>(),
+          gh<_i910.AuthLocalSource>(),
+          gh<_i107.PinManager>(),
+        ));
+    gh.lazySingleton<_i262.VerifyPinUseCase>(
+        () => _i262.VerifyPinUseCase(gh<_i514.AuthBehavior>()));
     gh.lazySingleton<_i188.AuthSignInWithGoogleUseCase>(
-      () => _i188.AuthSignInWithGoogleUseCase(gh<_i514.AuthBehavior>()),
-    );
+        () => _i188.AuthSignInWithGoogleUseCase(gh<_i514.AuthBehavior>()));
     gh.lazySingleton<_i296.AuthSignOutUseCase>(
-      () => _i296.AuthSignOutUseCase(gh<_i514.AuthBehavior>()),
-    );
+        () => _i296.AuthSignOutUseCase(gh<_i514.AuthBehavior>()));
+    gh.lazySingleton<_i411.HasPinUseCase>(
+        () => _i411.HasPinUseCase(gh<_i514.AuthBehavior>()));
     gh.lazySingleton<_i254.AuthGetCurrentUserUseCase>(
-      () => _i254.AuthGetCurrentUserUseCase(gh<_i514.AuthBehavior>()),
-    );
-    gh.factory<_i541.AuthBloc>(
-      () => _i541.AuthBloc(
-        gh<_i296.AuthSignOutUseCase>(),
-        gh<_i188.AuthSignInWithGoogleUseCase>(),
-        gh<_i254.AuthGetCurrentUserUseCase>(),
-      ),
-    );
+        () => _i254.AuthGetCurrentUserUseCase(gh<_i514.AuthBehavior>()));
+    gh.lazySingleton<_i139.AuthenticateBiometricsUseCase>(
+        () => _i139.AuthenticateBiometricsUseCase(gh<_i514.AuthBehavior>()));
+    gh.lazySingleton<_i712.SetPinUseCase>(
+        () => _i712.SetPinUseCase(gh<_i514.AuthBehavior>()));
+    gh.factory<_i541.AuthBloc>(() => _i541.AuthBloc(
+          gh<_i296.AuthSignOutUseCase>(),
+          gh<_i188.AuthSignInWithGoogleUseCase>(),
+          gh<_i254.AuthGetCurrentUserUseCase>(),
+          gh<_i411.HasPinUseCase>(),
+          gh<_i712.SetPinUseCase>(),
+          gh<_i262.VerifyPinUseCase>(),
+          gh<_i139.AuthenticateBiometricsUseCase>(),
+        ));
     return this;
   }
 }

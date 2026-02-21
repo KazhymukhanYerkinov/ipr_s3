@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
-import 'package:ipr_s3/core/router/app_router.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_state.dart';
@@ -16,9 +15,7 @@ class AuthSignInScreen extends StatelessWidget {
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is Authenticated) {
-            context.router.replace(AuthHomeRoute(user: state.user));
-          } else if (state is AuthError) {
+          if (state is AuthError) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(state.message)));

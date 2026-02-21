@@ -22,31 +22,35 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "appTitle": MessageLookupByLibrary.simpleMessage("Secure App"),
-    "home": MessageLookupByLibrary.simpleMessage("Home"),
-    "securityEncryptedData": MessageLookupByLibrary.simpleMessage(
-      "✓ Local data encrypted (Hive + AES-256)",
-    ),
-    "securityFeatures": MessageLookupByLibrary.simpleMessage(
-      "Security Features",
-    ),
-    "securityHttpsOnly": MessageLookupByLibrary.simpleMessage(
-      "✓ HTTPS only (Firebase SDK)",
-    ),
-    "securityMaskedLogs": MessageLookupByLibrary.simpleMessage(
-      "✓ Sensitive data masked in logs",
-    ),
-    "securityOAuth": MessageLookupByLibrary.simpleMessage(
-      "✓ OAuth 2.0 via Google Sign-In",
-    ),
-    "securityTokenStorage": MessageLookupByLibrary.simpleMessage(
-      "✓ Token in Secure Storage (Keychain/EncryptedSP)",
-    ),
-    "signInSubtitle": MessageLookupByLibrary.simpleMessage(
-      "Protected with OWASP standards",
-    ),
-    "signInWithGoogle": MessageLookupByLibrary.simpleMessage(
-      "Sign in with Google",
-    ),
-  };
+        "appTitle": MessageLookupByLibrary.simpleMessage("Secure App"),
+        "biometricReason": MessageLookupByLibrary.simpleMessage(
+            "Confirm to unlock File Secure"),
+        "confirmPin": MessageLookupByLibrary.simpleMessage("Confirm PIN"),
+        "createFourDigitCode":
+            MessageLookupByLibrary.simpleMessage("Create a 4-digit code"),
+        "enterPin": MessageLookupByLibrary.simpleMessage("Enter PIN"),
+        "enterPinAgain":
+            MessageLookupByLibrary.simpleMessage("Enter PIN again"),
+        "home": MessageLookupByLibrary.simpleMessage("Home"),
+        "pinMismatch": MessageLookupByLibrary.simpleMessage(
+            "PINs don\'t match. Try again"),
+        "securityEncryptedData": MessageLookupByLibrary.simpleMessage(
+            "✓ Local data encrypted (Hive + AES-256)"),
+        "securityFeatures":
+            MessageLookupByLibrary.simpleMessage("Security Features"),
+        "securityHttpsOnly":
+            MessageLookupByLibrary.simpleMessage("✓ HTTPS only (Firebase SDK)"),
+        "securityMaskedLogs": MessageLookupByLibrary.simpleMessage(
+            "✓ Sensitive data masked in logs"),
+        "securityOAuth": MessageLookupByLibrary.simpleMessage(
+            "✓ OAuth 2.0 via Google Sign-In"),
+        "securityTokenStorage": MessageLookupByLibrary.simpleMessage(
+            "✓ Token in Secure Storage (Keychain/EncryptedSP)"),
+        "setupPin": MessageLookupByLibrary.simpleMessage("Set up PIN"),
+        "signInSubtitle": MessageLookupByLibrary.simpleMessage(
+            "Protected with OWASP standards"),
+        "signInWithGoogle":
+            MessageLookupByLibrary.simpleMessage("Sign in with Google"),
+        "wrongPin": MessageLookupByLibrary.simpleMessage("Wrong PIN")
+      };
 }

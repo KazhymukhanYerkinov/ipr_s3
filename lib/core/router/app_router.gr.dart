@@ -17,10 +17,13 @@ class AuthHomeRoute extends PageRouteInfo<AuthHomeRouteArgs> {
     required UserEntity user,
     List<PageRouteInfo>? children,
   }) : super(
-         AuthHomeRoute.name,
-         args: AuthHomeRouteArgs(key: key, user: user),
-         initialChildren: children,
-       );
+          AuthHomeRoute.name,
+          args: AuthHomeRouteArgs(
+            key: key,
+            user: user,
+          ),
+          initialChildren: children,
+        );
 
   static const String name = 'AuthHomeRoute';
 
@@ -28,13 +31,19 @@ class AuthHomeRoute extends PageRouteInfo<AuthHomeRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<AuthHomeRouteArgs>();
-      return AuthHomeScreen(key: args.key, user: args.user);
+      return AuthHomeScreen(
+        key: args.key,
+        user: args.user,
+      );
     },
   );
 }
 
 class AuthHomeRouteArgs {
-  const AuthHomeRouteArgs({this.key, required this.user});
+  const AuthHomeRouteArgs({
+    this.key,
+    required this.user,
+  });
 
   final Key? key;
 
@@ -50,7 +59,10 @@ class AuthHomeRouteArgs {
 /// [AuthSignInScreen]
 class AuthSignInRoute extends PageRouteInfo<void> {
   const AuthSignInRoute({List<PageRouteInfo>? children})
-    : super(AuthSignInRoute.name, initialChildren: children);
+      : super(
+          AuthSignInRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'AuthSignInRoute';
 
@@ -58,6 +70,44 @@ class AuthSignInRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const AuthSignInScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [LockScreen]
+class LockRoute extends PageRouteInfo<void> {
+  const LockRoute({List<PageRouteInfo>? children})
+      : super(
+          LockRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LockRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const LockScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [SetPinScreen]
+class SetPinRoute extends PageRouteInfo<void> {
+  const SetPinRoute({List<PageRouteInfo>? children})
+      : super(
+          SetPinRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SetPinRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SetPinScreen();
     },
   );
 }

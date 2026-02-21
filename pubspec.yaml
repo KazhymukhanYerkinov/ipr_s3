@@ -76,6 +76,12 @@ dependencies:
   # HTTP client
   dio: ^5.7.0
 
+  # Cryptography
+  crypto: ^3.0.6
+
+  # Biometric authentication
+  local_auth: ^2.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
