@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ipr_s3/core/constants/storage_keys.dart';
 import 'package:local_auth/local_auth.dart';
 
 abstract class AuthLocalSource {
@@ -16,26 +17,21 @@ class AuthLocalSourceImpl implements AuthLocalSource {
 
   AuthLocalSourceImpl(this._secureStorage, this._localAuth);
 
-  static const _tokenKey = 'firebase_id_token';
-
   @override
   Future<void> cacheToken(String token) async {
-    await _secureStorage.write(key: _tokenKey, value: token);
+    await _secureStorage.write(key: StorageKeys.firebaseToken, value: token);
   }
 
   @override
   Future<String?> getCachedToken() async {
-    return await _secureStorage.read(key: _tokenKey);
+    return await _secureStorage.read(key: StorageKeys.firebaseToken);
   }
 
   @override
   Future<void> deleteToken() async {
-    await _secureStorage.delete(key: _tokenKey);
+    await _secureStorage.delete(key: StorageKeys.firebaseToken);
   }
 
-  /// Биометрическая аутентификация через Face ID / Touch ID / Fingerprint.
-  /// Возвращает false если устройство не поддерживает биометрию или
-  /// пользователь отменил — graceful degradation, приложение не падает.
   @override
   Future<bool> authenticateWithBiometrics() async {
     final canCheck = await _localAuth.canCheckBiometrics;
