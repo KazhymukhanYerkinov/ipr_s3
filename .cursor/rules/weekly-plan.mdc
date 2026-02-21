@@ -1,0 +1,276 @@
+---
+description: 10-day implementation plan for File Secure App with daily tasks and file lists
+alwaysApply: true
+---
+
+# План реализации File Secure App — 10 дней
+
+## День 1: Фундамент проекта
+**Цели ИПР:** Фундамент для всех 7 целей
+
+Задачи:
+- Инициализировать Flutter-проект, настроить pubspec.yaml со всеми зависимостями
+- Создать полную структуру папок Clean Architecture
+- Настроить GetIt + Injectable (DI), AutoRoute (роутинг)
+- Базовый app.dart с MaterialApp.router, тема (light/dark)
+- Failure классы для dartz (ServerFailure, CacheFailure, EncryptionFailure)
+- Запустить build_runner — убедиться что всё генерируется
+
+Файлы:
+- `lib/main.dart`, `lib/app.dart`
+- `lib/core/di/injection.dart`
+- `lib/core/router/app_router.dart`
+- `lib/core/theme/app_theme.dart`
+- `lib/core/error/failures.dart`
+- `lib/core/constants/app_constants.dart`
+- `pubspec.yaml`, `build.yaml`, `analysis_options.yaml`
+
+---
+
+## День 2: Core Security — шифрование и защита
+**Цели ИПР:** Цель 4 (secure storage, маскировка логов, HTTPS-only, Hive encryption)
+
+Задачи:
+- `EncryptionService` — генерация AES-256 ключа, хранение в flutter_secure_storage, создание HiveAesCipher
+- `SecureLogger` — маскировка JWT, email, Bearer, ключей, путей. В release — только errors
+- `SecureBlocObserver` — логирует только типы state/event, не данные
+- `PinManager` — PIN как sha256 hash в secure storage, верификация
+- Hive init с encrypted box
+- `SecurityInterceptor` для Dio — блокирует HTTP, разрешает только HTTPS
+
+Файлы:
+- `lib/core/security/encryption_service.dart`
+- `lib/core/security/secure_logger.dart`
+- `lib/core/security/secure_bloc_observer.dart`
+- `lib/core/security/pin_manager.dart`
+- `lib/core/security/security_interceptor.dart`
+- `lib/core/network/dio_client.dart`
+- `lib/core/network/auth_interceptor.dart`
+- `lib/core/storage/hive_initializer.dart`
+
+---
+
+## День 3: Auth Feature — вход и защита
+**Цели ИПР:** Цель 4 (OAuth 2.0, биометрия, secure auth flow)
+
+Задачи:
+- `UserEntity` (Freezed), `UserDto` (Hive TypeAdapter)
+- `AuthLocalSource` — проверка PIN, биометрия через local_auth
+- `AuthGoogleSource` — Google Sign-In → Firebase Auth → idToken
+- `AuthBehavior` (абстракт) + `AuthRepositoryImpl` (Either<Failure, T>)
+- Use cases: SignInWithGoogle, SignOut, CheckAuth, VerifyPin, SetPin
+- `AuthBloc` — states: Initial, Loading, Authenticated, Unauthenticated, PinRequired, Error
+- UI: Lock Screen (PIN + биометрия), Login Screen (Google), Set PIN Screen
+
+Файлы:
+- `lib/features/auth/data/dtos/user_dto.dart`
+- `lib/features/auth/data/sources/auth_local_source.dart`
+- `lib/features/auth/data/sources/auth_google_source.dart`
+- `lib/features/auth/data/repositories/auth_repository_impl.dart`
+- `lib/features/auth/domain/entities/user_entity.dart`
+- `lib/features/auth/domain/behaviors/auth_behavior.dart`
+- `lib/features/auth/domain/use_cases/sign_in_with_google.dart`
+- `lib/features/auth/domain/use_cases/sign_out.dart`
+- `lib/features/auth/domain/use_cases/check_auth.dart`
+- `lib/features/auth/domain/use_cases/verify_pin.dart`
+- `lib/features/auth/domain/use_cases/set_pin.dart`
+- `lib/features/auth/presentation/bloc/auth_bloc.dart`
+- `lib/features/auth/presentation/screens/lock_screen.dart`
+- `lib/features/auth/presentation/screens/login_screen.dart`
+- `lib/features/auth/presentation/screens/set_pin_screen.dart`
+
+---
+
+## День 4: Files Core — модели + шифрование в Isolate
+**Цели ИПР:** Цель 3 (compute, Isolate.spawn, двусторонняя связь), Цель 6 (Queue)
+
+Задачи:
+- `SecureFileEntity` (Freezed) — id, name, type, size, encryptedPath, thumbnailPath, createdAt, updatedAt, tags, folderId
+- `SecureFileDto` — Hive TypeAdapter для метаданных
+- `FileEncryptionService` — encrypt/decrypt bytes через compute() (AES-256-CBC, top-level function)
+- `FileSearchService` — поиск через Isolate.spawn() с SendPort/ReceivePort (двусторонняя связь)
+- `ThumbnailService` — генерация превью изображений в compute()
+- `EncryptionQueue` — Queue<FileTask> из dart:collection, последовательная обработка, emit прогресса
+- `FilesLocalSource` — CRUD в Hive encrypted box + файловая система
+- `FilesBehavior` + `FilesRepositoryImpl`
+- Use cases: ImportFile, DecryptFile, DeleteFile, GetFiles, SearchFiles
+
+Файлы:
+- `lib/features/files/data/dtos/secure_file_dto.dart`
+- `lib/features/files/data/sources/files_local_source.dart`
+- `lib/features/files/data/services/file_encryption_service.dart`
+- `lib/features/files/data/services/file_search_service.dart`
+- `lib/features/files/data/services/thumbnail_service.dart`
+- `lib/features/files/data/services/encryption_queue.dart`
+- `lib/features/files/data/repositories/files_repository_impl.dart`
+- `lib/features/files/domain/entities/secure_file_entity.dart`
+- `lib/features/files/domain/behaviors/files_behavior.dart`
+- `lib/features/files/domain/use_cases/import_file.dart`
+- `lib/features/files/domain/use_cases/decrypt_file.dart`
+- `lib/features/files/domain/use_cases/delete_file.dart`
+- `lib/features/files/domain/use_cases/get_files.dart`
+- `lib/features/files/domain/use_cases/search_files.dart`
+
+---
+
+## День 5: Files Presentation — UI + производительность
+**Цели ИПР:** Цель 1 (ListView.builder, RepaintBoundary, const, BlocSelector), Цель 5 (Factory)
+
+Задачи:
+- `FilesBloc` — загрузка, импорт, удаление, поиск, view mode (grid/list)
+- `FilePreviewFactory` (Factory паттерн) — ImagePreview, PdfPreview, TextPreview, UnknownPreview
+- Home Screen: ListView.builder/GridView.builder, RepaintBoundary на карточках, const constructors, поиск с debounce, FAB для импорта
+- File Viewer Screen — расшифровка → показ → удаление из памяти при выходе
+- Import Progress Screen — прогресс из EncryptionQueue
+- BlocSelector для минимизации rebuilds
+
+Файлы:
+- `lib/features/files/presentation/bloc/files_bloc.dart`
+- `lib/features/files/presentation/screens/home_screen.dart`
+- `lib/features/files/presentation/screens/file_viewer_screen.dart`
+- `lib/features/files/presentation/screens/import_progress_screen.dart`
+- `lib/features/files/presentation/widgets/file_card.dart`
+- `lib/features/files/presentation/widgets/file_grid.dart`
+- `lib/features/files/presentation/widgets/file_list_view.dart`
+- `lib/features/files/presentation/widgets/search_bar_widget.dart`
+- `lib/features/files/presentation/widgets/previews/file_preview_factory.dart`
+- `lib/features/files/presentation/widgets/previews/image_preview.dart`
+- `lib/features/files/presentation/widgets/previews/pdf_preview.dart`
+- `lib/features/files/presentation/widgets/previews/text_preview.dart`
+- `lib/features/files/presentation/widgets/previews/unknown_preview.dart`
+
+---
+
+## День 6: Папки (Composite) + сортировка (Strategy)
+**Цели ИПР:** Цель 5 (Composite, Strategy), Цель 6 (fold для рекурсивного подсчёта)
+
+Задачи:
+- **Composite**: FileSystemItem (абстракт), FileItem, FolderItem (children, рекурсивный totalFiles через fold)
+- FolderTreeWidget — рекурсивный виджет (ExpansionTile), CRUD папок, перемещение файлов
+- **Strategy**: SortStrategy интерфейс, SortByDate, SortByName, SortBySize, SortByType
+- Переключение стратегии в FilesBloc через dropdown
+- Folder Screen — дерево с кол-вом файлов и общим размером
+
+Файлы:
+- `lib/features/folders/domain/entities/file_system_item.dart`
+- `lib/features/folders/domain/entities/file_item.dart`
+- `lib/features/folders/domain/entities/folder_item.dart`
+- `lib/features/folders/domain/behaviors/folders_behavior.dart`
+- `lib/features/folders/domain/use_cases/create_folder.dart`
+- `lib/features/folders/domain/use_cases/delete_folder.dart`
+- `lib/features/folders/domain/use_cases/move_file_to_folder.dart`
+- `lib/features/folders/data/dtos/folder_dto.dart`
+- `lib/features/folders/data/sources/folders_local_source.dart`
+- `lib/features/folders/data/repositories/folders_repository_impl.dart`
+- `lib/features/folders/presentation/bloc/folders_bloc.dart`
+- `lib/features/folders/presentation/screens/folder_tree_screen.dart`
+- `lib/features/folders/presentation/widgets/folder_tree_widget.dart`
+- `lib/features/files/domain/strategies/sort_strategy.dart`
+- `lib/features/files/domain/strategies/sort_by_date.dart`
+- `lib/features/files/domain/strategies/sort_by_name.dart`
+- `lib/features/files/domain/strategies/sort_by_size.dart`
+- `lib/features/files/domain/strategies/sort_by_type.dart`
+
+---
+
+## День 7: Command (Undo/Redo) + Коллекции + Stats
+**Цели ИПР:** Цель 5 (Command), Цель 6 (LinkedList, Set с hashCode, map/where/fold)
+
+Задачи:
+- **Command**: FileCommand (абстракт: execute, undo, description), DeleteFileCommand, MoveFileCommand, RenameFileCommand
+- CommandEntry extends LinkedListEntry<CommandEntry>
+- CommandManager — два LinkedList: undoStack, redoStack. Методы: execute, undo, redo, canUndo, canRedo
+- **Tag** с кастомным operator== и hashCode (по name.toLowerCase()), Set<Tag> исключает дубликаты
+- Tag management UI
+- **Stats Screen**: fold (общий размер), groupBy по типам (Map), where по дате, sort+take (топ-5)
+- SnackBar "Отменить" при удалении
+
+Файлы:
+- `lib/features/files/domain/commands/file_command.dart`
+- `lib/features/files/domain/commands/delete_file_command.dart`
+- `lib/features/files/domain/commands/move_file_command.dart`
+- `lib/features/files/domain/commands/rename_file_command.dart`
+- `lib/features/files/domain/commands/command_manager.dart`
+- `lib/core/collections/command_entry.dart`
+- `lib/core/collections/tag.dart`
+- `lib/features/files/presentation/widgets/tag_chips_widget.dart`
+- `lib/features/stats/presentation/bloc/stats_bloc.dart`
+- `lib/features/stats/presentation/screens/stats_screen.dart`
+
+---
+
+## День 8: Method Channels (Android + iOS)
+**Цели ИПР:** Цель 7 (MethodChannel, нативный код, обработка ошибок, документация)
+
+Задачи:
+- **Android (Kotlin)** MainActivity.kt: канал "com.filesecure/device_info", методы getBatteryLevel (BatteryManager), getFreeStorage (StatFs), getTotalStorage. Обработка: result.error()
+- **iOS (Swift)** AppDelegate.swift: тот же канал, getBatteryLevel (UIDevice), getFreeStorage (FileManager). Обработка ошибок
+- **Dart**: DeviceInfoChannel — обёртка, graceful degradation (fallback при недоступности)
+- **Settings Screen**: батарея с иконкой, свободное/занятое место (прогресс-бар), смена PIN, тема
+
+Файлы:
+- `android/app/src/main/kotlin/.../MainActivity.kt`
+- `ios/Runner/AppDelegate.swift`
+- `lib/core/platform/device_info_channel.dart`
+- `lib/features/settings/presentation/bloc/settings_bloc.dart`
+- `lib/features/settings/presentation/screens/settings_screen.dart`
+
+---
+
+## День 9: FFI — C-библиотека
+**Цели ИПР:** Цель 7 (FFI, C-интеграция, DynamicLibrary, управление памятью)
+
+Задачи:
+- **C-код**: hash_utils.c — crc32(uint8_t*, int), djb2_hash(char*), count_bytes(uint8_t*, int, uint8_t)
+- **Android**: CMakeLists.txt — компиляция в libhash_utils.so
+- **iOS**: добавить .c в Xcode, module.modulemap
+- **Dart FFI**: NativeHashService — DynamicLibrary.open (Android) / .process (iOS), lookupFunction, Pointer<Uint8>, malloc/free
+- Проверка целостности файлов через CRC32
+- **Benchmark Screen**: Dart CRC32 vs C CRC32 на 1МБ/5МБ/10МБ, main thread vs Isolate, таблица результатов
+
+Файлы:
+- `native/src/hash_utils.c`
+- `android/app/CMakeLists.txt`
+- `ios/Runner/hash_utils.c`
+- `lib/core/platform/native_hash_service.dart`
+- `lib/features/benchmark/presentation/bloc/benchmark_bloc.dart`
+- `lib/features/benchmark/presentation/screens/benchmark_screen.dart`
+
+---
+
+## День 10: CI/CD + Тесты + README + Полировка
+**Цели ИПР:** Цель 2 (GitHub Actions, lint, test, build, кэширование, бейдж)
+
+Задачи:
+- **GitHub Actions**: quality (format, analyze, test --coverage), build-android (APK+AAB, upload artifacts), build-ios (no-codesign, upload). Triggers: push/PR to main. Кэширование: flutter-action cache + actions/cache для pub
+- **Unit tests**: EncryptionService, PinManager, CommandManager, SortStrategy, Tag hashCode, EncryptionQueue
+- **BLoC tests**: AuthBloc, FilesBloc (mocktail + bloc_test)
+- **Widget tests**: LockScreen, HomeScreen, FileCard
+- **README.md**: статус-бейдж, описание, архитектура, цели ИПР, как запустить
+- **Полировка**: все dispose(), const constructors, DevTools (FPS, Memory, Rebuilds), убрать print, flutter analyze — 0 warnings
+
+Файлы:
+- `.github/workflows/flutter-ci.yml`
+- `test/core/security/encryption_service_test.dart`
+- `test/core/security/pin_manager_test.dart`
+- `test/core/collections/tag_test.dart`
+- `test/features/auth/bloc/auth_bloc_test.dart`
+- `test/features/files/bloc/files_bloc_test.dart`
+- `test/features/files/domain/commands/command_manager_test.dart`
+- `test/features/files/domain/strategies/sort_strategy_test.dart`
+- `test/features/files/data/services/encryption_queue_test.dart`
+- `test/widgets/lock_screen_test.dart`
+- `test/widgets/home_screen_test.dart`
+- `test/widgets/file_card_test.dart`
+- `README.md`
+
+---
+
+## Сводка целей по дням
+- Цель 1 (Производительность): День 5, День 10
+- Цель 2 (CI/CD): День 10
+- Цель 3 (Isolate/compute): День 4, День 9
+- Цель 4 (Безопасность): День 2, День 3
+- Цель 5 (Паттерны): День 5 (Factory), День 6 (Composite, Strategy), День 7 (Command)
+- Цель 6 (Коллекции): День 4 (Queue), День 6 (fold), День 7 (LinkedList, Set, map/where/fold)
+- Цель 7 (MethodChannel + FFI): День 8 (MethodChannel), День 9 (FFI)

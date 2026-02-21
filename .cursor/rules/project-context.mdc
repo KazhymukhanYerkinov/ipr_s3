@@ -1,0 +1,235 @@
+---
+description: Full project context and IPR requirements for File Secure App
+alwaysApply: true
+---
+
+# File Secure App — ИПР проект
+
+## О проекте
+- **Приложение**: File Secure App — зашифрованное локальное хранилище файлов (фото, документы, PDF)
+- **Тип**: Пет-проект для ИПР (Индивидуальный План Развития)
+- **Компания**: Bank CenterCredit, продуктовая команда "Сбережения"
+- **Разработчик**: Эркинов Қажмұхан Жүсіпұлы
+- **Текущий уровень**: Middle-4, целевой — **Senior-3** (60-65 баллов)
+- **TeamLead**: Айбасов Айбек Айдарович
+- **Стек**: Flutter/Dart
+- **Бэкенд**: Нет. Всё реализуется на фронте (Hive, локальное хранилище, Firebase Auth)
+- **Срок по ИПР**: 1 мая 2026 года
+
+## Архитектура
+- **Clean Architecture**: строго data / domain / presentation
+- **State management**: BLoC (flutter_bloc) + Freezed для states/events
+- **DI**: GetIt + Injectable (code generation)
+- **Routing**: AutoRoute (code generation)
+- **Local storage**: Hive (encrypted box через HiveAesCipher) + flutter_secure_storage для ключей
+- **Error handling**: Either<Failure, T> из dartz (Left = ошибка, Right = успех)
+- **Code generation**: Freezed, json_serializable, injectable_generator, auto_route_generator, hive_generator
+
+## Структура features
+- `auth` — PIN-код, биометрия (local_auth), Google Sign-In (Firebase Auth, OAuth 2.0)
+- `files` — импорт файлов (file_picker), шифрование/дешифрование через Isolate, список с превью, viewer
+- `folders` — древовидная структура папок (Composite паттерн)
+- `settings` — информация об устройстве (MethodChannel), смена PIN, тема
+- `benchmark` — демо: main thread vs Isolate, Dart vs C (FFI), сравнение производительности коллекций
+
+## Ключевые пакеты
+flutter_bloc, hive, hive_flutter, flutter_secure_storage, encrypt, file_picker, local_auth, google_sign_in, firebase_auth, firebase_core, get_it, injectable, auto_route, freezed, dartz, dio, equatable, logger, ffi, path_provider
+
+---
+
+# 7 ЦЕЛЕЙ ИПР — ДЕТАЛЬНО
+
+## ЦЕЛЬ 1: Улучшение производительности и рендеринга Flutter-приложений
+
+### Теория (знать для ассессмента)
+- Архитектура Flutter rendering pipeline (Widget → Element → RenderObject)
+- Как работает Widget tree, Element tree и RenderObject tree
+- Влияние async-операций на UI thread
+- Что такое jank и frame drops, как их профилировать
+
+### Практические задачи в проекте
+- Использовать Flutter DevTools для анализа FPS, memory и rebuilds
+- Внедрить ленивые списки: `ListView.builder`, `SliverList` (список файлов)
+- Применить `RepaintBoundary` на карточках файлов с превью
+- `const` constructors везде где возможно
+- Разбивка build-функций на мелкие виджеты
+- Оптимизировать тяжёлую задачу через Isolate/compute (шифрование)
+- `ValueListenableBuilder` и `BlocSelector` для минимизации rebuilds
+
+### Критерии приёмки
+- DevTools показывает снижение ненужных rebuilds
+- Scroll производительность оптимизирована в списках
+- Выделены отдельные виджеты с RepaintBoundary в сложных экранах
+- Async операции вынесены из UI thread
+- Устранены memory leaks при работе с контроллерами и слушателями (dispose паттерны)
+
+---
+
+## ЦЕЛЬ 2: Настройка CI/CD с GitHub Actions
+
+### Теория (знать для ассессмента)
+- Основы CI/CD и принципы DevOps
+- Структура GitHub Actions workflow и триггеры (on push, on PR)
+- Code signing и secrets management (GitHub Secrets)
+- Кэширование зависимостей в CI
+
+### Практические задачи в проекте
+- Настроить CI для сборки и тестирования Flutter-приложения
+- Подключить `dart format --set-exit-if-changed` и `flutter analyze --fatal-infos`
+- Настроить генерацию APK/AAB/IPA файлов и загрузку как artifacts
+- Добавить статус-бейдж сборки в README
+- Настроить автозапуск workflow при PR в main
+
+### Критерии приёмки
+- Рабочий workflow с этапами lint, test и build
+- Все PR автоматически запускают проверки и публикуют результаты
+- Проект собирается через GitHub Actions на Android и iOS
+- README содержит статус-бейдж с результатами последних сборок
+- CI использует кэширование зависимостей для ускорения билдов
+
+---
+
+## ЦЕЛЬ 3: Многопоточность через Isolate и compute
+
+### Теория (знать для ассессмента)
+- Архитектура isolate-потоков во Flutter (каждый Isolate имеет свой heap)
+- Отличие main isolate и background isolate
+- Event loop и run-to-completion модель исполнения
+- Ограничения: нельзя обращаться к UI из другого Isolate
+- Передача данных через SendPort/ReceivePort (только примитивы и transferable)
+
+### Практические задачи в проекте
+- Шифрование/дешифрование файлов через `compute()` (тяжёлая операция)
+- Custom `Isolate.spawn()` с двусторонней передачей данных (полнотекстовый поиск по файлам)
+- Benchmark Screen: измерить время main thread vs Isolate, показать разницу
+- Обработка ошибок isolate с fallback результатом
+- Генерация thumbnail для изображений в compute()
+
+### Критерии приёмки
+- compute/Isolate используется в ресурсоёмких задачах
+- Приложение остаётся отзывчивым при обработке больших данных
+- Нет ошибок при передаче данных между потоками
+- Используются безопасные способы отмены и завершения работы
+- Поведение изолятов проверено в DevTools или логами
+
+---
+
+## ЦЕЛЬ 4: Безопасность данных и взаимодействий
+
+### Теория (знать для ассессмента)
+- OWASP Mobile Top 10 и их применение к Flutter
+- Принципы безопасной авторизации и работы с токенами (access/refresh)
+- Разница между secure storage (Keychain/Keystore) и insecure (SharedPreferences)
+- Man-in-the-middle атаки и certificate pinning
+- Security-first принципы проектирования
+
+### Практические задачи в проекте
+- Хранение ключей шифрования через `flutter_secure_storage` (Keychain iOS / Keystore Android)
+- Ограничение логирования: `SecureLogger` маскирует токены, ключи, email, пути к файлам
+- Только HTTPS для сетевых запросов (SecurityInterceptor блокирует HTTP)
+- Вход через OAuth 2.0 — Google Sign-In с Firebase Auth
+- Шифрование локальных данных: Hive + AES-256 (HiveAesCipher), ключ в secure storage
+- PIN-код хранится как hash (sha256), не plain text
+- Биометрия через local_auth
+
+### Критерии приёмки
+- Все токены/ключи хранятся в защищённом хранилище
+- Приложение использует только HTTPS для сетевых запросов
+- В логах отсутствуют чувствительные данные
+- Вход реализован через безопасный механизм авторизации (OAuth 2.0)
+- Проведена ревизия безопасности приложения по чеклисту OWASP
+
+---
+
+## ЦЕЛЬ 5: Продвинутые паттерны проектирования (GoF)
+
+### Теория (знать для ассессмента)
+- Назначение паттернов Command, Strategy, Factory, Composite
+- Связь паттернов с SOLID-принципами и чистой архитектурой
+- Когда какой паттерн применять, trade-offs каждого
+
+### Практические задачи в проекте (минимум 2, реализуем все 4)
+- **Command**: история действий — удаление/восстановление файлов с Undo/Redo. `CommandManager` с `LinkedList`-стеком
+- **Strategy**: сортировка файлов — `SortStrategy` интерфейс с реализациями `SortByDate`, `SortByName`, `SortBySize`, `SortByType`. Переключение в runtime
+- **Factory**: создание превью по типу файла — `FilePreviewFactory` возвращает разные виджеты для image/pdf/text/unknown
+- **Composite**: древовидная структура папок — `FileSystemItem` (абстракт), `FileItem` и `FolderItem` (содержит children). Рекурсивный подсчёт totalNotes через fold
+
+### Критерии приёмки
+- Реализовано минимум 2 паттерна из списка (мы делаем все 4)
+- Паттерны изолированы, легко тестируются и расширяются
+- Код с паттернами понятен команде (чистый, документированный)
+- Паттерны решают конкретные архитектурные задачи (не для галочки)
+- Отсутствует дублирование логики, устранён tight coupling
+
+---
+
+## ЦЕЛЬ 6: Коллекции и структуры данных в Dart
+
+### Теория (знать для ассессмента)
+- Различия между List, Set, Map, Queue, LinkedList
+- Mutable vs immutable (UnmodifiableListView, const [])
+- Как работают hashCode и operator== в Set и Map
+- Сложность операций: O(1) доступ в Map/Set vs O(n) в List для поиска
+- dart:collection — расширенные коллекции
+
+### Практические задачи в проекте
+- **LinkedList** (dart:collection): стек Undo/Redo в CommandManager. `CommandEntry extends LinkedListEntry<CommandEntry>`
+- **Queue** (dart:collection): очередь шифрования файлов. `EncryptionQueue` обрабатывает файлы последовательно через `addLast`/`removeFirst`
+- **Set с кастомным hashCode**: теги файлов. `Tag` переопределяет `operator==` и `hashCode` (сравнение по name.toLowerCase()), дубликаты исключаются автоматически
+- **map/where/fold**: фильтрация файлов, подсчёт статистики (общий размер, количество по типам), трансформация данных
+- Сравнение производительности List vs Queue при вставке в начало (Benchmark Screen)
+
+### Критерии приёмки
+- Коллекции подобраны осознанно под задачу (не List везде)
+- LinkedList и Queue применены в подходящих сценариях
+- Set с кастомной логикой сравнения объектов работает корректно
+- Код эффективен при большом объёме данных
+- map/where/fold используются вместо циклов, где это оправдано
+
+---
+
+## ЦЕЛЬ 7: Интеграция с нативными модулями — Method Channels и FFI
+
+### Теория (знать для ассессмента)
+- Архитектура Flutter Engine и роль платформенных каналов
+- Разница между MethodChannel, BasicMessageChannel и EventChannel
+- MethodCodec: StandardMethodCodec vs JSONMethodCodec
+- FFI (Foreign Function Interface): dart:ffi, Pointer, NativeFunction
+- Сериализация/десериализация данных между Flutter и нативным кодом
+
+### Практические задачи в проекте
+- **MethodChannel** (Android — Kotlin, iOS — Swift):
+  - Получение уровня батареи (BatteryManager / UIDevice)
+  - Получение свободного места на диске (StatFs / FileManager)
+  - Обработка ошибок с нативной стороны (result.error)
+  - Канал: `com.filesecure/device_info`
+- **FFI** (C-библиотека):
+  - C-функция `crc32` для быстрого хэширования файлов
+  - C-функция `djb2_hash` для хэширования строк
+  - Dart bindings через `DynamicLibrary.open` (Android) / `DynamicLibrary.process` (iOS)
+  - CMakeLists.txt для Android, podspec для iOS
+  - Benchmark: Dart CRC32 vs C CRC32 — сравнение скорости
+- Документация по каналам и FFI в коде
+
+### Критерии приёмки
+- Реализован минимум один рабочий MethodChannel для Android и iOS
+- Выполнена интеграция с внешней C/C++ библиотекой через FFI
+- Нативный код корректно обрабатывает ошибки и возвращает значения
+- Проект содержит комментарии и документацию по каналам
+- Flutter-приложение успешно использует данные из платформы
+
+---
+
+# ПРАВИЛА ГЕНЕРАЦИИ КОДА
+
+1. **Clean Architecture** — data/domain/presentation строго разделены. Не смешивать слои
+2. **Freezed** — для всех state-классов, event-классов и entity
+3. **Either<Failure, T>** — из dartz для обработки ошибок в use cases и repositories
+4. **Шифрование ТОЛЬКО в Isolate** — compute() или Isolate.spawn(), никогда на main thread
+5. **Логи маскируют** — токены, ключи, email, пути к файлам через SecureLogger
+6. **const constructors** — везде где возможно, для минимизации rebuilds
+7. **RepaintBoundary** — на тяжёлых виджетах (карточки файлов с превью)
+8. **Коллекции осознанно** — Queue для очередей, LinkedList для Undo стека, Set для уникальности, map/where/fold вместо for-циклов
+9. **Паттерны к месту** — Strategy для сортировки, Command для Undo, Composite для папок, Factory для превью
+10. **Dispose паттерны** — всегда закрывать контроллеры, StreamSubscription, Isolate в dispose()
+11. **Уровень Senior-3** — код должен быть production-quality: обработка edge cases, graceful degradation, документация
