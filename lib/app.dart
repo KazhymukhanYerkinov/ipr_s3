@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
               _appRouter.replaceAll([const SetPinRoute()]);
             case PinRequired():
               _appRouter.replaceAll([const LockRoute()]);
-            case Authenticated(:final user):
-              _appRouter.replaceAll([AuthHomeRoute(user: user)]);
+            case Authenticated():
+              _appRouter.replaceAll([const HomeRoute()]);
             default:
               break;
           }

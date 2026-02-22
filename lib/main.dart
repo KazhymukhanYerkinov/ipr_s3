@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'app.dart';
 import 'core/di/injection.dart';
 import 'core/security/secure_bloc_observer.dart';
+import 'features/files/data/dtos/secure_file_dto.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -14,6 +15,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await Hive.initFlutter();
+  Hive.registerAdapter(SecureFileDtoAdapter());
 
   await configureDependencies();
 

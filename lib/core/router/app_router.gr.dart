@@ -75,6 +75,96 @@ class AuthSignInRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [FileViewerScreen]
+class FileViewerRoute extends PageRouteInfo<FileViewerRouteArgs> {
+  FileViewerRoute({
+    Key? key,
+    required String fileId,
+    required String fileName,
+    List<PageRouteInfo>? children,
+  }) : super(
+          FileViewerRoute.name,
+          args: FileViewerRouteArgs(
+            key: key,
+            fileId: fileId,
+            fileName: fileName,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'FileViewerRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<FileViewerRouteArgs>();
+      return FileViewerScreen(
+        key: args.key,
+        fileId: args.fileId,
+        fileName: args.fileName,
+      );
+    },
+  );
+}
+
+class FileViewerRouteArgs {
+  const FileViewerRouteArgs({
+    this.key,
+    required this.fileId,
+    required this.fileName,
+  });
+
+  final Key? key;
+
+  final String fileId;
+
+  final String fileName;
+
+  @override
+  String toString() {
+    return 'FileViewerRouteArgs{key: $key, fileId: $fileId, fileName: $fileName}';
+  }
+}
+
+/// generated route for
+/// [HomeScreen]
+class HomeRoute extends PageRouteInfo<void> {
+  const HomeRoute({List<PageRouteInfo>? children})
+      : super(
+          HomeRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'HomeRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const HomeScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [ImportProgressScreen]
+class ImportProgressRoute extends PageRouteInfo<void> {
+  const ImportProgressRoute({List<PageRouteInfo>? children})
+      : super(
+          ImportProgressRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ImportProgressRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const ImportProgressScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [LockScreen]
 class LockRoute extends PageRouteInfo<void> {
   const LockRoute({List<PageRouteInfo>? children})

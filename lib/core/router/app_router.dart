@@ -5,6 +5,9 @@ import 'package:ipr_s3/features/auth/presentation/screens/auth_home_screen.dart'
 import 'package:ipr_s3/features/auth/presentation/screens/auth_sign_in_screen.dart';
 import 'package:ipr_s3/features/auth/presentation/screens/lock_screen.dart';
 import 'package:ipr_s3/features/auth/presentation/screens/set_pin_screen.dart';
+import 'package:ipr_s3/features/files/presentation/screens/file_viewer_screen.dart';
+import 'package:ipr_s3/features/files/presentation/screens/home_screen.dart';
+import 'package:ipr_s3/features/files/presentation/screens/import_progress_screen.dart';
 
 part 'app_router.gr.dart';
 
@@ -16,5 +19,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: AuthHomeRoute.page),
     AutoRoute(page: LockRoute.page),
     AutoRoute(page: SetPinRoute.page),
+    AutoRoute(page: HomeRoute.page),
+    AutoRoute(page: FileViewerRoute.page),
+    AutoRoute(page: ImportProgressRoute.page),
   ];
 }
