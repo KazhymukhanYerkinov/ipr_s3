@@ -2,6 +2,8 @@ import 'package:file_picker/file_picker.dart' as picker;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/strategies/sort_by_date.dart';
+import 'package:ipr_s3/features/files/domain/strategies/sort_strategy.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/delete_file.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/get_files.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/import_file.dart';
@@ -28,9 +30,11 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     on<FileSearchRequested>(_onSearch);
     on<FileSearchCleared>(_onSearchCleared);
     on<ViewModeToggled>(_onViewModeToggled);
+    on<SortStrategyChanged>(_onSortStrategyChanged);
   }
 
   ViewMode _currentViewMode = ViewMode.list;
+  SortStrategy _currentSortStrategy = SortByDate();
 
   Future<void> _onLoad(
     FilesLoadRequested event,
@@ -40,10 +44,14 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     final result = await _getFilesUseCase();
     result.fold(
       (failure) => emit(FilesState.error(message: failure.message)),
-      (files) => emit(FilesState.loaded(
-        files: files,
-        viewMode: _currentViewMode,
-      )),
+      (files) {
+        final sorted = _currentSortStrategy.sort(files);
+        emit(FilesState.loaded(
+          files: sorted,
+          viewMode: _currentViewMode,
+          sortStrategy: _currentSortStrategy,
+        ));
+      },
     );
   }
 
@@ -104,11 +112,15 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     final result = await _searchFilesUseCase(event.query);
     result.fold(
       (failure) => emit(FilesState.error(message: failure.message)),
-      (files) => emit(FilesState.loaded(
-        files: files,
-        viewMode: _currentViewMode,
-        searchQuery: event.query,
-      )),
+      (files) {
+        final sorted = _currentSortStrategy.sort(files);
+        emit(FilesState.loaded(
+          files: sorted,
+          viewMode: _currentViewMode,
+          searchQuery: event.query,
+          sortStrategy: _currentSortStrategy,
+        ));
+      },
     );
   }
 
@@ -129,6 +141,22 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     final currentState = state;
     if (currentState is FilesLoaded) {
       emit(currentState.copyWith(viewMode: _currentViewMode));
+    }
+  }
+
+  void _onSortStrategyChanged(
+    SortStrategyChanged event,
+    Emitter<FilesState> emit,
+  ) {
+    _currentSortStrategy = event.strategy;
+
+    final currentState = state;
+    if (currentState is FilesLoaded) {
+      final sorted = _currentSortStrategy.sort(currentState.files);
+      emit(currentState.copyWith(
+        files: sorted,
+        sortStrategy: _currentSortStrategy,
+      ));
     }
   }
 

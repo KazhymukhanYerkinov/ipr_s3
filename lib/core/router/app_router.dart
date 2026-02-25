@@ -8,6 +8,9 @@ import 'package:ipr_s3/features/auth/presentation/screens/set_pin_screen.dart';
 import 'package:ipr_s3/features/files/presentation/screens/file_viewer_screen.dart';
 import 'package:ipr_s3/features/files/presentation/screens/home_screen.dart';
 import 'package:ipr_s3/features/files/presentation/screens/import_progress_screen.dart';
+import 'package:ipr_s3/features/folders/presentation/screens/folder_tree_screen.dart';
+import 'package:ipr_s3/features/settings/presentation/screens/settings_screen.dart';
+import 'package:ipr_s3/features/stats/presentation/screens/stats_screen.dart';
 
 part 'app_router.gr.dart';
 
@@ -22,5 +25,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: HomeRoute.page),
     AutoRoute(page: FileViewerRoute.page),
     AutoRoute(page: ImportProgressRoute.page),
+    AutoRoute(page: FolderTreeRoute.page),
+    AutoRoute(page: StatsRoute.page),
+    AutoRoute(page: SettingsRoute.page),
   ];
 }

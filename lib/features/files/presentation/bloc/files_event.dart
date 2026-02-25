@@ -1,4 +1,5 @@
 import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/strategies/sort_strategy.dart';
 
 sealed class FilesEvent {}
 
@@ -19,3 +20,8 @@ final class FileSearchRequested extends FilesEvent {
 final class FileSearchCleared extends FilesEvent {}
 
 final class ViewModeToggled extends FilesEvent {}
+
+final class SortStrategyChanged extends FilesEvent {
+  final SortStrategy strategy;
+  SortStrategyChanged(this.strategy);
+}

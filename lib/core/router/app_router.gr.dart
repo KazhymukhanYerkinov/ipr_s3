@@ -127,6 +127,25 @@ class FileViewerRouteArgs {
 }
 
 /// generated route for
+/// [FolderTreeScreen]
+class FolderTreeRoute extends PageRouteInfo<void> {
+  const FolderTreeRoute({List<PageRouteInfo>? children})
+      : super(
+          FolderTreeRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'FolderTreeRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const FolderTreeScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [HomeScreen]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute({List<PageRouteInfo>? children})
@@ -198,6 +217,44 @@ class SetPinRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const SetPinScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [SettingsScreen]
+class SettingsRoute extends PageRouteInfo<void> {
+  const SettingsRoute({List<PageRouteInfo>? children})
+      : super(
+          SettingsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SettingsRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SettingsScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [StatsScreen]
+class StatsRoute extends PageRouteInfo<void> {
+  const StatsRoute({List<PageRouteInfo>? children})
+      : super(
+          StatsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'StatsRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const StatsScreen();
     },
   );
 }

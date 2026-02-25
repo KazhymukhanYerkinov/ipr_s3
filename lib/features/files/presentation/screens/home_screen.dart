@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
 import 'package:ipr_s3/core/router/app_router.dart';
+import 'package:ipr_s3/features/files/domain/strategies/sort_by_date.dart';
+import 'package:ipr_s3/features/files/domain/strategies/sort_by_name.dart';
+import 'package:ipr_s3/features/files/domain/strategies/sort_by_size.dart';
+import 'package:ipr_s3/features/files/domain/strategies/sort_by_type.dart';
+import 'package:ipr_s3/features/files/domain/strategies/sort_strategy.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_bloc.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_event.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_state.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/file_grid.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/file_list_view.dart';
+import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/search_bar_widget.dart';
 
 @RoutePage()
@@ -34,6 +40,7 @@ class _HomeView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('File Secure'),
         actions: [
+          _SortDropdown(),
           BlocSelector<FilesBloc, FilesState, ViewMode?>(
             selector: (state) =>
                 state is FilesLoaded ? state.viewMode : null,
@@ -48,6 +55,50 @@ class _HomeView extends StatelessWidget {
                 ),
               );
             },
+          ),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              switch (value) {
+                case 'folders':
+                  context.pushRoute(const FolderTreeRoute());
+                case 'stats':
+                  context.pushRoute(const StatsRoute());
+                case 'settings':
+                  context.pushRoute(const SettingsRoute());
+              }
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(
+                value: 'folders',
+                child: Row(
+                  children: [
+                    Icon(Icons.folder_outlined, size: 20),
+                    SizedBox(width: 8),
+                    Text('Folders'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'stats',
+                child: Row(
+                  children: [
+                    Icon(Icons.bar_chart_rounded, size: 20),
+                    SizedBox(width: 8),
+                    Text('Statistics'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'settings',
+                child: Row(
+                  children: [
+                    Icon(Icons.settings_outlined, size: 20),
+                    SizedBox(width: 8),
+                    Text('Settings'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -146,7 +197,7 @@ class _HomeView extends StatelessWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, dynamic file) {
+  void _confirmDelete(BuildContext context, SecureFileEntity file) {
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -218,6 +269,31 @@ class _EmptyState extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SortDropdown extends StatelessWidget {
+  static final List<SortStrategy> _strategies = [
+    SortByDate(),
+    SortByName(),
+    SortBySize(),
+    SortByType(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<SortStrategy>(
+      icon: const Icon(Icons.sort_rounded),
+      tooltip: 'Sort',
+      onSelected: (strategy) =>
+          context.read<FilesBloc>().add(SortStrategyChanged(strategy)),
+      itemBuilder: (_) => _strategies
+          .map((s) => PopupMenuItem(
+                value: s,
+                child: Text(s.label),
+              ))
+          .toList(),
     );
   }
 }

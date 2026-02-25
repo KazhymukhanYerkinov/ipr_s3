@@ -15,6 +15,7 @@ import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:ipr_s3/core/di/register_module.dart' as _i345;
 import 'package:ipr_s3/core/network/api_client.dart' as _i140;
+import 'package:ipr_s3/core/platform/device_info_channel.dart' as _i851;
 import 'package:ipr_s3/core/security/encryption_helper.dart' as _i564;
 import 'package:ipr_s3/core/security/pin_manager.dart' as _i107;
 import 'package:ipr_s3/features/auth/data/services/auth_service.dart' as _i77;
@@ -64,6 +65,24 @@ import 'package:ipr_s3/features/files/domain/use_cases/search_files.dart'
     as _i787;
 import 'package:ipr_s3/features/files/presentation/bloc/files_bloc.dart'
     as _i288;
+import 'package:ipr_s3/features/folders/data/repositories/folders_repository_impl.dart'
+    as _i575;
+import 'package:ipr_s3/features/folders/data/sources/folders_local_source.dart'
+    as _i57;
+import 'package:ipr_s3/features/folders/domain/behaviors/folders_behavior.dart'
+    as _i342;
+import 'package:ipr_s3/features/folders/domain/use_cases/create_folder.dart'
+    as _i327;
+import 'package:ipr_s3/features/folders/domain/use_cases/delete_folder.dart'
+    as _i246;
+import 'package:ipr_s3/features/folders/domain/use_cases/move_file_to_folder.dart'
+    as _i562;
+import 'package:ipr_s3/features/folders/presentation/bloc/folders_bloc.dart'
+    as _i134;
+import 'package:ipr_s3/features/settings/presentation/bloc/settings_bloc.dart'
+    as _i789;
+import 'package:ipr_s3/features/stats/presentation/bloc/stats_bloc.dart'
+    as _i243;
 import 'package:local_auth/local_auth.dart' as _i152;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -85,6 +104,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i152.LocalAuthentication>(() => registerModule.localAuth);
     gh.lazySingleton<_i424.FileSearchService>(() => _i424.FileSearchService());
     gh.lazySingleton<_i681.ThumbnailService>(() => _i681.ThumbnailService());
+    gh.lazySingleton<_i851.DeviceInfoChannel>(() => _i851.DeviceInfoChannel());
     gh.lazySingleton<_i910.AuthLocalSource>(() => _i910.AuthLocalSourceImpl(
           gh<_i558.FlutterSecureStorage>(),
           gh<_i152.LocalAuthentication>(),
@@ -93,6 +113,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i107.PinManager(gh<_i558.FlutterSecureStorage>()));
     gh.lazySingleton<_i564.EncryptionHelper>(
         () => _i564.EncryptionHelper(gh<_i558.FlutterSecureStorage>()));
+    gh.lazySingleton<_i57.FoldersLocalSource>(
+        () => _i57.FoldersLocalSourceImpl(gh<_i564.EncryptionHelper>()));
     gh.lazySingleton<_i140.ApiClient>(
         () => _i140.ApiClient(gh<_i910.AuthLocalSource>()));
     gh.lazySingleton<_i78.FileEncryptionService>(
@@ -101,10 +123,18 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i59.FirebaseAuth>(),
           gh<_i116.GoogleSignIn>(),
         ));
+    gh.factory<_i789.SettingsBloc>(() => _i789.SettingsBloc(
+          gh<_i851.DeviceInfoChannel>(),
+          gh<_i107.PinManager>(),
+        ));
     gh.lazySingleton<_i943.FilesLocalSource>(
         () => _i943.FilesLocalSourceImpl(gh<_i564.EncryptionHelper>()));
     gh.lazySingleton<_i462.EncryptionQueue>(
         () => _i462.EncryptionQueue(gh<_i78.FileEncryptionService>()));
+    gh.lazySingleton<_i342.FoldersBehavior>(() => _i575.FoldersRepositoryImpl(
+          gh<_i57.FoldersLocalSource>(),
+          gh<_i943.FilesLocalSource>(),
+        ));
     gh.lazySingleton<_i679.FilesBehavior>(() => _i86.FilesRepositoryImpl(
           gh<_i943.FilesLocalSource>(),
           gh<_i78.FileEncryptionService>(),
@@ -116,6 +146,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i910.AuthLocalSource>(),
           gh<_i107.PinManager>(),
         ));
+    gh.factory<_i243.StatsBloc>(
+        () => _i243.StatsBloc(gh<_i679.FilesBehavior>()));
     gh.lazySingleton<_i475.DeleteFileUseCase>(
         () => _i475.DeleteFileUseCase(gh<_i679.FilesBehavior>()));
     gh.lazySingleton<_i188.ImportFileUseCase>(
@@ -146,6 +178,18 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i139.AuthenticateBiometricsUseCase(gh<_i514.AuthBehavior>()));
     gh.lazySingleton<_i712.SetPinUseCase>(
         () => _i712.SetPinUseCase(gh<_i514.AuthBehavior>()));
+    gh.factory<_i327.CreateFolderUseCase>(
+        () => _i327.CreateFolderUseCase(gh<_i342.FoldersBehavior>()));
+    gh.factory<_i246.DeleteFolderUseCase>(
+        () => _i246.DeleteFolderUseCase(gh<_i342.FoldersBehavior>()));
+    gh.factory<_i562.MoveFileToFolderUseCase>(
+        () => _i562.MoveFileToFolderUseCase(gh<_i342.FoldersBehavior>()));
+    gh.factory<_i134.FoldersBloc>(() => _i134.FoldersBloc(
+          gh<_i342.FoldersBehavior>(),
+          gh<_i327.CreateFolderUseCase>(),
+          gh<_i246.DeleteFolderUseCase>(),
+          gh<_i562.MoveFileToFolderUseCase>(),
+        ));
     gh.factory<_i541.AuthBloc>(() => _i541.AuthBloc(
           gh<_i296.AuthSignOutUseCase>(),
           gh<_i188.AuthSignInWithGoogleUseCase>(),
