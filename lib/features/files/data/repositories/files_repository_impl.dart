@@ -4,20 +4,32 @@ import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/platform/native_hash_service.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/data/services/file_encryption_service.dart';
 import 'package:ipr_s3/features/files/data/services/file_search_service.dart';
 import 'package:ipr_s3/features/files/data/services/thumbnail_service.dart';
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
-import 'package:ipr_s3/features/files/domain/behaviors/files_behavior.dart';
-import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/behaviors/get_files_behavior.dart';
+import 'package:ipr_s3/features/files/domain/behaviors/import_file_behavior.dart';
+import 'package:ipr_s3/features/files/domain/behaviors/decrypt_file_behavior.dart';
+import 'package:ipr_s3/features/files/domain/behaviors/delete_file_behavior.dart';
+import 'package:ipr_s3/features/files/domain/behaviors/search_files_behavior.dart';
+import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
-@LazySingleton(as: FilesBehavior)
-class FilesRepositoryImpl implements FilesBehavior {
+@lazySingleton
+class FilesRepositoryImpl
+    implements
+        GetFilesBehavior,
+        ImportFileBehavior,
+        DecryptFileBehavior,
+        DeleteFileBehavior,
+        SearchFilesBehavior {
   final FilesLocalSource _localSource;
   final FileEncryptionService _encryptionService;
   final ThumbnailService _thumbnailService;
   final FileSearchService _searchService;
+  final NativeHashService _nativeHashService;
   final _logger = SecureLogger();
   final _uuid = const Uuid();
 
@@ -26,6 +38,7 @@ class FilesRepositoryImpl implements FilesBehavior {
     this._encryptionService,
     this._thumbnailService,
     this._searchService,
+    this._nativeHashService,
   );
 
   @override
@@ -50,6 +63,7 @@ class FilesRepositoryImpl implements FilesBehavior {
       final now = DateTime.now();
 
       final encryptedBytes = await _encryptionService.encrypt(bytes);
+      final checksum = _nativeHashService.crc32(encryptedBytes);
       final encryptedPath = await _localSource.saveEncryptedFile(
         fileId,
         encryptedBytes,
@@ -76,6 +90,7 @@ class FilesRepositoryImpl implements FilesBehavior {
         thumbnailPath: thumbnailPath,
         createdAt: now,
         updatedAt: now,
+        checksum: checksum,
       );
 
       await _localSource.save(entity);
@@ -98,6 +113,17 @@ class FilesRepositoryImpl implements FilesBehavior {
       final encryptedBytes = await _localSource.readEncryptedFile(
         entity.encryptedPath,
       );
+
+      if (entity.checksum != null) {
+        final currentChecksum = _nativeHashService.crc32(encryptedBytes);
+        if (currentChecksum != entity.checksum) {
+          _logger.error('File integrity check failed for [REDACTED_ID]');
+          return const Left(
+            FileFailure(message: 'File integrity check failed — data may be corrupted'),
+          );
+        }
+      }
+
       final decryptedBytes = await _encryptionService.decrypt(encryptedBytes);
       _logger.info('File decrypted successfully');
       return Right(decryptedBytes);

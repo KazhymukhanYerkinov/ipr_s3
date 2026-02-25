@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:ipr_s3/core/di/injection.dart';
-import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/decrypt_file.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/get_files.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/previews/file_preview_factory.dart';

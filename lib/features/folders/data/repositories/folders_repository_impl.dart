@@ -5,11 +5,19 @@ import 'package:ipr_s3/core/error/failures.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
 import 'package:ipr_s3/features/folders/data/sources/folders_local_source.dart';
-import 'package:ipr_s3/features/folders/domain/behaviors/folders_behavior.dart';
-import 'package:ipr_s3/features/folders/domain/entities/folder_item.dart';
+import 'package:ipr_s3/features/folders/domain/behaviors/get_folders_behavior.dart';
+import 'package:ipr_s3/features/folders/domain/behaviors/create_folder_behavior.dart';
+import 'package:ipr_s3/features/folders/domain/behaviors/delete_folder_behavior.dart';
+import 'package:ipr_s3/features/folders/domain/behaviors/move_file_to_folder_behavior.dart';
+import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 
-@LazySingleton(as: FoldersBehavior)
-class FoldersRepositoryImpl implements FoldersBehavior {
+@lazySingleton
+class FoldersRepositoryImpl
+    implements
+        GetFoldersBehavior,
+        CreateFolderBehavior,
+        DeleteFolderBehavior,
+        MoveFileToFolderBehavior {
   final FoldersLocalSource _foldersSource;
   final FilesLocalSource _filesSource;
   final _logger = SecureLogger();

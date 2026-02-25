@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ipr_s3/core/error/failures.dart';
-import 'package:ipr_s3/features/auth/domain/entities/user.dart';
+import 'package:ipr_s3/features/auth/domain/models/user.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_get_current_user_use_case.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_in_with_google_use_case.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_out_use_case.dart';

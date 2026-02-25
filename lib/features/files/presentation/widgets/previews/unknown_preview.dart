@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 class UnknownPreview extends StatelessWidget {
   final SecureFileEntity file;

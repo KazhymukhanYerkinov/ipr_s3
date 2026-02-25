@@ -1,6 +1,6 @@
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
 import 'package:ipr_s3/features/files/domain/commands/file_command.dart';
-import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 class MoveFileCommand implements FileCommand {
   final FilesLocalSource _source;

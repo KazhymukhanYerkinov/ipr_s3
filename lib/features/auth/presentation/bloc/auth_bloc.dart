@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/features/auth/domain/entities/user.dart';
+import 'package:ipr_s3/features/auth/domain/models/user.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/authenticate_biometrics_use_case.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_get_current_user_use_case.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_in_with_google_use_case.dart';

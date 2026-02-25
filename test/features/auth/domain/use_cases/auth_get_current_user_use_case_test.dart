@@ -2,19 +2,19 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ipr_s3/core/error/failures.dart';
-import 'package:ipr_s3/features/auth/domain/behaviors/auth_behavior.dart';
-import 'package:ipr_s3/features/auth/domain/entities/user.dart';
+import 'package:ipr_s3/features/auth/domain/behaviors/get_current_user_behavior.dart';
+import 'package:ipr_s3/features/auth/domain/models/user.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_get_current_user_use_case.dart';
 
-class MockAuthBehavior extends Mock implements AuthBehavior {}
+class MockGetCurrentUserBehavior extends Mock implements GetCurrentUserBehavior {}
 
 void main() {
   late AuthGetCurrentUserUseCase useCase;
-  late MockAuthBehavior mockAuthBehavior;
+  late MockGetCurrentUserBehavior mockGetCurrentUserBehavior;
 
   setUp(() {
-    mockAuthBehavior = MockAuthBehavior();
-    useCase = AuthGetCurrentUserUseCase(mockAuthBehavior);
+    mockGetCurrentUserBehavior = MockGetCurrentUserBehavior();
+    useCase = AuthGetCurrentUserUseCase(mockGetCurrentUserBehavior);
   });
 
   const testUser = UserEntity(
@@ -25,17 +25,17 @@ void main() {
 
   group('AuthGetCurrentUserUseCase', () {
     test('should return UserEntity when user is authenticated', () async {
-      when(() => mockAuthBehavior.getCurrentUser())
+      when(() => mockGetCurrentUserBehavior.getCurrentUser())
           .thenAnswer((_) async => const Right(testUser));
 
       final result = await useCase();
 
       expect(result, const Right(testUser));
-      verify(() => mockAuthBehavior.getCurrentUser()).called(1);
+      verify(() => mockGetCurrentUserBehavior.getCurrentUser()).called(1);
     });
 
     test('should return null when no user is authenticated', () async {
-      when(() => mockAuthBehavior.getCurrentUser())
+      when(() => mockGetCurrentUserBehavior.getCurrentUser())
           .thenAnswer((_) async => const Right(null));
 
       final result = await useCase();
@@ -44,28 +44,28 @@ void main() {
         (_) => fail('Should be Right'),
         (user) => expect(user, isNull),
       );
-      verify(() => mockAuthBehavior.getCurrentUser()).called(1);
+      verify(() => mockGetCurrentUserBehavior.getCurrentUser()).called(1);
     });
 
     test('should return AuthFailure when getting user fails', () async {
       const failure = AuthFailure(message: 'Failed to get current user');
-      when(() => mockAuthBehavior.getCurrentUser())
+      when(() => mockGetCurrentUserBehavior.getCurrentUser())
           .thenAnswer((_) async => const Left(failure));
 
       final result = await useCase();
 
       expect(result, const Left(failure));
-      verify(() => mockAuthBehavior.getCurrentUser()).called(1);
+      verify(() => mockGetCurrentUserBehavior.getCurrentUser()).called(1);
     });
 
-    test('should delegate call to AuthBehavior.getCurrentUser', () async {
-      when(() => mockAuthBehavior.getCurrentUser())
+    test('should delegate call to GetCurrentUserBehavior.getCurrentUser', () async {
+      when(() => mockGetCurrentUserBehavior.getCurrentUser())
           .thenAnswer((_) async => const Right(testUser));
 
       await useCase();
 
-      verify(() => mockAuthBehavior.getCurrentUser()).called(1);
-      verifyNoMoreInteractions(mockAuthBehavior);
+      verify(() => mockGetCurrentUserBehavior.getCurrentUser()).called(1);
+      verifyNoMoreInteractions(mockGetCurrentUserBehavior);
     });
   });
 }

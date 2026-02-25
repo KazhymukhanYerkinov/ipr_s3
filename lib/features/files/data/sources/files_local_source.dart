@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:ipr_s3/core/security/encryption_helper.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/data/dtos/secure_file_dto.dart';
-import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 abstract class FilesLocalSource {
   Future<List<SecureFileEntity>> getAll();

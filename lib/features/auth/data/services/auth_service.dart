@@ -5,11 +5,25 @@ import 'package:ipr_s3/core/security/pin_manager.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/auth/data/sources/auth_local_source.dart';
 import 'package:ipr_s3/features/auth/data/sources/auth_remote_source.dart';
-import 'package:ipr_s3/features/auth/domain/behaviors/auth_behavior.dart';
-import 'package:ipr_s3/features/auth/domain/entities/user.dart';
+import 'package:ipr_s3/features/auth/domain/behaviors/authenticate_with_biometrics_behavior.dart';
+import 'package:ipr_s3/features/auth/domain/behaviors/get_current_user_behavior.dart';
+import 'package:ipr_s3/features/auth/domain/behaviors/has_pin_behavior.dart';
+import 'package:ipr_s3/features/auth/domain/behaviors/set_pin_behavior.dart';
+import 'package:ipr_s3/features/auth/domain/behaviors/sign_in_with_google_behavior.dart';
+import 'package:ipr_s3/features/auth/domain/behaviors/sign_out_behavior.dart';
+import 'package:ipr_s3/features/auth/domain/behaviors/verify_pin_behavior.dart';
+import 'package:ipr_s3/features/auth/domain/models/user.dart';
 
-@LazySingleton(as: AuthBehavior)
-class AuthService implements AuthBehavior {
+@lazySingleton
+class AuthService
+    implements
+        GetCurrentUserBehavior,
+        SignInWithGoogleBehavior,
+        SignOutBehavior,
+        HasPinBehavior,
+        SetPinBehavior,
+        VerifyPinBehavior,
+        AuthenticateWithBiometricsBehavior {
   final AuthLocalSource _authLocalSource;
   final AuthRemoteSource _authRemoteSource;
   final PinManager _pinManager;

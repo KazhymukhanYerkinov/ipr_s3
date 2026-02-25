@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
-import 'package:ipr_s3/features/folders/domain/entities/folder_item.dart';
+import 'package:ipr_s3/features/folders/data/mappers/folder_mapper.dart';
+import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 
 part 'folder_dto.g.dart';
 
@@ -25,21 +26,10 @@ class FolderDto extends HiveObject {
   });
 
   factory FolderDto.fromEntity(FolderItem entity) {
-    return FolderDto(
-      id: entity.id,
-      name: entity.name,
-      parentId: entity.parentId,
-      createdAt: entity.createdAt,
-    );
+    return FolderMapper.toDto(entity);
   }
 
   FolderItem toEntity({List<FolderItem> children = const []}) {
-    return FolderItem(
-      id: id,
-      name: name,
-      parentId: parentId,
-      createdAt: createdAt,
-      children: children,
-    );
+    return FolderMapper.fromDto(this, children: children);
   }
 }

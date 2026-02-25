@@ -75,6 +75,25 @@ class AuthSignInRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [BenchmarkScreen]
+class BenchmarkRoute extends PageRouteInfo<void> {
+  const BenchmarkRoute({List<PageRouteInfo>? children})
+      : super(
+          BenchmarkRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'BenchmarkRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const BenchmarkScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [FileViewerScreen]
 class FileViewerRoute extends PageRouteInfo<FileViewerRouteArgs> {
   FileViewerRoute({

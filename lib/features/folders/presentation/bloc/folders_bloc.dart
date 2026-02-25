@@ -1,60 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/features/folders/domain/entities/folder_item.dart';
+import 'package:ipr_s3/features/folders/domain/behaviors/get_folders_behavior.dart';
 import 'package:ipr_s3/features/folders/domain/use_cases/create_folder.dart';
 import 'package:ipr_s3/features/folders/domain/use_cases/delete_folder.dart';
 import 'package:ipr_s3/features/folders/domain/use_cases/move_file_to_folder.dart';
-import 'package:ipr_s3/features/folders/domain/behaviors/folders_behavior.dart';
-
-part 'folders_bloc.freezed.dart';
-
-// --- Events ---
-
-sealed class FoldersEvent {}
-
-final class FoldersLoadRequested extends FoldersEvent {}
-
-final class FolderCreateRequested extends FoldersEvent {
-  final String name;
-  final String? parentId;
-  FolderCreateRequested({required this.name, this.parentId});
-}
-
-final class FolderDeleteRequested extends FoldersEvent {
-  final String folderId;
-  FolderDeleteRequested(this.folderId);
-}
-
-final class FileMovedToFolder extends FoldersEvent {
-  final String fileId;
-  final String? folderId;
-  FileMovedToFolder({required this.fileId, this.folderId});
-}
-
-// --- State ---
-
-@freezed
-class FoldersState with _$FoldersState {
-  const factory FoldersState.initial() = FoldersInitial;
-  const factory FoldersState.loading() = FoldersLoading;
-  const factory FoldersState.loaded({
-    required List<FolderItem> folders,
-  }) = FoldersLoaded;
-  const factory FoldersState.error({required String message}) = FoldersError;
-}
-
-// --- BLoC ---
+import 'package:ipr_s3/features/folders/presentation/bloc/folders_event.dart';
+import 'package:ipr_s3/features/folders/presentation/bloc/folders_state.dart';
 
 @injectable
 class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
-  final FoldersBehavior _foldersBehavior;
+  final GetFoldersBehavior _getFoldersBehavior;
   final CreateFolderUseCase _createFolder;
   final DeleteFolderUseCase _deleteFolder;
   final MoveFileToFolderUseCase _moveFileToFolder;
 
   FoldersBloc(
-    this._foldersBehavior,
+    this._getFoldersBehavior,
     this._createFolder,
     this._deleteFolder,
     this._moveFileToFolder,
@@ -70,7 +31,7 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
     Emitter<FoldersState> emit,
   ) async {
     emit(const FoldersState.loading());
-    final result = await _foldersBehavior.getFolders();
+    final result = await _getFoldersBehavior.getFolders();
     result.fold(
       (failure) => emit(FoldersState.error(message: failure.message)),
       (folders) => emit(FoldersState.loaded(folders: folders)),

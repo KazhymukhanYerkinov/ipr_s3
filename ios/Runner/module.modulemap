@@ -1,0 +1,4 @@
+module hash_utils {
+    header "hash_utils.c"
+    export *
+}

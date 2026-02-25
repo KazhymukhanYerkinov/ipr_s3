@@ -7,7 +7,7 @@ import 'package:ipr_s3/features/auth/data/dtos/user_dto.dart';
 import 'package:ipr_s3/features/auth/data/services/auth_service.dart';
 import 'package:ipr_s3/features/auth/data/sources/auth_local_source.dart';
 import 'package:ipr_s3/features/auth/data/sources/auth_remote_source.dart';
-import 'package:ipr_s3/features/auth/domain/entities/user.dart';
+import 'package:ipr_s3/features/auth/domain/models/user.dart';
 
 class MockAuthRemoteSource extends Mock implements AuthRemoteSource {}
 

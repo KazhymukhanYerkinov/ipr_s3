@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/security/encryption_helper.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/folders/data/dtos/folder_dto.dart';
-import 'package:ipr_s3/features/folders/domain/entities/folder_item.dart';
+import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 
 abstract class FoldersLocalSource {
   Future<List<FolderItem>> getAll();

@@ -3,7 +3,7 @@ import 'dart:isolate';
 
 import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
-import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 /// Message sent from the main isolate to the search worker.
 class SearchRequest {

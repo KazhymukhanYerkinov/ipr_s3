@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
 import 'package:ipr_s3/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:ipr_s3/features/settings/presentation/bloc/settings_event.dart';
+import 'package:ipr_s3/features/settings/presentation/bloc/settings_state.dart';
+import 'package:ipr_s3/features/settings/presentation/widgets/device_info_card.dart';
+import 'package:ipr_s3/features/settings/presentation/widgets/section_header.dart';
+import 'package:ipr_s3/features/settings/presentation/widgets/security_card.dart';
 
 @RoutePage()
 class SettingsScreen extends StatelessWidget {
@@ -51,18 +56,18 @@ class _SettingsView extends StatelessWidget {
               ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  _SectionHeader(title: 'Device', theme: theme),
+                  SectionHeader(title: 'Device', theme: theme),
                   const SizedBox(height: 8),
-                  _DeviceInfoCard(
+                  DeviceInfoCard(
                     batteryLevel: batteryLevel,
                     freeStorage: freeStorage,
                     totalStorage: totalStorage,
                     theme: theme,
                   ),
                   const SizedBox(height: 24),
-                  _SectionHeader(title: 'Security', theme: theme),
+                  SectionHeader(title: 'Security', theme: theme),
                   const SizedBox(height: 8),
-                  _SecurityCard(
+                  SecurityCard(
                     hasPin: hasPin,
                     theme: theme,
                     onChangePin: () => _showChangePinDialog(context),
@@ -154,215 +159,5 @@ class _SettingsView extends StatelessWidget {
       oldPinController.dispose();
       newPinController.dispose();
     });
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  final ThemeData theme;
-
-  const _SectionHeader({required this.title, required this.theme});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: theme.textTheme.titleSmall?.copyWith(
-        color: theme.colorScheme.primary,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.5,
-      ),
-    );
-  }
-}
-
-class _DeviceInfoCard extends StatelessWidget {
-  final int? batteryLevel;
-  final int? freeStorage;
-  final int? totalStorage;
-  final ThemeData theme;
-
-  const _DeviceInfoCard({
-    required this.batteryLevel,
-    required this.freeStorage,
-    required this.totalStorage,
-    required this.theme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final usedStorage = (totalStorage != null && freeStorage != null)
-        ? totalStorage! - freeStorage!
-        : null;
-    final usagePercent = (totalStorage != null && usedStorage != null && totalStorage! > 0)
-        ? usedStorage / totalStorage!
-        : null;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _BatteryRow(level: batteryLevel, theme: theme),
-            const Divider(height: 24),
-            _StorageSection(
-              freeStorage: freeStorage,
-              totalStorage: totalStorage,
-              usagePercent: usagePercent,
-              theme: theme,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _BatteryRow extends StatelessWidget {
-  final int? level;
-  final ThemeData theme;
-
-  const _BatteryRow({required this.level, required this.theme});
-
-  @override
-  Widget build(BuildContext context) {
-    final displayLevel = level != null ? '$level%' : 'N/A';
-
-    IconData icon;
-    Color color;
-    if (level == null) {
-      icon = Icons.battery_unknown_rounded;
-      color = theme.colorScheme.onSurfaceVariant;
-    } else if (level! <= 15) {
-      icon = Icons.battery_alert_rounded;
-      color = theme.colorScheme.error;
-    } else if (level! <= 50) {
-      icon = Icons.battery_3_bar_rounded;
-      color = Colors.orange;
-    } else {
-      icon = Icons.battery_full_rounded;
-      color = Colors.green;
-    }
-
-    return Row(
-      children: [
-        Icon(icon, color: color, size: 28),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text('Battery', style: theme.textTheme.bodyLarge),
-        ),
-        Text(
-          displayLevel,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StorageSection extends StatelessWidget {
-  final int? freeStorage;
-  final int? totalStorage;
-  final double? usagePercent;
-  final ThemeData theme;
-
-  const _StorageSection({
-    required this.freeStorage,
-    required this.totalStorage,
-    required this.usagePercent,
-    required this.theme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.storage_rounded, size: 28,
-                color: theme.colorScheme.primary),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text('Storage', style: theme.textTheme.bodyLarge),
-            ),
-            if (usagePercent != null)
-              Text(
-                '${(usagePercent! * 100).toStringAsFixed(0)}% used',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: usagePercent ?? 0,
-            minHeight: 8,
-            backgroundColor: theme.colorScheme.surfaceContainerHighest,
-            valueColor: AlwaysStoppedAnimation(
-              usagePercent != null && usagePercent! > 0.9
-                  ? theme.colorScheme.error
-                  : theme.colorScheme.primary,
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          freeStorage != null && totalStorage != null
-              ? '${_formatSize(freeStorage!)} free of ${_formatSize(totalStorage!)}'
-              : 'Storage info unavailable',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ],
-    );
-  }
-
-  String _formatSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) {
-      return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    }
-    if (bytes < 1024 * 1024 * 1024) {
-      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
-    }
-    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
-  }
-}
-
-class _SecurityCard extends StatelessWidget {
-  final bool hasPin;
-  final ThemeData theme;
-  final VoidCallback onChangePin;
-
-  const _SecurityCard({
-    required this.hasPin,
-    required this.theme,
-    required this.onChangePin,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        children: [
-          ListTile(
-            leading: Icon(Icons.lock_outline_rounded,
-                color: theme.colorScheme.primary),
-            title: const Text('Change PIN'),
-            subtitle: Text(hasPin ? 'PIN is set' : 'No PIN set'),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: hasPin ? onChangePin : null,
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
-import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/data/mappers/secure_file_mapper.dart';
+import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 part 'secure_file_dto.g.dart';
 
@@ -35,6 +36,9 @@ class SecureFileDto extends HiveObject {
   @HiveField(9)
   final String? folderId;
 
+  @HiveField(10)
+  final int? checksum;
+
   SecureFileDto({
     required this.id,
     required this.name,
@@ -46,35 +50,14 @@ class SecureFileDto extends HiveObject {
     required this.updatedAt,
     this.tags = const [],
     this.folderId,
+    this.checksum,
   });
 
   factory SecureFileDto.fromEntity(SecureFileEntity entity) {
-    return SecureFileDto(
-      id: entity.id,
-      name: entity.name,
-      typeIndex: entity.type.index,
-      size: entity.size,
-      encryptedPath: entity.encryptedPath,
-      thumbnailPath: entity.thumbnailPath,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-      tags: entity.tags,
-      folderId: entity.folderId,
-    );
+    return SecureFileMapper.toDto(entity);
   }
 
   SecureFileEntity toEntity() {
-    return SecureFileEntity(
-      id: id,
-      name: name,
-      type: FileType.values[typeIndex],
-      size: size,
-      encryptedPath: encryptedPath,
-      thumbnailPath: thumbnailPath,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      tags: tags,
-      folderId: folderId,
-    );
+    return SecureFileMapper.fromDto(this);
   }
 }

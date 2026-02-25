@@ -3,18 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
 import 'package:ipr_s3/core/router/app_router.dart';
-import 'package:ipr_s3/features/files/domain/strategies/sort_by_date.dart';
-import 'package:ipr_s3/features/files/domain/strategies/sort_by_name.dart';
-import 'package:ipr_s3/features/files/domain/strategies/sort_by_size.dart';
-import 'package:ipr_s3/features/files/domain/strategies/sort_by_type.dart';
-import 'package:ipr_s3/features/files/domain/strategies/sort_strategy.dart';
+import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_bloc.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_event.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_state.dart';
+import 'package:ipr_s3/features/files/presentation/widgets/empty_state.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/file_grid.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/file_list_view.dart';
-import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/search_bar_widget.dart';
+import 'package:ipr_s3/features/files/presentation/widgets/sort_dropdown.dart';
 
 @RoutePage()
 class HomeScreen extends StatelessWidget {
@@ -40,7 +37,7 @@ class _HomeView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('File Secure'),
         actions: [
-          _SortDropdown(),
+          SortDropdown(),
           BlocSelector<FilesBloc, FilesState, ViewMode?>(
             selector: (state) =>
                 state is FilesLoaded ? state.viewMode : null,
@@ -141,7 +138,7 @@ class _HomeView extends StatelessWidget {
                     ),
                   FilesLoaded(:final files, :final viewMode) =>
                     files.isEmpty
-                        ? _EmptyState(theme: theme)
+                        ? EmptyState(theme: theme)
                         : viewMode == ViewMode.list
                             ? FileListView(
                                 files: files,
@@ -226,74 +223,6 @@ class _HomeView extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  final ThemeData theme;
-
-  const _EmptyState({required this.theme});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer.withAlpha(60),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.lock_outline_rounded,
-              size: 56,
-              color: theme.colorScheme.primary,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'No files yet',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Tap + to import and encrypt your first file',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SortDropdown extends StatelessWidget {
-  static final List<SortStrategy> _strategies = [
-    SortByDate(),
-    SortByName(),
-    SortBySize(),
-    SortByType(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<SortStrategy>(
-      icon: const Icon(Icons.sort_rounded),
-      tooltip: 'Sort',
-      onSelected: (strategy) =>
-          context.read<FilesBloc>().add(SortStrategyChanged(strategy)),
-      itemBuilder: (_) => _strategies
-          .map((s) => PopupMenuItem(
-                value: s,
-                child: Text(s.label),
-              ))
-          .toList(),
     );
   }
 }

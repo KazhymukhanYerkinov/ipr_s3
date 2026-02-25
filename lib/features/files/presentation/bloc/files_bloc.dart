@@ -1,7 +1,7 @@
 import 'package:file_picker/file_picker.dart' as picker;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_by_date.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_strategy.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/delete_file.dart';

@@ -1,10 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:ipr_s3/features/auth/domain/entities/user.dart';
+import 'package:ipr_s3/features/auth/domain/models/user.dart';
 import 'package:ipr_s3/features/auth/presentation/screens/auth_home_screen.dart';
 import 'package:ipr_s3/features/auth/presentation/screens/auth_sign_in_screen.dart';
 import 'package:ipr_s3/features/auth/presentation/screens/lock_screen.dart';
 import 'package:ipr_s3/features/auth/presentation/screens/set_pin_screen.dart';
+import 'package:ipr_s3/features/benchmark/presentation/screens/benchmark_screen.dart';
 import 'package:ipr_s3/features/files/presentation/screens/file_viewer_screen.dart';
 import 'package:ipr_s3/features/files/presentation/screens/home_screen.dart';
 import 'package:ipr_s3/features/files/presentation/screens/import_progress_screen.dart';
@@ -18,15 +19,27 @@ part 'app_router.gr.dart';
 class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
+    // Auth
     AutoRoute(page: AuthSignInRoute.page, initial: true),
     AutoRoute(page: AuthHomeRoute.page),
     AutoRoute(page: LockRoute.page),
     AutoRoute(page: SetPinRoute.page),
+
+    // Files
     AutoRoute(page: HomeRoute.page),
     AutoRoute(page: FileViewerRoute.page),
     AutoRoute(page: ImportProgressRoute.page),
+
+    // Folders
     AutoRoute(page: FolderTreeRoute.page),
+
+    // Stats
     AutoRoute(page: StatsRoute.page),
+
+    // Settings
     AutoRoute(page: SettingsRoute.page),
+
+    // Benchmark
+    AutoRoute(page: BenchmarkRoute.page),
   ];
 }

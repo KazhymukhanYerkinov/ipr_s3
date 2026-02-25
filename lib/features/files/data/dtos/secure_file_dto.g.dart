@@ -27,13 +27,14 @@ class SecureFileDtoAdapter extends TypeAdapter<SecureFileDto> {
       updatedAt: fields[7] as DateTime,
       tags: (fields[8] as List).cast<String>(),
       folderId: fields[9] as String?,
+      checksum: fields[10] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, SecureFileDto obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class SecureFileDtoAdapter extends TypeAdapter<SecureFileDto> {
       ..writeByte(8)
       ..write(obj.tags)
       ..writeByte(9)
-      ..write(obj.folderId);
+      ..write(obj.folderId)
+      ..writeByte(10)
+      ..write(obj.checksum);
   }
 
   @override

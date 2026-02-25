@@ -1,4 +1,4 @@
-import 'package:ipr_s3/features/files/domain/entities/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_strategy.dart';
 
 class SortBySize implements SortStrategy {

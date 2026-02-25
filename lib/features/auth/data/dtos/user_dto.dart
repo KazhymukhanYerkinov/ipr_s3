@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
-import 'package:ipr_s3/features/auth/domain/entities/user.dart';
+import 'package:ipr_s3/features/auth/domain/models/user.dart';
 
 class UserDto extends UserEntity {
   const UserDto({

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ipr_s3/features/auth/presentation/widgets/action_button.dart';
+import 'package:ipr_s3/features/auth/presentation/widgets/digit_button.dart';
 
 class PinKeyboard extends StatelessWidget {
   final ValueChanged<int> onDigitPressed;
@@ -33,7 +35,7 @@ class PinKeyboard extends StatelessWidget {
   Widget _buildRow(List<int> digits) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: digits.map((digit) => _DigitButton(
+      children: digits.map((digit) => DigitButton(
         digit: digit,
         onPressed: () => onDigitPressed(digit),
       )).toList(),
@@ -45,74 +47,21 @@ class PinKeyboard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         if (onBiometricPressed != null)
-          _ActionButton(
+          ActionButton(
             icon: Icons.fingerprint,
             onPressed: onBiometricPressed!,
           )
         else
           const SizedBox(width: 72, height: 72),
-        _DigitButton(
+        DigitButton(
           digit: 0,
           onPressed: () => onDigitPressed(0),
         ),
-        _ActionButton(
+        ActionButton(
           icon: Icons.backspace_outlined,
           onPressed: onBackspacePressed,
         ),
       ],
-    );
-  }
-}
-
-class _DigitButton extends StatelessWidget {
-  final int digit;
-  final VoidCallback onPressed;
-
-  const _DigitButton({required this.digit, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return SizedBox(
-      width: 72,
-      height: 72,
-      child: Material(
-        color: theme.colorScheme.surfaceContainerHighest.withAlpha(100),
-        shape: const CircleBorder(),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onPressed,
-          customBorder: const CircleBorder(),
-          child: Center(
-            child: Text(
-              '$digit',
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  const _ActionButton({required this.icon, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 72,
-      height: 72,
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Icon(icon, size: 28),
-      ),
     );
   }
 }

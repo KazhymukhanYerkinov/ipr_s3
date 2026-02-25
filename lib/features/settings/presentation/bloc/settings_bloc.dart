@@ -1,42 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/platform/device_info_channel.dart';
 import 'package:ipr_s3/core/security/pin_manager.dart';
-
-part 'settings_bloc.freezed.dart';
-
-// --- Events ---
-
-sealed class SettingsEvent {}
-
-final class SettingsLoadRequested extends SettingsEvent {}
-
-final class PinChangeRequested extends SettingsEvent {
-  final String oldPin;
-  final String newPin;
-  PinChangeRequested({required this.oldPin, required this.newPin});
-}
-
-final class PinDeleteRequested extends SettingsEvent {}
-
-// --- State ---
-
-@freezed
-class SettingsState with _$SettingsState {
-  const factory SettingsState.initial() = SettingsInitial;
-  const factory SettingsState.loading() = SettingsLoading;
-  const factory SettingsState.loaded({
-    int? batteryLevel,
-    int? freeStorage,
-    int? totalStorage,
-    required bool hasPin,
-    @Default('') String message,
-  }) = SettingsLoaded;
-  const factory SettingsState.error({required String message}) = SettingsError;
-}
-
-// --- BLoC ---
+import 'package:ipr_s3/features/settings/presentation/bloc/settings_event.dart';
+import 'package:ipr_s3/features/settings/presentation/bloc/settings_state.dart';
 
 @injectable
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {

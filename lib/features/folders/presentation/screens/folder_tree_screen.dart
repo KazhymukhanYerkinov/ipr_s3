@@ -2,8 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
-import 'package:ipr_s3/features/folders/domain/entities/folder_item.dart';
+import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_bloc.dart';
+import 'package:ipr_s3/features/folders/presentation/bloc/folders_event.dart';
+import 'package:ipr_s3/features/folders/presentation/bloc/folders_state.dart';
 import 'package:ipr_s3/features/folders/presentation/widgets/folder_tree_widget.dart';
 
 @RoutePage()
