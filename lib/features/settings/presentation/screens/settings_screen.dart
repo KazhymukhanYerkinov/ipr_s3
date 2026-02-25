@@ -2,6 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
+import 'package:ipr_s3/core/localization/localization_x.dart';
+import 'package:ipr_s3/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:ipr_s3/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ipr_s3/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:ipr_s3/features/settings/presentation/bloc/settings_event.dart';
 import 'package:ipr_s3/features/settings/presentation/bloc/settings_state.dart';
@@ -28,9 +31,10 @@ class _SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l = context.locale;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l.settings)),
       body: BlocConsumer<SettingsBloc, SettingsState>(
         listener: (context, state) {
           if (state is SettingsLoaded && state.message.isNotEmpty) {
@@ -56,7 +60,7 @@ class _SettingsView extends StatelessWidget {
               ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  SectionHeader(title: 'Device', theme: theme),
+                  SectionHeader(title: l.device, theme: theme),
                   const SizedBox(height: 8),
                   DeviceInfoCard(
                     batteryLevel: batteryLevel,
@@ -65,12 +69,26 @@ class _SettingsView extends StatelessWidget {
                     theme: theme,
                   ),
                   const SizedBox(height: 24),
-                  SectionHeader(title: 'Security', theme: theme),
+                  SectionHeader(title: l.security, theme: theme),
                   const SizedBox(height: 8),
                   SecurityCard(
                     hasPin: hasPin,
                     theme: theme,
                     onChangePin: () => _showChangePinDialog(context),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => _confirmLogout(context),
+                      icon: const Icon(Icons.logout),
+                      label: Text(l.logOut),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: theme.colorScheme.error,
+                        side: BorderSide(color: theme.colorScheme.error),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -87,7 +105,7 @@ class _SettingsView extends StatelessWidget {
                       onPressed: () => context
                           .read<SettingsBloc>()
                           .add(SettingsLoadRequested()),
-                      child: const Text('Retry'),
+                      child: Text(l.retry),
                     ),
                   ],
                 ),
@@ -99,7 +117,38 @@ class _SettingsView extends StatelessWidget {
     );
   }
 
+  void _confirmLogout(BuildContext context) {
+    final l = context.locale;
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        final theme = Theme.of(dialogContext);
+        return AlertDialog(
+          title: Text(l.logOutTitle),
+          content: Text(l.logOutConfirm),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(l.cancel),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                context.read<AuthBloc>().add(SignOutRequested());
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: theme.colorScheme.error,
+              ),
+              child: Text(l.logOut),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showChangePinDialog(BuildContext context) {
+    final l = context.locale;
     final oldPinController = TextEditingController();
     final newPinController = TextEditingController();
 
@@ -107,7 +156,7 @@ class _SettingsView extends StatelessWidget {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Change PIN'),
+          title: Text(l.changePin),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -116,9 +165,9 @@ class _SettingsView extends StatelessWidget {
                 obscureText: true,
                 keyboardType: TextInputType.number,
                 maxLength: 4,
-                decoration: const InputDecoration(
-                  labelText: 'Current PIN',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l.currentPin,
+                  border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 12),
@@ -127,9 +176,9 @@ class _SettingsView extends StatelessWidget {
                 obscureText: true,
                 keyboardType: TextInputType.number,
                 maxLength: 4,
-                decoration: const InputDecoration(
-                  labelText: 'New PIN',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l.newPin,
+                  border: const OutlineInputBorder(),
                 ),
               ),
             ],
@@ -137,7 +186,7 @@ class _SettingsView extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+              child: Text(l.cancel),
             ),
             FilledButton(
               onPressed: () {
@@ -150,14 +199,11 @@ class _SettingsView extends StatelessWidget {
                   Navigator.pop(dialogContext);
                 }
               },
-              child: const Text('Save'),
+              child: Text(l.save),
             ),
           ],
         );
       },
-    ).then((_) {
-      oldPinController.dispose();
-      newPinController.dispose();
-    });
+    );
   }
 }

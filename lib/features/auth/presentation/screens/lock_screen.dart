@@ -138,7 +138,18 @@ class _LockScreenState extends State<LockScreen>
                 onBackspacePressed: _onBackspacePressed,
                 onBiometricPressed: _onBiometricPressed,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
+              TextButton.icon(
+                onPressed: () =>
+                    context.read<AuthBloc>().add(SignOutRequested()),
+                icon: Icon(Icons.logout, size: 18,
+                    color: theme.colorScheme.error),
+                label: Text(
+                  context.locale.logOut,
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),

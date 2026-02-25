@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipr_s3/core/localization/localization_x.dart';
 
 class EmptyState extends StatelessWidget {
   final ThemeData theme;
@@ -7,6 +8,8 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.locale;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -25,14 +28,14 @@ class EmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'No files yet',
+            l.noFilesYet,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Tap + to import and encrypt your first file',
+            l.tapToImport,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

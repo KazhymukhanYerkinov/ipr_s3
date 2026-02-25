@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ipr_s3/core/collections/tag.dart';
+import 'package:ipr_s3/core/localization/localization_x.dart';
 
 /// Виджет для отображения и управления тегами файла.
 ///
@@ -54,19 +55,20 @@ class _TagChipsWidgetState extends State<TagChipsWidget> {
   }
 
   void _showAddDialog() {
+    final l = context.locale;
     final controller = TextEditingController();
 
     showDialog(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Add Tag'),
+          title: Text(l.addTag),
           content: TextField(
             controller: controller,
             autofocus: true,
-            decoration: const InputDecoration(
-              hintText: 'Tag name',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l.tagName,
+              border: const OutlineInputBorder(),
             ),
             textCapitalization: TextCapitalization.words,
             onSubmitted: (value) {
@@ -77,24 +79,25 @@ class _TagChipsWidgetState extends State<TagChipsWidget> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+              child: Text(l.cancel),
             ),
             FilledButton(
               onPressed: () {
                 _addTag(controller.text);
                 Navigator.pop(dialogContext);
               },
-              child: const Text('Add'),
+              child: Text(l.add),
             ),
           ],
         );
       },
-    ).then((_) => controller.dispose());
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l = context.locale;
 
     return Wrap(
       spacing: 8,
@@ -111,7 +114,7 @@ class _TagChipsWidgetState extends State<TagChipsWidget> {
         ),
         ActionChip(
           avatar: Icon(Icons.add, size: 16, color: theme.colorScheme.primary),
-          label: const Text('Add tag'),
+          label: Text(l.addTagChip),
           onPressed: _showAddDialog,
           visualDensity: VisualDensity.compact,
         ),

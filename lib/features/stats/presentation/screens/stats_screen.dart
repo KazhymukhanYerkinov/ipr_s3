@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
+import 'package:ipr_s3/core/localization/localization_x.dart';
 import 'package:ipr_s3/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:ipr_s3/features/stats/presentation/bloc/stats_event.dart';
 import 'package:ipr_s3/features/stats/presentation/bloc/stats_state.dart';
@@ -28,9 +29,10 @@ class _StatsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l = context.locale;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Statistics')),
+      appBar: AppBar(title: Text(l.statistics)),
       body: BlocBuilder<StatsBloc, StatsState>(
         builder: (context, state) {
           return switch (state) {
@@ -61,14 +63,14 @@ class _StatsView extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   FileListCard(
-                    title: 'Recent Files',
+                    title: l.recentFiles,
                     icon: Icons.access_time_rounded,
                     files: recentFiles,
                     theme: theme,
                   ),
                   const SizedBox(height: 16),
                   FileListCard(
-                    title: 'Largest Files',
+                    title: l.largestFiles,
                     icon: Icons.storage_rounded,
                     files: largestFiles,
                     theme: theme,
@@ -88,7 +90,7 @@ class _StatsView extends StatelessWidget {
                       onPressed: () => context
                           .read<StatsBloc>()
                           .add(StatsLoadRequested()),
-                      child: const Text('Retry'),
+                      child: Text(l.retry),
                     ),
                   ],
                 ),

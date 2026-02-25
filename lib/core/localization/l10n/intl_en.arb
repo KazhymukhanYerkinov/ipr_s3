@@ -89,5 +89,248 @@
   "biometricReason": "Confirm to unlock File Secure",
   "@biometricReason": {
     "description": "Reason string shown during biometric prompt"
+  },
+
+  "fileSecure": "File Secure",
+  "@fileSecure": {
+    "description": "Main app bar title on home screen"
+  },
+
+  "folders": "Folders",
+  "@folders": {
+    "description": "Folders menu item and screen title"
+  },
+
+  "statistics": "Statistics",
+  "@statistics": {
+    "description": "Statistics menu item and screen title"
+  },
+
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings menu item and screen title"
+  },
+
+  "encryptingFile": "Encrypting {fileName}...",
+  "@encryptingFile": {
+    "description": "Status text while encrypting a file",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "somethingWentWrong": "Something went wrong",
+  "@somethingWentWrong": {
+    "description": "Generic error message"
+  },
+
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button label"
+  },
+
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button label"
+  },
+
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button label"
+  },
+
+  "save": "Save",
+  "@save": {
+    "description": "Save button label"
+  },
+
+  "create": "Create",
+  "@create": {
+    "description": "Create button label"
+  },
+
+  "deleteFileTitle": "Delete file?",
+  "@deleteFileTitle": {
+    "description": "Delete file confirmation dialog title"
+  },
+
+  "deleteFileContent": "This will permanently delete \"{fileName}\".",
+  "@deleteFileContent": {
+    "description": "Delete file confirmation dialog content",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "logOut": "Log out",
+  "@logOut": {
+    "description": "Log out button label"
+  },
+
+  "logOutTitle": "Log out?",
+  "@logOutTitle": {
+    "description": "Log out confirmation dialog title"
+  },
+
+  "logOutConfirm": "Are you sure you want to log out?",
+  "@logOutConfirm": {
+    "description": "Log out confirmation dialog content"
+  },
+
+  "device": "Device",
+  "@device": {
+    "description": "Device section header in settings"
+  },
+
+  "security": "Security",
+  "@security": {
+    "description": "Security section header in settings"
+  },
+
+  "changePin": "Change PIN",
+  "@changePin": {
+    "description": "Change PIN dialog title and list tile"
+  },
+
+  "currentPin": "Current PIN",
+  "@currentPin": {
+    "description": "Current PIN text field label"
+  },
+
+  "newPin": "New PIN",
+  "@newPin": {
+    "description": "New PIN text field label"
+  },
+
+  "pinIsSet": "PIN is set",
+  "@pinIsSet": {
+    "description": "Subtitle when PIN is configured"
+  },
+
+  "noPinSet": "No PIN set",
+  "@noPinSet": {
+    "description": "Subtitle when PIN is not configured"
+  },
+
+  "newFolder": "New Folder",
+  "@newFolder": {
+    "description": "New folder dialog title"
+  },
+
+  "newSubfolder": "New Subfolder",
+  "@newSubfolder": {
+    "description": "New subfolder dialog title"
+  },
+
+  "folderName": "Folder name",
+  "@folderName": {
+    "description": "Folder name text field hint"
+  },
+
+  "deleteFolderTitle": "Delete folder?",
+  "@deleteFolderTitle": {
+    "description": "Delete folder confirmation dialog title"
+  },
+
+  "deleteFolderContent": "This will permanently delete \"{folderName}\" and all subfolders.",
+  "@deleteFolderContent": {
+    "description": "Delete folder confirmation dialog content",
+    "placeholders": {
+      "folderName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "recentFiles": "Recent Files",
+  "@recentFiles": {
+    "description": "Recent files card title in statistics"
+  },
+
+  "largestFiles": "Largest Files",
+  "@largestFiles": {
+    "description": "Largest files card title in statistics"
+  },
+
+  "decrypting": "Decrypting...",
+  "@decrypting": {
+    "description": "Status text while decrypting a file"
+  },
+
+  "fileNotFound": "File not found",
+  "@fileNotFound": {
+    "description": "Error when file is not found"
+  },
+
+  "importingFiles": "Importing Files",
+  "@importingFiles": {
+    "description": "Import progress screen title"
+  },
+
+  "filesProgress": "{completed} of {total} files",
+  "@filesProgress": {
+    "description": "Import progress counter",
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+
+  "allFilesEncrypted": "All files encrypted!",
+  "@allFilesEncrypted": {
+    "description": "Success message after all files are encrypted"
+  },
+
+  "preparing": "Preparing...",
+  "@preparing": {
+    "description": "Status text while preparing import"
+  },
+
+  "noFilesYet": "No files yet",
+  "@noFilesYet": {
+    "description": "Empty state title"
+  },
+
+  "tapToImport": "Tap + to import and encrypt your first file",
+  "@tapToImport": {
+    "description": "Empty state subtitle"
+  },
+
+  "searchFiles": "Search files...",
+  "@searchFiles": {
+    "description": "Search bar hint text"
+  },
+
+  "addTag": "Add Tag",
+  "@addTag": {
+    "description": "Add tag dialog title"
+  },
+
+  "tagName": "Tag name",
+  "@tagName": {
+    "description": "Tag name text field hint"
+  },
+
+  "add": "Add",
+  "@add": {
+    "description": "Add button label"
+  },
+
+  "addTagChip": "Add tag",
+  "@addTagChip": {
+    "description": "Add tag action chip label"
+  },
+
+  "benchmarkTitle": "Benchmark: Dart vs C (FFI)",
+  "@benchmarkTitle": {
+    "description": "Benchmark screen app bar title"
   }
 }

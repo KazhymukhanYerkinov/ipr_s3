@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:ipr_s3/core/di/injection.dart';
+import 'package:ipr_s3/core/localization/localization_x.dart';
 import 'package:ipr_s3/features/files/data/services/encryption_queue.dart';
 
 @RoutePage()
@@ -43,11 +44,12 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l = context.locale;
     final progress = _currentProgress;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Importing Files'),
+        title: Text(l.importingFiles),
       ),
       body: Center(
         child: Padding(
@@ -90,7 +92,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '${progress.completedCount} of ${progress.totalCount} files',
+                  l.filesProgress(progress.completedCount, progress.totalCount),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -104,7 +106,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                           color: theme.colorScheme.primary, size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        'All files encrypted!',
+                        l.allFilesEncrypted,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w500,
@@ -114,7 +116,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                   ),
               ] else ...[
                 Text(
-                  'Preparing...',
+                  l.preparing,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
+import 'package:ipr_s3/core/localization/localization_x.dart';
 import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_bloc.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_event.dart';
@@ -27,10 +28,11 @@ class _FolderTreeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l = context.locale;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Folders'),
+        title: Text(l.folders),
       ),
       body: BlocConsumer<FoldersBloc, FoldersState>(
         listener: (context, state) {
@@ -62,14 +64,14 @@ class _FolderTreeView extends StatelessWidget {
                     Icon(Icons.error_outline_rounded,
                         size: 48, color: theme.colorScheme.error),
                     const SizedBox(height: 12),
-                    Text('Something went wrong',
+                    Text(l.somethingWentWrong,
                         style: theme.textTheme.bodyLarge),
                     const SizedBox(height: 16),
                     FilledButton.tonal(
                       onPressed: () => context
                           .read<FoldersBloc>()
                           .add(FoldersLoadRequested()),
-                      child: const Text('Retry'),
+                      child: Text(l.retry),
                     ),
                   ],
                 ),
@@ -86,26 +88,27 @@ class _FolderTreeView extends StatelessWidget {
   }
 
   void _showCreateDialog(BuildContext context, {String? parentId}) {
+    final l = context.locale;
     final controller = TextEditingController();
 
     showDialog(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(parentId != null ? 'New Subfolder' : 'New Folder'),
+          title: Text(parentId != null ? l.newSubfolder : l.newFolder),
           content: TextField(
             controller: controller,
             autofocus: true,
-            decoration: const InputDecoration(
-              hintText: 'Folder name',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l.folderName,
+              border: const OutlineInputBorder(),
             ),
             textCapitalization: TextCapitalization.sentences,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+              child: Text(l.cancel),
             ),
             FilledButton(
               onPressed: () {
@@ -120,30 +123,30 @@ class _FolderTreeView extends StatelessWidget {
                   Navigator.pop(dialogContext);
                 }
               },
-              child: const Text('Create'),
+              child: Text(l.create),
             ),
           ],
         );
       },
-    ).then((_) => controller.dispose());
+    );
   }
 
   void _confirmDelete(BuildContext context, FolderItem folder) {
+    final l = context.locale;
     showDialog(
       context: context,
       builder: (dialogContext) {
         final theme = Theme.of(dialogContext);
         return AlertDialog(
-          title: const Text('Delete folder?'),
+          title: Text(l.deleteFolderTitle),
           content: Text(
-            'This will permanently delete "${folder.name}" '
-            'and all subfolders.',
+            l.deleteFolderContent(folder.name),
             style: theme.textTheme.bodyMedium,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+              child: Text(l.cancel),
             ),
             FilledButton(
               onPressed: () {
@@ -155,7 +158,7 @@ class _FolderTreeView extends StatelessWidget {
               style: FilledButton.styleFrom(
                 backgroundColor: theme.colorScheme.error,
               ),
-              child: const Text('Delete'),
+              child: Text(l.delete),
             ),
           ],
         );

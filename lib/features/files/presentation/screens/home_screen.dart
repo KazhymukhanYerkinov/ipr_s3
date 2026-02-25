@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
+import 'package:ipr_s3/core/localization/localization_x.dart';
 import 'package:ipr_s3/core/router/app_router.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_bloc.dart';
@@ -32,10 +33,11 @@ class _HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l = context.locale;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('File Secure'),
+        title: Text(l.fileSecure),
         actions: [
           SortDropdown(),
           BlocSelector<FilesBloc, FilesState, ViewMode?>(
@@ -64,14 +66,14 @@ class _HomeView extends StatelessWidget {
                   context.pushRoute(const SettingsRoute());
               }
             },
-            itemBuilder: (_) => const [
+            itemBuilder: (_) => [
               PopupMenuItem(
                 value: 'folders',
                 child: Row(
                   children: [
-                    Icon(Icons.folder_outlined, size: 20),
-                    SizedBox(width: 8),
-                    Text('Folders'),
+                    const Icon(Icons.folder_outlined, size: 20),
+                    const SizedBox(width: 8),
+                    Text(l.folders),
                   ],
                 ),
               ),
@@ -79,9 +81,9 @@ class _HomeView extends StatelessWidget {
                 value: 'stats',
                 child: Row(
                   children: [
-                    Icon(Icons.bar_chart_rounded, size: 20),
-                    SizedBox(width: 8),
-                    Text('Statistics'),
+                    const Icon(Icons.bar_chart_rounded, size: 20),
+                    const SizedBox(width: 8),
+                    Text(l.statistics),
                   ],
                 ),
               ),
@@ -89,9 +91,9 @@ class _HomeView extends StatelessWidget {
                 value: 'settings',
                 child: Row(
                   children: [
-                    Icon(Icons.settings_outlined, size: 20),
-                    SizedBox(width: 8),
-                    Text('Settings'),
+                    const Icon(Icons.settings_outlined, size: 20),
+                    const SizedBox(width: 8),
+                    Text(l.settings),
                   ],
                 ),
               ),
@@ -130,7 +132,7 @@ class _HomeView extends StatelessWidget {
                           const CircularProgressIndicator(),
                           const SizedBox(height: 16),
                           Text(
-                            'Encrypting $fileName...',
+                            l.encryptingFile(fileName),
                             style: theme.textTheme.bodyLarge,
                           ),
                         ],
@@ -167,14 +169,14 @@ class _HomeView extends StatelessWidget {
                           Icon(Icons.error_outline_rounded,
                               size: 48, color: theme.colorScheme.error),
                           const SizedBox(height: 12),
-                          Text('Something went wrong',
+                          Text(l.somethingWentWrong,
                               style: theme.textTheme.bodyLarge),
                           const SizedBox(height: 16),
                           FilledButton.tonal(
                             onPressed: () => context
                                 .read<FilesBloc>()
                                 .add(FilesLoadRequested()),
-                            child: const Text('Retry'),
+                            child: Text(l.retry),
                           ),
                         ],
                       ),
@@ -195,20 +197,21 @@ class _HomeView extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context, SecureFileEntity file) {
+    final l = context.locale;
     showDialog(
       context: context,
       builder: (dialogContext) {
         final theme = Theme.of(dialogContext);
         return AlertDialog(
-          title: const Text('Delete file?'),
+          title: Text(l.deleteFileTitle),
           content: Text(
-            'This will permanently delete "${file.name}".',
+            l.deleteFileContent(file.name),
             style: theme.textTheme.bodyMedium,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+              child: Text(l.cancel),
             ),
             FilledButton(
               onPressed: () {
@@ -218,7 +221,7 @@ class _HomeView extends StatelessWidget {
               style: FilledButton.styleFrom(
                 backgroundColor: theme.colorScheme.error,
               ),
-              child: const Text('Delete'),
+              child: Text(l.delete),
             ),
           ],
         );

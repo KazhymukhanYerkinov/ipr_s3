@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:ipr_s3/core/di/injection.dart';
+import 'package:ipr_s3/core/localization/localization_x.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/decrypt_file.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/get_files.dart';
@@ -62,7 +63,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
         if (file == null) {
           if (mounted) {
             setState(() {
-              _error = 'File not found';
+              _error = context.locale.fileNotFound;
               _isLoading = false;
             });
           }
@@ -101,6 +102,8 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
   }
 
   Widget _buildBody(ThemeData theme) {
+    final l = context.locale;
+
     if (_isLoading) {
       return Center(
         child: Column(
@@ -109,7 +112,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
             const CircularProgressIndicator(),
             const SizedBox(height: 16),
             Text(
-              'Decrypting...',
+              l.decrypting,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -131,7 +134,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
             const SizedBox(height: 16),
             FilledButton.tonal(
               onPressed: _loadAndDecrypt,
-              child: const Text('Retry'),
+              child: Text(l.retry),
             ),
           ],
         ),

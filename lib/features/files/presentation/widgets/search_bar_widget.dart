@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:ipr_s3/core/localization/localization_x.dart';
 
 class SearchBarWidget extends StatefulWidget {
   final ValueChanged<String> onSearch;
@@ -48,7 +49,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
         controller: _controller,
         onChanged: _onChanged,
         decoration: InputDecoration(
-          hintText: 'Search files...',
+          hintText: context.locale.searchFiles,
           prefixIcon: const Icon(Icons.search_rounded),
           suffixIcon: ValueListenableBuilder<TextEditingValue>(
             valueListenable: _controller,
