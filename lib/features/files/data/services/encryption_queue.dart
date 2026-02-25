@@ -95,25 +95,29 @@ class EncryptionQueue {
         final encrypted = await _encryptionService.encrypt(task.data);
         _completedCount++;
 
-        _progressController.add(QueueProgress(
-          fileId: task.fileId,
-          fileName: task.fileName,
-          completedCount: _completedCount,
-          totalCount: total,
-          isComplete: _queue.isEmpty,
-          encryptedData: encrypted,
-        ));
+        _progressController.add(
+          QueueProgress(
+            fileId: task.fileId,
+            fileName: task.fileName,
+            completedCount: _completedCount,
+            totalCount: total,
+            isComplete: _queue.isEmpty,
+            encryptedData: encrypted,
+          ),
+        );
       } catch (e, stackTrace) {
         _logger.error('Encryption failed for task', e, stackTrace);
         _completedCount++;
 
-        _progressController.add(QueueProgress(
-          fileId: task.fileId,
-          fileName: task.fileName,
-          completedCount: _completedCount,
-          totalCount: total,
-          isComplete: _queue.isEmpty,
-        ));
+        _progressController.add(
+          QueueProgress(
+            fileId: task.fileId,
+            fileName: task.fileName,
+            completedCount: _completedCount,
+            totalCount: total,
+            isComplete: _queue.isEmpty,
+          ),
+        );
       }
     }
 

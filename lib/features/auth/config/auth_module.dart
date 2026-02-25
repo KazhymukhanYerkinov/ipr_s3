@@ -11,44 +11,27 @@ import 'package:ipr_s3/features/auth/domain/behaviors/verify_pin_behavior.dart';
 @module
 abstract class AuthModule {
   @factoryMethod
-  GetCurrentUserBehavior getCurrentUserBehavior(
-    AuthService authService,
-  ) =>
+  GetCurrentUserBehavior getCurrentUserBehavior(AuthService authService) =>
       authService;
 
   @factoryMethod
-  SignInWithGoogleBehavior signInWithGoogleBehavior(
-    AuthService authService,
-  ) =>
+  SignInWithGoogleBehavior signInWithGoogleBehavior(AuthService authService) =>
       authService;
 
   @factoryMethod
-  SignOutBehavior signOutBehavior(
-    AuthService authService,
-  ) =>
-      authService;
+  SignOutBehavior signOutBehavior(AuthService authService) => authService;
 
   @factoryMethod
-  HasPinBehavior hasPinBehavior(
-    AuthService authService,
-  ) =>
-      authService;
+  HasPinBehavior hasPinBehavior(AuthService authService) => authService;
 
   @factoryMethod
-  SetPinBehavior setPinBehavior(
-    AuthService authService,
-  ) =>
-      authService;
+  SetPinBehavior setPinBehavior(AuthService authService) => authService;
 
   @factoryMethod
-  VerifyPinBehavior verifyPinBehavior(
-    AuthService authService,
-  ) =>
-      authService;
+  VerifyPinBehavior verifyPinBehavior(AuthService authService) => authService;
 
   @factoryMethod
   AuthenticateWithBiometricsBehavior authenticateWithBiometricsBehavior(
     AuthService authService,
-  ) =>
-      authService;
+  ) => authService;
 }

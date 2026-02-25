@@ -48,13 +48,13 @@ class _BenchmarkView extends StatelessWidget {
                 theme: theme,
               ),
             BenchmarkCompleted(:final results) => ResultsView(
-                results: results,
-                theme: theme,
-              ),
+              results: results,
+              theme: theme,
+            ),
             BenchmarkError(:final message) => BenchmarkErrorView(
-                message: message,
-                theme: theme,
-              ),
+              message: message,
+              theme: theme,
+            ),
             _ => const SizedBox.shrink(),
           };
         },

@@ -9,32 +9,22 @@ import 'package:ipr_s3/features/files/domain/behaviors/search_files_behavior.dar
 @module
 abstract class FilesModule {
   @factoryMethod
-  GetFilesBehavior getFilesBehavior(
-    FilesRepositoryImpl repository,
-  ) =>
+  GetFilesBehavior getFilesBehavior(FilesRepositoryImpl repository) =>
       repository;
 
   @factoryMethod
-  ImportFileBehavior importFileBehavior(
-    FilesRepositoryImpl repository,
-  ) =>
+  ImportFileBehavior importFileBehavior(FilesRepositoryImpl repository) =>
       repository;
 
   @factoryMethod
-  DecryptFileBehavior decryptFileBehavior(
-    FilesRepositoryImpl repository,
-  ) =>
+  DecryptFileBehavior decryptFileBehavior(FilesRepositoryImpl repository) =>
       repository;
 
   @factoryMethod
-  DeleteFileBehavior deleteFileBehavior(
-    FilesRepositoryImpl repository,
-  ) =>
+  DeleteFileBehavior deleteFileBehavior(FilesRepositoryImpl repository) =>
       repository;
 
   @factoryMethod
-  SearchFilesBehavior searchFilesBehavior(
-    FilesRepositoryImpl repository,
-  ) =>
+  SearchFilesBehavior searchFilesBehavior(FilesRepositoryImpl repository) =>
       repository;
 }

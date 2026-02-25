@@ -59,16 +59,16 @@ class SecureFileEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        type,
-        size,
-        encryptedPath,
-        thumbnailPath,
-        createdAt,
-        updatedAt,
-        tags,
-        folderId,
-        checksum,
-      ];
+    id,
+    name,
+    type,
+    size,
+    encryptedPath,
+    thumbnailPath,
+    createdAt,
+    updatedAt,
+    tags,
+    folderId,
+    checksum,
+  ];
 }

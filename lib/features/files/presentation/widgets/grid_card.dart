@@ -28,9 +28,7 @@ class GridCard extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 color: color.withAlpha(15),
-                child: Center(
-                  child: Icon(icon, size: 48, color: color),
-                ),
+                child: Center(child: Icon(icon, size: 48, color: color)),
               ),
             ),
             Padding(
@@ -86,7 +84,10 @@ class GridCard extends StatelessWidget {
       FileType.text => (Icons.description_outlined, theme.colorScheme.tertiary),
       FileType.video => (Icons.videocam_outlined, Colors.deepPurple),
       FileType.audio => (Icons.audiotrack_outlined, Colors.orange),
-      FileType.unknown => (Icons.insert_drive_file_outlined, theme.colorScheme.onSurfaceVariant),
+      FileType.unknown => (
+        Icons.insert_drive_file_outlined,
+        theme.colorScheme.onSurfaceVariant,
+      ),
     };
   }
 

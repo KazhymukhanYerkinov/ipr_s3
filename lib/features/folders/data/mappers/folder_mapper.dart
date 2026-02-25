@@ -2,7 +2,10 @@ import 'package:ipr_s3/features/folders/data/dtos/folder_dto.dart';
 import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 
 class FolderMapper {
-  static FolderItem fromDto(FolderDto dto, {List<FolderItem> children = const []}) {
+  static FolderItem fromDto(
+    FolderDto dto, {
+    List<FolderItem> children = const [],
+  }) {
     return FolderItem(
       id: dto.id,
       name: dto.name,

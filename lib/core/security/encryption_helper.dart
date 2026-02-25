@@ -13,7 +13,9 @@ class EncryptionHelper {
   EncryptionHelper(this._secureStorage);
 
   Future<Uint8List> getEncryptionKey() async {
-    final existingKey = await _secureStorage.read(key: StorageKeys.encryptionKey);
+    final existingKey = await _secureStorage.read(
+      key: StorageKeys.encryptionKey,
+    );
     if (existingKey != null) {
       return base64Url.decode(existingKey);
     }

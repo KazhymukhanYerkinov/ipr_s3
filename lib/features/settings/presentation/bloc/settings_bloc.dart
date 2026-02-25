@@ -11,7 +11,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final PinManager _pinManager;
 
   SettingsBloc(this._deviceInfo, this._pinManager)
-      : super(const SettingsState.initial()) {
+    : super(const SettingsState.initial()) {
     on<SettingsLoadRequested>(_onLoad);
     on<PinChangeRequested>(_onPinChange);
     on<PinDeleteRequested>(_onPinDelete);
@@ -30,12 +30,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       _pinManager.hasPin(),
     ]);
 
-    emit(SettingsState.loaded(
-      batteryLevel: results[0] as int?,
-      freeStorage: results[1] as int?,
-      totalStorage: results[2] as int?,
-      hasPin: results[3] as bool,
-    ));
+    emit(
+      SettingsState.loaded(
+        batteryLevel: results[0] as int?,
+        freeStorage: results[1] as int?,
+        totalStorage: results[2] as int?,
+        hasPin: results[3] as bool,
+      ),
+    );
   }
 
   Future<void> _onPinChange(

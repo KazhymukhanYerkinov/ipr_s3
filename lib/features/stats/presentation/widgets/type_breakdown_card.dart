@@ -16,8 +16,9 @@ class TypeBreakdownCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sortedTypes = countByType.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    final sortedTypes =
+        countByType.entries.toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
 
     return Card(
       child: Padding(
@@ -36,20 +37,26 @@ class TypeBreakdownCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Row(
                   children: [
-                    Icon(_iconForType(type), size: 20,
-                        color: theme.colorScheme.primary),
+                    Icon(
+                      _iconForType(type),
+                      size: 20,
+                      color: theme.colorScheme.primary,
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text(type.name.toUpperCase(),
-                          style: theme.textTheme.bodyMedium),
+                      child: Text(
+                        type.name.toUpperCase(),
+                        style: theme.textTheme.bodyMedium,
+                      ),
                     ),
-                    Text('$count files',
-                        style: theme.textTheme.bodySmall),
+                    Text('$count files', style: theme.textTheme.bodySmall),
                     const SizedBox(width: 12),
-                    Text(formatSize(size),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        )),
+                    Text(
+                      formatSize(size),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ),
               );

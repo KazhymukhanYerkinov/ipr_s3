@@ -7,7 +7,6 @@ class SortByName implements SortStrategy {
 
   @override
   List<SecureFileEntity> sort(List<SecureFileEntity> files) =>
-      [...files]..sort(
-          (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
-        );
+      [...files]
+        ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
 }

@@ -9,7 +9,11 @@ class ErrorPlaceholder extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.broken_image_outlined, size: 64, color: theme.colorScheme.error),
+        Icon(
+          Icons.broken_image_outlined,
+          size: 64,
+          color: theme.colorScheme.error,
+        ),
         const SizedBox(height: 12),
         Text('Failed to load image', style: theme.textTheme.bodyLarge),
       ],

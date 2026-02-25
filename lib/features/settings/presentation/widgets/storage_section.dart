@@ -21,12 +21,13 @@ class StorageSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.storage_rounded, size: 28,
-                color: theme.colorScheme.primary),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text('Storage', style: theme.textTheme.bodyLarge),
+            Icon(
+              Icons.storage_rounded,
+              size: 28,
+              color: theme.colorScheme.primary,
             ),
+            const SizedBox(width: 12),
+            Expanded(child: Text('Storage', style: theme.textTheme.bodyLarge)),
             if (usagePercent != null)
               Text(
                 '${(usagePercent! * 100).toStringAsFixed(0)}% used',

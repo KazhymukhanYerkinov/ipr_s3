@@ -12,7 +12,8 @@ part of 'settings_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$SettingsState {
@@ -20,49 +21,59 @@ mixin _$SettingsState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(int? batteryLevel, int? freeStorage,
-            int? totalStorage, bool hasPin, String message)
-        loaded,
+    required TResult Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )
+    loaded,
     required TResult Function(String message) error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(int? batteryLevel, int? freeStorage, int? totalStorage,
-            bool hasPin, String message)?
-        loaded,
+    TResult? Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )?
+    loaded,
     TResult? Function(String message)? error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(int? batteryLevel, int? freeStorage, int? totalStorage,
-            bool hasPin, String message)?
-        loaded,
+    TResult Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )?
+    loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(SettingsInitial value) initial,
     required TResult Function(SettingsLoading value) loading,
     required TResult Function(SettingsLoaded value) loaded,
     required TResult Function(SettingsError value) error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SettingsInitial value)? initial,
     TResult? Function(SettingsLoading value)? loading,
     TResult? Function(SettingsLoaded value)? loaded,
     TResult? Function(SettingsError value)? error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SettingsInitial value)? initial,
@@ -70,15 +81,15 @@ mixin _$SettingsState {
     TResult Function(SettingsLoaded value)? loaded,
     TResult Function(SettingsError value)? error,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $SettingsStateCopyWith<$Res> {
   factory $SettingsStateCopyWith(
-          SettingsState value, $Res Function(SettingsState) then) =
-      _$SettingsStateCopyWithImpl<$Res, SettingsState>;
+    SettingsState value,
+    $Res Function(SettingsState) then,
+  ) = _$SettingsStateCopyWithImpl<$Res, SettingsState>;
 }
 
 /// @nodoc
@@ -94,9 +105,10 @@ class _$SettingsStateCopyWithImpl<$Res, $Val extends SettingsState>
 
 /// @nodoc
 abstract class _$$SettingsInitialImplCopyWith<$Res> {
-  factory _$$SettingsInitialImplCopyWith(_$SettingsInitialImpl value,
-          $Res Function(_$SettingsInitialImpl) then) =
-      __$$SettingsInitialImplCopyWithImpl<$Res>;
+  factory _$$SettingsInitialImplCopyWith(
+    _$SettingsInitialImpl value,
+    $Res Function(_$SettingsInitialImpl) then,
+  ) = __$$SettingsInitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -104,8 +116,9 @@ class __$$SettingsInitialImplCopyWithImpl<$Res>
     extends _$SettingsStateCopyWithImpl<$Res, _$SettingsInitialImpl>
     implements _$$SettingsInitialImplCopyWith<$Res> {
   __$$SettingsInitialImplCopyWithImpl(
-      _$SettingsInitialImpl _value, $Res Function(_$SettingsInitialImpl) _then)
-      : super(_value, _then);
+    _$SettingsInitialImpl _value,
+    $Res Function(_$SettingsInitialImpl) _then,
+  ) : super(_value, _then);
 }
 
 /// @nodoc
@@ -132,9 +145,14 @@ class _$SettingsInitialImpl implements SettingsInitial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(int? batteryLevel, int? freeStorage,
-            int? totalStorage, bool hasPin, String message)
-        loaded,
+    required TResult Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )
+    loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -145,9 +163,14 @@ class _$SettingsInitialImpl implements SettingsInitial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(int? batteryLevel, int? freeStorage, int? totalStorage,
-            bool hasPin, String message)?
-        loaded,
+    TResult? Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )?
+    loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -158,9 +181,14 @@ class _$SettingsInitialImpl implements SettingsInitial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(int? batteryLevel, int? freeStorage, int? totalStorage,
-            bool hasPin, String message)?
-        loaded,
+    TResult Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )?
+    loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -214,9 +242,10 @@ abstract class SettingsInitial implements SettingsState {
 
 /// @nodoc
 abstract class _$$SettingsLoadingImplCopyWith<$Res> {
-  factory _$$SettingsLoadingImplCopyWith(_$SettingsLoadingImpl value,
-          $Res Function(_$SettingsLoadingImpl) then) =
-      __$$SettingsLoadingImplCopyWithImpl<$Res>;
+  factory _$$SettingsLoadingImplCopyWith(
+    _$SettingsLoadingImpl value,
+    $Res Function(_$SettingsLoadingImpl) then,
+  ) = __$$SettingsLoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -224,8 +253,9 @@ class __$$SettingsLoadingImplCopyWithImpl<$Res>
     extends _$SettingsStateCopyWithImpl<$Res, _$SettingsLoadingImpl>
     implements _$$SettingsLoadingImplCopyWith<$Res> {
   __$$SettingsLoadingImplCopyWithImpl(
-      _$SettingsLoadingImpl _value, $Res Function(_$SettingsLoadingImpl) _then)
-      : super(_value, _then);
+    _$SettingsLoadingImpl _value,
+    $Res Function(_$SettingsLoadingImpl) _then,
+  ) : super(_value, _then);
 }
 
 /// @nodoc
@@ -252,9 +282,14 @@ class _$SettingsLoadingImpl implements SettingsLoading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(int? batteryLevel, int? freeStorage,
-            int? totalStorage, bool hasPin, String message)
-        loaded,
+    required TResult Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )
+    loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -265,9 +300,14 @@ class _$SettingsLoadingImpl implements SettingsLoading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(int? batteryLevel, int? freeStorage, int? totalStorage,
-            bool hasPin, String message)?
-        loaded,
+    TResult? Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )?
+    loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -278,9 +318,14 @@ class _$SettingsLoadingImpl implements SettingsLoading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(int? batteryLevel, int? freeStorage, int? totalStorage,
-            bool hasPin, String message)?
-        loaded,
+    TResult Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )?
+    loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -334,16 +379,18 @@ abstract class SettingsLoading implements SettingsState {
 
 /// @nodoc
 abstract class _$$SettingsLoadedImplCopyWith<$Res> {
-  factory _$$SettingsLoadedImplCopyWith(_$SettingsLoadedImpl value,
-          $Res Function(_$SettingsLoadedImpl) then) =
-      __$$SettingsLoadedImplCopyWithImpl<$Res>;
+  factory _$$SettingsLoadedImplCopyWith(
+    _$SettingsLoadedImpl value,
+    $Res Function(_$SettingsLoadedImpl) then,
+  ) = __$$SettingsLoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call(
-      {int? batteryLevel,
-      int? freeStorage,
-      int? totalStorage,
-      bool hasPin,
-      String message});
+  $Res call({
+    int? batteryLevel,
+    int? freeStorage,
+    int? totalStorage,
+    bool hasPin,
+    String message,
+  });
 }
 
 /// @nodoc
@@ -351,8 +398,9 @@ class __$$SettingsLoadedImplCopyWithImpl<$Res>
     extends _$SettingsStateCopyWithImpl<$Res, _$SettingsLoadedImpl>
     implements _$$SettingsLoadedImplCopyWith<$Res> {
   __$$SettingsLoadedImplCopyWithImpl(
-      _$SettingsLoadedImpl _value, $Res Function(_$SettingsLoadedImpl) _then)
-      : super(_value, _then);
+    _$SettingsLoadedImpl _value,
+    $Res Function(_$SettingsLoadedImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -363,40 +411,48 @@ class __$$SettingsLoadedImplCopyWithImpl<$Res>
     Object? hasPin = null,
     Object? message = null,
   }) {
-    return _then(_$SettingsLoadedImpl(
-      batteryLevel: freezed == batteryLevel
-          ? _value.batteryLevel
-          : batteryLevel // ignore: cast_nullable_to_non_nullable
-              as int?,
-      freeStorage: freezed == freeStorage
-          ? _value.freeStorage
-          : freeStorage // ignore: cast_nullable_to_non_nullable
-              as int?,
-      totalStorage: freezed == totalStorage
-          ? _value.totalStorage
-          : totalStorage // ignore: cast_nullable_to_non_nullable
-              as int?,
-      hasPin: null == hasPin
-          ? _value.hasPin
-          : hasPin // ignore: cast_nullable_to_non_nullable
-              as bool,
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+    return _then(
+      _$SettingsLoadedImpl(
+        batteryLevel:
+            freezed == batteryLevel
+                ? _value.batteryLevel
+                : batteryLevel // ignore: cast_nullable_to_non_nullable
+                    as int?,
+        freeStorage:
+            freezed == freeStorage
+                ? _value.freeStorage
+                : freeStorage // ignore: cast_nullable_to_non_nullable
+                    as int?,
+        totalStorage:
+            freezed == totalStorage
+                ? _value.totalStorage
+                : totalStorage // ignore: cast_nullable_to_non_nullable
+                    as int?,
+        hasPin:
+            null == hasPin
+                ? _value.hasPin
+                : hasPin // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        message:
+            null == message
+                ? _value.message
+                : message // ignore: cast_nullable_to_non_nullable
+                    as String,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$SettingsLoadedImpl implements SettingsLoaded {
-  const _$SettingsLoadedImpl(
-      {this.batteryLevel,
-      this.freeStorage,
-      this.totalStorage,
-      required this.hasPin,
-      this.message = ''});
+  const _$SettingsLoadedImpl({
+    this.batteryLevel,
+    this.freeStorage,
+    this.totalStorage,
+    required this.hasPin,
+    this.message = '',
+  });
 
   @override
   final int? batteryLevel;
@@ -432,23 +488,36 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, batteryLevel, freeStorage, totalStorage, hasPin, message);
+    runtimeType,
+    batteryLevel,
+    freeStorage,
+    totalStorage,
+    hasPin,
+    message,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$SettingsLoadedImplCopyWith<_$SettingsLoadedImpl> get copyWith =>
       __$$SettingsLoadedImplCopyWithImpl<_$SettingsLoadedImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(int? batteryLevel, int? freeStorage,
-            int? totalStorage, bool hasPin, String message)
-        loaded,
+    required TResult Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )
+    loaded,
     required TResult Function(String message) error,
   }) {
     return loaded(batteryLevel, freeStorage, totalStorage, hasPin, message);
@@ -459,13 +528,23 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(int? batteryLevel, int? freeStorage, int? totalStorage,
-            bool hasPin, String message)?
-        loaded,
+    TResult? Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )?
+    loaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(
-        batteryLevel, freeStorage, totalStorage, hasPin, message);
+      batteryLevel,
+      freeStorage,
+      totalStorage,
+      hasPin,
+      message,
+    );
   }
 
   @override
@@ -473,9 +552,14 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(int? batteryLevel, int? freeStorage, int? totalStorage,
-            bool hasPin, String message)?
-        loaded,
+    TResult Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )?
+    loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -524,12 +608,13 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
 }
 
 abstract class SettingsLoaded implements SettingsState {
-  const factory SettingsLoaded(
-      {final int? batteryLevel,
-      final int? freeStorage,
-      final int? totalStorage,
-      required final bool hasPin,
-      final String message}) = _$SettingsLoadedImpl;
+  const factory SettingsLoaded({
+    final int? batteryLevel,
+    final int? freeStorage,
+    final int? totalStorage,
+    required final bool hasPin,
+    final String message,
+  }) = _$SettingsLoadedImpl;
 
   int? get batteryLevel;
   int? get freeStorage;
@@ -544,8 +629,9 @@ abstract class SettingsLoaded implements SettingsState {
 /// @nodoc
 abstract class _$$SettingsErrorImplCopyWith<$Res> {
   factory _$$SettingsErrorImplCopyWith(
-          _$SettingsErrorImpl value, $Res Function(_$SettingsErrorImpl) then) =
-      __$$SettingsErrorImplCopyWithImpl<$Res>;
+    _$SettingsErrorImpl value,
+    $Res Function(_$SettingsErrorImpl) then,
+  ) = __$$SettingsErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String message});
 }
@@ -555,20 +641,22 @@ class __$$SettingsErrorImplCopyWithImpl<$Res>
     extends _$SettingsStateCopyWithImpl<$Res, _$SettingsErrorImpl>
     implements _$$SettingsErrorImplCopyWith<$Res> {
   __$$SettingsErrorImplCopyWithImpl(
-      _$SettingsErrorImpl _value, $Res Function(_$SettingsErrorImpl) _then)
-      : super(_value, _then);
+    _$SettingsErrorImpl _value,
+    $Res Function(_$SettingsErrorImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? message = null,
-  }) {
-    return _then(_$SettingsErrorImpl(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+  $Res call({Object? message = null}) {
+    return _then(
+      _$SettingsErrorImpl(
+        message:
+            null == message
+                ? _value.message
+                : message // ignore: cast_nullable_to_non_nullable
+                    as String,
+      ),
+    );
   }
 }
 
@@ -607,9 +695,14 @@ class _$SettingsErrorImpl implements SettingsError {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(int? batteryLevel, int? freeStorage,
-            int? totalStorage, bool hasPin, String message)
-        loaded,
+    required TResult Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )
+    loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -620,9 +713,14 @@ class _$SettingsErrorImpl implements SettingsError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(int? batteryLevel, int? freeStorage, int? totalStorage,
-            bool hasPin, String message)?
-        loaded,
+    TResult? Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )?
+    loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -633,9 +731,14 @@ class _$SettingsErrorImpl implements SettingsError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(int? batteryLevel, int? freeStorage, int? totalStorage,
-            bool hasPin, String message)?
-        loaded,
+    TResult Function(
+      int? batteryLevel,
+      int? freeStorage,
+      int? totalStorage,
+      bool hasPin,
+      String message,
+    )?
+    loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

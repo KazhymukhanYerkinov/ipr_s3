@@ -40,17 +40,19 @@ class _SettingsView extends StatelessWidget {
           if (state is SettingsLoaded && state.message.isNotEmpty) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(
-                content: Text(state.message),
-                behavior: SnackBarBehavior.floating,
-              ));
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
           }
         },
         builder: (context, state) {
           return switch (state) {
             SettingsLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: CircularProgressIndicator(),
+            ),
             SettingsLoaded(
               :final batteryLevel,
               :final freeStorage,
@@ -93,23 +95,27 @@ class _SettingsView extends StatelessWidget {
                 ],
               ),
             SettingsError(:final message) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error_outline, size: 48,
-                        color: theme.colorScheme.error),
-                    const SizedBox(height: 12),
-                    Text(message),
-                    const SizedBox(height: 16),
-                    FilledButton.tonal(
-                      onPressed: () => context
-                          .read<SettingsBloc>()
-                          .add(SettingsLoadRequested()),
-                      child: Text(l.retry),
-                    ),
-                  ],
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: theme.colorScheme.error,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(message),
+                  const SizedBox(height: 16),
+                  FilledButton.tonal(
+                    onPressed:
+                        () => context.read<SettingsBloc>().add(
+                          SettingsLoadRequested(),
+                        ),
+                    child: Text(l.retry),
+                  ),
+                ],
               ),
+            ),
             _ => const SizedBox.shrink(),
           };
         },
@@ -194,8 +200,8 @@ class _SettingsView extends StatelessWidget {
                 final newPin = newPinController.text.trim();
                 if (oldPin.length == 4 && newPin.length == 4) {
                   context.read<SettingsBloc>().add(
-                        PinChangeRequested(oldPin: oldPin, newPin: newPin),
-                      );
+                    PinChangeRequested(oldPin: oldPin, newPin: newPin),
+                  );
                   Navigator.pop(dialogContext);
                 }
               },

@@ -15,7 +15,10 @@ class FileIcon extends StatelessWidget {
       FileType.text => (Icons.description_outlined, theme.colorScheme.tertiary),
       FileType.video => (Icons.videocam_outlined, Colors.deepPurple),
       FileType.audio => (Icons.audiotrack_outlined, Colors.orange),
-      FileType.unknown => (Icons.insert_drive_file_outlined, theme.colorScheme.onSurfaceVariant),
+      FileType.unknown => (
+        Icons.insert_drive_file_outlined,
+        theme.colorScheme.onSurfaceVariant,
+      ),
     };
 
     return Container(

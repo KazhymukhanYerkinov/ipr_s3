@@ -118,16 +118,12 @@ import 'package:ipr_s3/features/stats/presentation/bloc/stats_bloc.dart'
 import 'package:local_auth/local_auth.dart' as _i152;
 
 extension GetItInjectableX on _i174.GetIt {
-// initializes the registration of main-scope dependencies inside of GetIt
+  // initializes the registration of main-scope dependencies inside of GetIt
   _i174.GetIt init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
   }) {
-    final gh = _i526.GetItHelper(
-      this,
-      environment,
-      environmentFilter,
-    );
+    final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
     final authModule = _$AuthModule();
     final filesModule = _$FilesModule();
@@ -135,144 +131,209 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i59.FirebaseAuth>(() => registerModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => registerModule.googleSignIn);
     gh.lazySingleton<_i558.FlutterSecureStorage>(
-        () => registerModule.secureStorage);
+      () => registerModule.secureStorage,
+    );
     gh.lazySingleton<_i152.LocalAuthentication>(() => registerModule.localAuth);
     gh.lazySingleton<_i851.DeviceInfoChannel>(() => _i851.DeviceInfoChannel());
     gh.lazySingleton<_i865.NativeHashService>(() => _i865.NativeHashService());
     gh.lazySingleton<_i424.FileSearchService>(() => _i424.FileSearchService());
     gh.lazySingleton<_i681.ThumbnailService>(() => _i681.ThumbnailService());
-    gh.lazySingleton<_i910.AuthLocalSource>(() => _i910.AuthLocalSourceImpl(
-          gh<_i558.FlutterSecureStorage>(),
-          gh<_i152.LocalAuthentication>(),
-        ));
+    gh.lazySingleton<_i910.AuthLocalSource>(
+      () => _i910.AuthLocalSourceImpl(
+        gh<_i558.FlutterSecureStorage>(),
+        gh<_i152.LocalAuthentication>(),
+      ),
+    );
     gh.lazySingleton<_i107.PinManager>(
-        () => _i107.PinManager(gh<_i558.FlutterSecureStorage>()));
+      () => _i107.PinManager(gh<_i558.FlutterSecureStorage>()),
+    );
     gh.lazySingleton<_i564.EncryptionHelper>(
-        () => _i564.EncryptionHelper(gh<_i558.FlutterSecureStorage>()));
+      () => _i564.EncryptionHelper(gh<_i558.FlutterSecureStorage>()),
+    );
     gh.lazySingleton<_i57.FoldersLocalSource>(
-        () => _i57.FoldersLocalSourceImpl(gh<_i564.EncryptionHelper>()));
+      () => _i57.FoldersLocalSourceImpl(gh<_i564.EncryptionHelper>()),
+    );
     gh.lazySingleton<_i140.ApiClient>(
-        () => _i140.ApiClient(gh<_i910.AuthLocalSource>()));
+      () => _i140.ApiClient(gh<_i910.AuthLocalSource>()),
+    );
     gh.lazySingleton<_i78.FileEncryptionService>(
-        () => _i78.FileEncryptionService(gh<_i564.EncryptionHelper>()));
+      () => _i78.FileEncryptionService(gh<_i564.EncryptionHelper>()),
+    );
     gh.factory<_i870.BenchmarkBloc>(
-        () => _i870.BenchmarkBloc(gh<_i865.NativeHashService>()));
-    gh.lazySingleton<_i1012.AuthRemoteSource>(() => _i1012.AuthRemoteSourceImpl(
-          gh<_i59.FirebaseAuth>(),
-          gh<_i116.GoogleSignIn>(),
-        ));
-    gh.factory<_i789.SettingsBloc>(() => _i789.SettingsBloc(
-          gh<_i851.DeviceInfoChannel>(),
-          gh<_i107.PinManager>(),
-        ));
+      () => _i870.BenchmarkBloc(gh<_i865.NativeHashService>()),
+    );
+    gh.lazySingleton<_i1012.AuthRemoteSource>(
+      () => _i1012.AuthRemoteSourceImpl(
+        gh<_i59.FirebaseAuth>(),
+        gh<_i116.GoogleSignIn>(),
+      ),
+    );
+    gh.factory<_i789.SettingsBloc>(
+      () => _i789.SettingsBloc(
+        gh<_i851.DeviceInfoChannel>(),
+        gh<_i107.PinManager>(),
+      ),
+    );
     gh.lazySingleton<_i943.FilesLocalSource>(
-        () => _i943.FilesLocalSourceImpl(gh<_i564.EncryptionHelper>()));
+      () => _i943.FilesLocalSourceImpl(gh<_i564.EncryptionHelper>()),
+    );
     gh.lazySingleton<_i462.EncryptionQueue>(
-        () => _i462.EncryptionQueue(gh<_i78.FileEncryptionService>()));
-    gh.lazySingleton<_i86.FilesRepositoryImpl>(() => _i86.FilesRepositoryImpl(
-          gh<_i943.FilesLocalSource>(),
-          gh<_i78.FileEncryptionService>(),
-          gh<_i681.ThumbnailService>(),
-          gh<_i424.FileSearchService>(),
-          gh<_i865.NativeHashService>(),
-        ));
-    gh.lazySingleton<_i77.AuthService>(() => _i77.AuthService(
-          gh<_i1012.AuthRemoteSource>(),
-          gh<_i910.AuthLocalSource>(),
-          gh<_i107.PinManager>(),
-        ));
+      () => _i462.EncryptionQueue(gh<_i78.FileEncryptionService>()),
+    );
+    gh.lazySingleton<_i86.FilesRepositoryImpl>(
+      () => _i86.FilesRepositoryImpl(
+        gh<_i943.FilesLocalSource>(),
+        gh<_i78.FileEncryptionService>(),
+        gh<_i681.ThumbnailService>(),
+        gh<_i424.FileSearchService>(),
+        gh<_i865.NativeHashService>(),
+      ),
+    );
+    gh.lazySingleton<_i77.AuthService>(
+      () => _i77.AuthService(
+        gh<_i1012.AuthRemoteSource>(),
+        gh<_i910.AuthLocalSource>(),
+        gh<_i107.PinManager>(),
+      ),
+    );
     gh.lazySingleton<_i575.FoldersRepositoryImpl>(
-        () => _i575.FoldersRepositoryImpl(
-              gh<_i57.FoldersLocalSource>(),
-              gh<_i943.FilesLocalSource>(),
-            ));
+      () => _i575.FoldersRepositoryImpl(
+        gh<_i57.FoldersLocalSource>(),
+        gh<_i943.FilesLocalSource>(),
+      ),
+    );
     gh.factory<_i342.GetCurrentUserBehavior>(
-        () => authModule.getCurrentUserBehavior(gh<_i77.AuthService>()));
+      () => authModule.getCurrentUserBehavior(gh<_i77.AuthService>()),
+    );
     gh.factory<_i310.SignInWithGoogleBehavior>(
-        () => authModule.signInWithGoogleBehavior(gh<_i77.AuthService>()));
+      () => authModule.signInWithGoogleBehavior(gh<_i77.AuthService>()),
+    );
     gh.factory<_i369.SignOutBehavior>(
-        () => authModule.signOutBehavior(gh<_i77.AuthService>()));
+      () => authModule.signOutBehavior(gh<_i77.AuthService>()),
+    );
     gh.factory<_i664.HasPinBehavior>(
-        () => authModule.hasPinBehavior(gh<_i77.AuthService>()));
+      () => authModule.hasPinBehavior(gh<_i77.AuthService>()),
+    );
     gh.factory<_i503.SetPinBehavior>(
-        () => authModule.setPinBehavior(gh<_i77.AuthService>()));
+      () => authModule.setPinBehavior(gh<_i77.AuthService>()),
+    );
     gh.factory<_i692.VerifyPinBehavior>(
-        () => authModule.verifyPinBehavior(gh<_i77.AuthService>()));
-    gh.factory<_i710.AuthenticateWithBiometricsBehavior>(() =>
-        authModule.authenticateWithBiometricsBehavior(gh<_i77.AuthService>()));
+      () => authModule.verifyPinBehavior(gh<_i77.AuthService>()),
+    );
+    gh.factory<_i710.AuthenticateWithBiometricsBehavior>(
+      () =>
+          authModule.authenticateWithBiometricsBehavior(gh<_i77.AuthService>()),
+    );
     gh.lazySingleton<_i712.SetPinUseCase>(
-        () => _i712.SetPinUseCase(gh<_i503.SetPinBehavior>()));
+      () => _i712.SetPinUseCase(gh<_i503.SetPinBehavior>()),
+    );
     gh.lazySingleton<_i411.HasPinUseCase>(
-        () => _i411.HasPinUseCase(gh<_i664.HasPinBehavior>()));
-    gh.lazySingleton<_i188.AuthSignInWithGoogleUseCase>(() =>
-        _i188.AuthSignInWithGoogleUseCase(
-            gh<_i310.SignInWithGoogleBehavior>()));
+      () => _i411.HasPinUseCase(gh<_i664.HasPinBehavior>()),
+    );
+    gh.lazySingleton<_i188.AuthSignInWithGoogleUseCase>(
+      () => _i188.AuthSignInWithGoogleUseCase(
+        gh<_i310.SignInWithGoogleBehavior>(),
+      ),
+    );
     gh.lazySingleton<_i262.VerifyPinUseCase>(
-        () => _i262.VerifyPinUseCase(gh<_i692.VerifyPinBehavior>()));
-    gh.lazySingleton<_i254.AuthGetCurrentUserUseCase>(() =>
-        _i254.AuthGetCurrentUserUseCase(gh<_i342.GetCurrentUserBehavior>()));
+      () => _i262.VerifyPinUseCase(gh<_i692.VerifyPinBehavior>()),
+    );
+    gh.lazySingleton<_i254.AuthGetCurrentUserUseCase>(
+      () => _i254.AuthGetCurrentUserUseCase(gh<_i342.GetCurrentUserBehavior>()),
+    );
     gh.factory<_i570.GetFilesBehavior>(
-        () => filesModule.getFilesBehavior(gh<_i86.FilesRepositoryImpl>()));
+      () => filesModule.getFilesBehavior(gh<_i86.FilesRepositoryImpl>()),
+    );
     gh.factory<_i20.ImportFileBehavior>(
-        () => filesModule.importFileBehavior(gh<_i86.FilesRepositoryImpl>()));
+      () => filesModule.importFileBehavior(gh<_i86.FilesRepositoryImpl>()),
+    );
     gh.factory<_i331.DecryptFileBehavior>(
-        () => filesModule.decryptFileBehavior(gh<_i86.FilesRepositoryImpl>()));
+      () => filesModule.decryptFileBehavior(gh<_i86.FilesRepositoryImpl>()),
+    );
     gh.factory<_i456.DeleteFileBehavior>(
-        () => filesModule.deleteFileBehavior(gh<_i86.FilesRepositoryImpl>()));
+      () => filesModule.deleteFileBehavior(gh<_i86.FilesRepositoryImpl>()),
+    );
     gh.factory<_i279.SearchFilesBehavior>(
-        () => filesModule.searchFilesBehavior(gh<_i86.FilesRepositoryImpl>()));
+      () => filesModule.searchFilesBehavior(gh<_i86.FilesRepositoryImpl>()),
+    );
     gh.lazySingleton<_i296.AuthSignOutUseCase>(
-        () => _i296.AuthSignOutUseCase(gh<_i369.SignOutBehavior>()));
+      () => _i296.AuthSignOutUseCase(gh<_i369.SignOutBehavior>()),
+    );
     gh.lazySingleton<_i166.DecryptFileUseCase>(
-        () => _i166.DecryptFileUseCase(gh<_i331.DecryptFileBehavior>()));
-    gh.factory<_i152.GetFoldersBehavior>(() =>
-        foldersModule.getFoldersBehavior(gh<_i575.FoldersRepositoryImpl>()));
-    gh.factory<_i19.CreateFolderBehavior>(() =>
-        foldersModule.createFolderBehavior(gh<_i575.FoldersRepositoryImpl>()));
-    gh.factory<_i559.DeleteFolderBehavior>(() =>
-        foldersModule.deleteFolderBehavior(gh<_i575.FoldersRepositoryImpl>()));
-    gh.factory<_i164.MoveFileToFolderBehavior>(() => foldersModule
-        .moveFileToFolderBehavior(gh<_i575.FoldersRepositoryImpl>()));
+      () => _i166.DecryptFileUseCase(gh<_i331.DecryptFileBehavior>()),
+    );
+    gh.factory<_i152.GetFoldersBehavior>(
+      () => foldersModule.getFoldersBehavior(gh<_i575.FoldersRepositoryImpl>()),
+    );
+    gh.factory<_i19.CreateFolderBehavior>(
+      () =>
+          foldersModule.createFolderBehavior(gh<_i575.FoldersRepositoryImpl>()),
+    );
+    gh.factory<_i559.DeleteFolderBehavior>(
+      () =>
+          foldersModule.deleteFolderBehavior(gh<_i575.FoldersRepositoryImpl>()),
+    );
+    gh.factory<_i164.MoveFileToFolderBehavior>(
+      () => foldersModule.moveFileToFolderBehavior(
+        gh<_i575.FoldersRepositoryImpl>(),
+      ),
+    );
     gh.factory<_i243.StatsBloc>(
-        () => _i243.StatsBloc(gh<_i570.GetFilesBehavior>()));
+      () => _i243.StatsBloc(gh<_i570.GetFilesBehavior>()),
+    );
     gh.lazySingleton<_i787.SearchFilesUseCase>(
-        () => _i787.SearchFilesUseCase(gh<_i279.SearchFilesBehavior>()));
-    gh.lazySingleton<_i139.AuthenticateBiometricsUseCase>(() =>
-        _i139.AuthenticateBiometricsUseCase(
-            gh<_i710.AuthenticateWithBiometricsBehavior>()));
+      () => _i787.SearchFilesUseCase(gh<_i279.SearchFilesBehavior>()),
+    );
+    gh.lazySingleton<_i139.AuthenticateBiometricsUseCase>(
+      () => _i139.AuthenticateBiometricsUseCase(
+        gh<_i710.AuthenticateWithBiometricsBehavior>(),
+      ),
+    );
     gh.lazySingleton<_i188.ImportFileUseCase>(
-        () => _i188.ImportFileUseCase(gh<_i20.ImportFileBehavior>()));
-    gh.factory<_i541.AuthBloc>(() => _i541.AuthBloc(
-          gh<_i296.AuthSignOutUseCase>(),
-          gh<_i188.AuthSignInWithGoogleUseCase>(),
-          gh<_i254.AuthGetCurrentUserUseCase>(),
-          gh<_i411.HasPinUseCase>(),
-          gh<_i712.SetPinUseCase>(),
-          gh<_i262.VerifyPinUseCase>(),
-          gh<_i139.AuthenticateBiometricsUseCase>(),
-        ));
+      () => _i188.ImportFileUseCase(gh<_i20.ImportFileBehavior>()),
+    );
+    gh.factory<_i541.AuthBloc>(
+      () => _i541.AuthBloc(
+        gh<_i296.AuthSignOutUseCase>(),
+        gh<_i188.AuthSignInWithGoogleUseCase>(),
+        gh<_i254.AuthGetCurrentUserUseCase>(),
+        gh<_i411.HasPinUseCase>(),
+        gh<_i712.SetPinUseCase>(),
+        gh<_i262.VerifyPinUseCase>(),
+        gh<_i139.AuthenticateBiometricsUseCase>(),
+      ),
+    );
     gh.factory<_i246.DeleteFolderUseCase>(
-        () => _i246.DeleteFolderUseCase(gh<_i559.DeleteFolderBehavior>()));
+      () => _i246.DeleteFolderUseCase(gh<_i559.DeleteFolderBehavior>()),
+    );
     gh.lazySingleton<_i475.DeleteFileUseCase>(
-        () => _i475.DeleteFileUseCase(gh<_i456.DeleteFileBehavior>()));
+      () => _i475.DeleteFileUseCase(gh<_i456.DeleteFileBehavior>()),
+    );
     gh.factory<_i327.CreateFolderUseCase>(
-        () => _i327.CreateFolderUseCase(gh<_i19.CreateFolderBehavior>()));
+      () => _i327.CreateFolderUseCase(gh<_i19.CreateFolderBehavior>()),
+    );
     gh.lazySingleton<_i942.GetFilesUseCase>(
-        () => _i942.GetFilesUseCase(gh<_i570.GetFilesBehavior>()));
-    gh.factory<_i562.MoveFileToFolderUseCase>(() =>
-        _i562.MoveFileToFolderUseCase(gh<_i164.MoveFileToFolderBehavior>()));
-    gh.factory<_i134.FoldersBloc>(() => _i134.FoldersBloc(
-          gh<_i152.GetFoldersBehavior>(),
-          gh<_i327.CreateFolderUseCase>(),
-          gh<_i246.DeleteFolderUseCase>(),
-          gh<_i562.MoveFileToFolderUseCase>(),
-        ));
-    gh.factory<_i288.FilesBloc>(() => _i288.FilesBloc(
-          gh<_i942.GetFilesUseCase>(),
-          gh<_i188.ImportFileUseCase>(),
-          gh<_i475.DeleteFileUseCase>(),
-          gh<_i787.SearchFilesUseCase>(),
-        ));
+      () => _i942.GetFilesUseCase(gh<_i570.GetFilesBehavior>()),
+    );
+    gh.factory<_i562.MoveFileToFolderUseCase>(
+      () => _i562.MoveFileToFolderUseCase(gh<_i164.MoveFileToFolderBehavior>()),
+    );
+    gh.factory<_i134.FoldersBloc>(
+      () => _i134.FoldersBloc(
+        gh<_i152.GetFoldersBehavior>(),
+        gh<_i327.CreateFolderUseCase>(),
+        gh<_i246.DeleteFolderUseCase>(),
+        gh<_i562.MoveFileToFolderUseCase>(),
+      ),
+    );
+    gh.factory<_i288.FilesBloc>(
+      () => _i288.FilesBloc(
+        gh<_i942.GetFilesUseCase>(),
+        gh<_i188.ImportFileUseCase>(),
+        gh<_i475.DeleteFileUseCase>(),
+        gh<_i787.SearchFilesUseCase>(),
+      ),
+    );
     return this;
   }
 }

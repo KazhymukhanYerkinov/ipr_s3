@@ -35,22 +35,28 @@ class FileListCard extends StatelessWidget {
             if (files.isEmpty)
               Text('No files', style: theme.textTheme.bodySmall)
             else
-              ...files.map((file) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(file.name,
-                              style: theme.textTheme.bodyMedium,
-                              overflow: TextOverflow.ellipsis),
+              ...files.map(
+                (file) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          file.name,
+                          style: theme.textTheme.bodyMedium,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        Text(formatSize(file.size),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            )),
-                      ],
-                    ),
-                  )),
+                      ),
+                      Text(
+                        formatSize(file.size),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),

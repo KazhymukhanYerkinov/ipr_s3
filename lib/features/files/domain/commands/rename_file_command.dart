@@ -17,19 +17,13 @@ class RenameFileCommand implements FileCommand {
   @override
   Future<void> execute() async {
     _oldName = _file.name;
-    final updated = _file.copyWith(
-      name: _newName,
-      updatedAt: DateTime.now(),
-    );
+    final updated = _file.copyWith(name: _newName, updatedAt: DateTime.now());
     await _source.save(updated);
   }
 
   @override
   Future<void> undo() async {
-    final restored = _file.copyWith(
-      name: _oldName,
-      updatedAt: DateTime.now(),
-    );
+    final restored = _file.copyWith(name: _oldName, updatedAt: DateTime.now());
     await _source.save(restored);
   }
 }

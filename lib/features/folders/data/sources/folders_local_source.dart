@@ -24,9 +24,7 @@ class FoldersLocalSourceImpl implements FoldersLocalSource {
     final box = await _encryptionHelper.openEncryptedBox<FolderDto>(_boxName);
     final dtos = box.values.toList();
 
-    final flatFolders = {
-      for (final dto in dtos) dto.id: dto.toEntity(),
-    };
+    final flatFolders = {for (final dto in dtos) dto.id: dto.toEntity()};
 
     return _buildTree(flatFolders);
   }
@@ -44,9 +42,7 @@ class FoldersLocalSourceImpl implements FoldersLocalSource {
 
     FolderItem attachChildren(FolderItem folder) {
       final kids = childrenMap[folder.id] ?? [];
-      return folder.copyWith(
-        children: kids.map(attachChildren).toList(),
-      );
+      return folder.copyWith(children: kids.map(attachChildren).toList());
     }
 
     for (final folder in flatMap.values) {

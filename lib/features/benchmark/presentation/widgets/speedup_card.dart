@@ -6,16 +6,15 @@ class SpeedupCard extends StatelessWidget {
   final BenchmarkResult result;
   final ThemeData theme;
 
-  const SpeedupCard({
-    super.key,
-    required this.result,
-    required this.theme,
-  });
+  const SpeedupCard({super.key, required this.result, required this.theme});
 
   @override
   Widget build(BuildContext context) {
-    final maxMs = [result.dartMs, result.nativeMs, result.isolateMs]
-        .reduce((a, b) => a > b ? a : b);
+    final maxMs = [
+      result.dartMs,
+      result.nativeMs,
+      result.isolateMs,
+    ].reduce((a, b) => a > b ? a : b);
     final maxVal = maxMs > 0 ? maxMs.toDouble() : 1.0;
 
     return Card(
@@ -24,10 +23,7 @@ class SpeedupCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '${result.sizeMb} MB',
-              style: theme.textTheme.titleSmall,
-            ),
+            Text('${result.sizeMb} MB', style: theme.textTheme.titleSmall),
             const SizedBox(height: 12),
             BarRow(
               label: 'Dart',

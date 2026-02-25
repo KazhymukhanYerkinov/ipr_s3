@@ -18,12 +18,14 @@ class DeviceInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final usedStorage = (totalStorage != null && freeStorage != null)
-        ? totalStorage! - freeStorage!
-        : null;
-    final usagePercent = (totalStorage != null && usedStorage != null && totalStorage! > 0)
-        ? usedStorage / totalStorage!
-        : null;
+    final usedStorage =
+        (totalStorage != null && freeStorage != null)
+            ? totalStorage! - freeStorage!
+            : null;
+    final usagePercent =
+        (totalStorage != null && usedStorage != null && totalStorage! > 0)
+            ? usedStorage / totalStorage!
+            : null;
 
     return Card(
       child: Padding(

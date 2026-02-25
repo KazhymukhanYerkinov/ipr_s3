@@ -24,7 +24,8 @@ class FolderNode extends StatelessWidget {
     final childFolders = folder.children.whereType<FolderItem>().toList();
     final hasChildren = childFolders.isNotEmpty;
 
-    final subtitle = '${folder.totalFiles} files'
+    final subtitle =
+        '${folder.totalFiles} files'
         ' · ${_formatSize(folder.totalSize)}';
 
     if (!hasChildren) {
@@ -58,15 +59,18 @@ class FolderNode extends StatelessWidget {
           const Icon(Icons.expand_more),
         ],
       ),
-      children: childFolders
-          .map((child) => FolderNode(
-                folder: child,
-                depth: depth + 1,
-                onFolderTap: onFolderTap,
-                onFolderDelete: onFolderDelete,
-                onAddSubfolder: onAddSubfolder,
-              ))
-          .toList(),
+      children:
+          childFolders
+              .map(
+                (child) => FolderNode(
+                  folder: child,
+                  depth: depth + 1,
+                  onFolderTap: onFolderTap,
+                  onFolderDelete: onFolderDelete,
+                  onAddSubfolder: onAddSubfolder,
+                ),
+              )
+              .toList(),
     );
   }
 

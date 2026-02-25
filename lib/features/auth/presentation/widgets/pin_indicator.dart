@@ -27,10 +27,7 @@ class PinIndicator extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isFilled ? primary : Colors.transparent,
-            border: Border.all(
-              color: isFilled ? primary : outline,
-              width: 2,
-            ),
+            border: Border.all(color: isFilled ? primary : outline, width: 2),
           ),
         );
       }),

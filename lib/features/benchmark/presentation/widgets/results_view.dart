@@ -10,11 +10,7 @@ class ResultsView extends StatelessWidget {
   final List<BenchmarkResult> results;
   final ThemeData theme;
 
-  const ResultsView({
-    super.key,
-    required this.results,
-    required this.theme,
-  });
+  const ResultsView({super.key, required this.results, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +25,12 @@ class ResultsView extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.table_chart_rounded,
-                        color: theme.colorScheme.primary),
+                    Icon(
+                      Icons.table_chart_rounded,
+                      color: theme.colorScheme.primary,
+                    ),
                     const SizedBox(width: 8),
-                    Text('CRC32 Results',
-                        style: theme.textTheme.titleMedium),
+                    Text('CRC32 Results', style: theme.textTheme.titleMedium),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -43,10 +40,12 @@ class ResultsView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        ...results.map((r) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: SpeedupCard(result: r, theme: theme),
-            )),
+        ...results.map(
+          (r) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: SpeedupCard(result: r, theme: theme),
+          ),
+        ),
         const SizedBox(height: 16),
         Card(
           color: theme.colorScheme.primaryContainer,
@@ -79,8 +78,9 @@ class ResultsView extends StatelessWidget {
         const SizedBox(height: 16),
         Center(
           child: FilledButton.tonal(
-            onPressed: () =>
-                context.read<BenchmarkBloc>().add(BenchmarkRunRequested()),
+            onPressed:
+                () =>
+                    context.read<BenchmarkBloc>().add(BenchmarkRunRequested()),
             child: const Text('Run Again'),
           ),
         ),

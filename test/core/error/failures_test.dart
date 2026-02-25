@@ -48,10 +48,13 @@ void main() {
       expect(failure, isA<Failure>());
     });
 
-    test('AuthFailure and CacheFailure with same message should not be equal', () {
-      const auth = AuthFailure(message: 'error');
-      const cache = CacheFailure(message: 'error');
-      expect(auth, isNot(equals(cache)));
-    });
+    test(
+      'AuthFailure and CacheFailure with same message should not be equal',
+      () {
+        const auth = AuthFailure(message: 'error');
+        const cache = CacheFailure(message: 'error');
+        expect(auth, isNot(equals(cache)));
+      },
+    );
   });
 }

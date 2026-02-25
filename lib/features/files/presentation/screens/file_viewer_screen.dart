@@ -94,9 +94,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.fileName),
-      ),
+      appBar: AppBar(title: Text(widget.fileName)),
       body: _buildBody(theme),
     );
   }
@@ -127,8 +125,11 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline_rounded,
-                size: 48, color: theme.colorScheme.error),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 48,
+              color: theme.colorScheme.error,
+            ),
             const SizedBox(height: 12),
             Text(_error!, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 16),
@@ -142,10 +143,7 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     }
 
     if (_file != null && _decryptedBytes != null) {
-      return FilePreviewFactory.create(
-        file: _file!,
-        bytes: _decryptedBytes!,
-      );
+      return FilePreviewFactory.create(file: _file!, bytes: _decryptedBytes!);
     }
 
     return const SizedBox.shrink();

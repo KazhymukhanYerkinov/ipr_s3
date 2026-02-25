@@ -4,11 +4,7 @@ class BatteryRow extends StatelessWidget {
   final int? level;
   final ThemeData theme;
 
-  const BatteryRow({
-    super.key,
-    required this.level,
-    required this.theme,
-  });
+  const BatteryRow({super.key, required this.level, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +30,7 @@ class BatteryRow extends StatelessWidget {
       children: [
         Icon(icon, color: color, size: 28),
         const SizedBox(width: 12),
-        Expanded(
-          child: Text('Battery', style: theme.textTheme.bodyLarge),
-        ),
+        Expanded(child: Text('Battery', style: theme.textTheme.bodyLarge)),
         Text(
           displayLevel,
           style: theme.textTheme.titleMedium?.copyWith(

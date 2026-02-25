@@ -12,7 +12,8 @@ part of 'benchmark_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$BenchmarkState {
@@ -20,47 +21,45 @@ mixin _$BenchmarkState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function(
-            String currentTask, int completedSteps, int totalSteps)
-        running,
+      String currentTask,
+      int completedSteps,
+      int totalSteps,
+    )
+    running,
     required TResult Function(List<BenchmarkResult> results) completed,
     required TResult Function(String message) error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function(String currentTask, int completedSteps, int totalSteps)?
-        running,
+    running,
     TResult? Function(List<BenchmarkResult> results)? completed,
     TResult? Function(String message)? error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function(String currentTask, int completedSteps, int totalSteps)?
-        running,
+    running,
     TResult Function(List<BenchmarkResult> results)? completed,
     TResult Function(String message)? error,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(BenchmarkInitial value) initial,
     required TResult Function(BenchmarkRunning value) running,
     required TResult Function(BenchmarkCompleted value) completed,
     required TResult Function(BenchmarkError value) error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(BenchmarkInitial value)? initial,
     TResult? Function(BenchmarkRunning value)? running,
     TResult? Function(BenchmarkCompleted value)? completed,
     TResult? Function(BenchmarkError value)? error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(BenchmarkInitial value)? initial,
@@ -68,15 +67,15 @@ mixin _$BenchmarkState {
     TResult Function(BenchmarkCompleted value)? completed,
     TResult Function(BenchmarkError value)? error,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $BenchmarkStateCopyWith<$Res> {
   factory $BenchmarkStateCopyWith(
-          BenchmarkState value, $Res Function(BenchmarkState) then) =
-      _$BenchmarkStateCopyWithImpl<$Res, BenchmarkState>;
+    BenchmarkState value,
+    $Res Function(BenchmarkState) then,
+  ) = _$BenchmarkStateCopyWithImpl<$Res, BenchmarkState>;
 }
 
 /// @nodoc
@@ -92,18 +91,20 @@ class _$BenchmarkStateCopyWithImpl<$Res, $Val extends BenchmarkState>
 
 /// @nodoc
 abstract class _$$BenchmarkInitialImplCopyWith<$Res> {
-  factory _$$BenchmarkInitialImplCopyWith(_$BenchmarkInitialImpl value,
-          $Res Function(_$BenchmarkInitialImpl) then) =
-      __$$BenchmarkInitialImplCopyWithImpl<$Res>;
+  factory _$$BenchmarkInitialImplCopyWith(
+    _$BenchmarkInitialImpl value,
+    $Res Function(_$BenchmarkInitialImpl) then,
+  ) = __$$BenchmarkInitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
 class __$$BenchmarkInitialImplCopyWithImpl<$Res>
     extends _$BenchmarkStateCopyWithImpl<$Res, _$BenchmarkInitialImpl>
     implements _$$BenchmarkInitialImplCopyWith<$Res> {
-  __$$BenchmarkInitialImplCopyWithImpl(_$BenchmarkInitialImpl _value,
-      $Res Function(_$BenchmarkInitialImpl) _then)
-      : super(_value, _then);
+  __$$BenchmarkInitialImplCopyWithImpl(
+    _$BenchmarkInitialImpl _value,
+    $Res Function(_$BenchmarkInitialImpl) _then,
+  ) : super(_value, _then);
 }
 
 /// @nodoc
@@ -130,8 +131,11 @@ class _$BenchmarkInitialImpl implements BenchmarkInitial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function(
-            String currentTask, int completedSteps, int totalSteps)
-        running,
+      String currentTask,
+      int completedSteps,
+      int totalSteps,
+    )
+    running,
     required TResult Function(List<BenchmarkResult> results) completed,
     required TResult Function(String message) error,
   }) {
@@ -143,7 +147,7 @@ class _$BenchmarkInitialImpl implements BenchmarkInitial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function(String currentTask, int completedSteps, int totalSteps)?
-        running,
+    running,
     TResult? Function(List<BenchmarkResult> results)? completed,
     TResult? Function(String message)? error,
   }) {
@@ -155,7 +159,7 @@ class _$BenchmarkInitialImpl implements BenchmarkInitial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function(String currentTask, int completedSteps, int totalSteps)?
-        running,
+    running,
     TResult Function(List<BenchmarkResult> results)? completed,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -210,9 +214,10 @@ abstract class BenchmarkInitial implements BenchmarkState {
 
 /// @nodoc
 abstract class _$$BenchmarkRunningImplCopyWith<$Res> {
-  factory _$$BenchmarkRunningImplCopyWith(_$BenchmarkRunningImpl value,
-          $Res Function(_$BenchmarkRunningImpl) then) =
-      __$$BenchmarkRunningImplCopyWithImpl<$Res>;
+  factory _$$BenchmarkRunningImplCopyWith(
+    _$BenchmarkRunningImpl value,
+    $Res Function(_$BenchmarkRunningImpl) then,
+  ) = __$$BenchmarkRunningImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String currentTask, int completedSteps, int totalSteps});
 }
@@ -221,9 +226,10 @@ abstract class _$$BenchmarkRunningImplCopyWith<$Res> {
 class __$$BenchmarkRunningImplCopyWithImpl<$Res>
     extends _$BenchmarkStateCopyWithImpl<$Res, _$BenchmarkRunningImpl>
     implements _$$BenchmarkRunningImplCopyWith<$Res> {
-  __$$BenchmarkRunningImplCopyWithImpl(_$BenchmarkRunningImpl _value,
-      $Res Function(_$BenchmarkRunningImpl) _then)
-      : super(_value, _then);
+  __$$BenchmarkRunningImplCopyWithImpl(
+    _$BenchmarkRunningImpl _value,
+    $Res Function(_$BenchmarkRunningImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -232,30 +238,36 @@ class __$$BenchmarkRunningImplCopyWithImpl<$Res>
     Object? completedSteps = null,
     Object? totalSteps = null,
   }) {
-    return _then(_$BenchmarkRunningImpl(
-      currentTask: null == currentTask
-          ? _value.currentTask
-          : currentTask // ignore: cast_nullable_to_non_nullable
-              as String,
-      completedSteps: null == completedSteps
-          ? _value.completedSteps
-          : completedSteps // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalSteps: null == totalSteps
-          ? _value.totalSteps
-          : totalSteps // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
+    return _then(
+      _$BenchmarkRunningImpl(
+        currentTask:
+            null == currentTask
+                ? _value.currentTask
+                : currentTask // ignore: cast_nullable_to_non_nullable
+                    as String,
+        completedSteps:
+            null == completedSteps
+                ? _value.completedSteps
+                : completedSteps // ignore: cast_nullable_to_non_nullable
+                    as int,
+        totalSteps:
+            null == totalSteps
+                ? _value.totalSteps
+                : totalSteps // ignore: cast_nullable_to_non_nullable
+                    as int,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$BenchmarkRunningImpl implements BenchmarkRunning {
-  const _$BenchmarkRunningImpl(
-      {required this.currentTask,
-      required this.completedSteps,
-      required this.totalSteps});
+  const _$BenchmarkRunningImpl({
+    required this.currentTask,
+    required this.completedSteps,
+    required this.totalSteps,
+  });
 
   @override
   final String currentTask;
@@ -291,15 +303,20 @@ class _$BenchmarkRunningImpl implements BenchmarkRunning {
   @pragma('vm:prefer-inline')
   _$$BenchmarkRunningImplCopyWith<_$BenchmarkRunningImpl> get copyWith =>
       __$$BenchmarkRunningImplCopyWithImpl<_$BenchmarkRunningImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function(
-            String currentTask, int completedSteps, int totalSteps)
-        running,
+      String currentTask,
+      int completedSteps,
+      int totalSteps,
+    )
+    running,
     required TResult Function(List<BenchmarkResult> results) completed,
     required TResult Function(String message) error,
   }) {
@@ -311,7 +328,7 @@ class _$BenchmarkRunningImpl implements BenchmarkRunning {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function(String currentTask, int completedSteps, int totalSteps)?
-        running,
+    running,
     TResult? Function(List<BenchmarkResult> results)? completed,
     TResult? Function(String message)? error,
   }) {
@@ -323,7 +340,7 @@ class _$BenchmarkRunningImpl implements BenchmarkRunning {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function(String currentTask, int completedSteps, int totalSteps)?
-        running,
+    running,
     TResult Function(List<BenchmarkResult> results)? completed,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -373,10 +390,11 @@ class _$BenchmarkRunningImpl implements BenchmarkRunning {
 }
 
 abstract class BenchmarkRunning implements BenchmarkState {
-  const factory BenchmarkRunning(
-      {required final String currentTask,
-      required final int completedSteps,
-      required final int totalSteps}) = _$BenchmarkRunningImpl;
+  const factory BenchmarkRunning({
+    required final String currentTask,
+    required final int completedSteps,
+    required final int totalSteps,
+  }) = _$BenchmarkRunningImpl;
 
   String get currentTask;
   int get completedSteps;
@@ -388,9 +406,10 @@ abstract class BenchmarkRunning implements BenchmarkState {
 
 /// @nodoc
 abstract class _$$BenchmarkCompletedImplCopyWith<$Res> {
-  factory _$$BenchmarkCompletedImplCopyWith(_$BenchmarkCompletedImpl value,
-          $Res Function(_$BenchmarkCompletedImpl) then) =
-      __$$BenchmarkCompletedImplCopyWithImpl<$Res>;
+  factory _$$BenchmarkCompletedImplCopyWith(
+    _$BenchmarkCompletedImpl value,
+    $Res Function(_$BenchmarkCompletedImpl) then,
+  ) = __$$BenchmarkCompletedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({List<BenchmarkResult> results});
 }
@@ -399,21 +418,23 @@ abstract class _$$BenchmarkCompletedImplCopyWith<$Res> {
 class __$$BenchmarkCompletedImplCopyWithImpl<$Res>
     extends _$BenchmarkStateCopyWithImpl<$Res, _$BenchmarkCompletedImpl>
     implements _$$BenchmarkCompletedImplCopyWith<$Res> {
-  __$$BenchmarkCompletedImplCopyWithImpl(_$BenchmarkCompletedImpl _value,
-      $Res Function(_$BenchmarkCompletedImpl) _then)
-      : super(_value, _then);
+  __$$BenchmarkCompletedImplCopyWithImpl(
+    _$BenchmarkCompletedImpl _value,
+    $Res Function(_$BenchmarkCompletedImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? results = null,
-  }) {
-    return _then(_$BenchmarkCompletedImpl(
-      results: null == results
-          ? _value._results
-          : results // ignore: cast_nullable_to_non_nullable
-              as List<BenchmarkResult>,
-    ));
+  $Res call({Object? results = null}) {
+    return _then(
+      _$BenchmarkCompletedImpl(
+        results:
+            null == results
+                ? _value._results
+                : results // ignore: cast_nullable_to_non_nullable
+                    as List<BenchmarkResult>,
+      ),
+    );
   }
 }
 
@@ -421,7 +442,7 @@ class __$$BenchmarkCompletedImplCopyWithImpl<$Res>
 
 class _$BenchmarkCompletedImpl implements BenchmarkCompleted {
   const _$BenchmarkCompletedImpl({required final List<BenchmarkResult> results})
-      : _results = results;
+    : _results = results;
 
   final List<BenchmarkResult> _results;
   @override
@@ -453,15 +474,20 @@ class _$BenchmarkCompletedImpl implements BenchmarkCompleted {
   @pragma('vm:prefer-inline')
   _$$BenchmarkCompletedImplCopyWith<_$BenchmarkCompletedImpl> get copyWith =>
       __$$BenchmarkCompletedImplCopyWithImpl<_$BenchmarkCompletedImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function(
-            String currentTask, int completedSteps, int totalSteps)
-        running,
+      String currentTask,
+      int completedSteps,
+      int totalSteps,
+    )
+    running,
     required TResult Function(List<BenchmarkResult> results) completed,
     required TResult Function(String message) error,
   }) {
@@ -473,7 +499,7 @@ class _$BenchmarkCompletedImpl implements BenchmarkCompleted {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function(String currentTask, int completedSteps, int totalSteps)?
-        running,
+    running,
     TResult? Function(List<BenchmarkResult> results)? completed,
     TResult? Function(String message)? error,
   }) {
@@ -485,7 +511,7 @@ class _$BenchmarkCompletedImpl implements BenchmarkCompleted {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function(String currentTask, int completedSteps, int totalSteps)?
-        running,
+    running,
     TResult Function(List<BenchmarkResult> results)? completed,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -535,9 +561,9 @@ class _$BenchmarkCompletedImpl implements BenchmarkCompleted {
 }
 
 abstract class BenchmarkCompleted implements BenchmarkState {
-  const factory BenchmarkCompleted(
-          {required final List<BenchmarkResult> results}) =
-      _$BenchmarkCompletedImpl;
+  const factory BenchmarkCompleted({
+    required final List<BenchmarkResult> results,
+  }) = _$BenchmarkCompletedImpl;
 
   List<BenchmarkResult> get results;
   @JsonKey(ignore: true)
@@ -547,9 +573,10 @@ abstract class BenchmarkCompleted implements BenchmarkState {
 
 /// @nodoc
 abstract class _$$BenchmarkErrorImplCopyWith<$Res> {
-  factory _$$BenchmarkErrorImplCopyWith(_$BenchmarkErrorImpl value,
-          $Res Function(_$BenchmarkErrorImpl) then) =
-      __$$BenchmarkErrorImplCopyWithImpl<$Res>;
+  factory _$$BenchmarkErrorImplCopyWith(
+    _$BenchmarkErrorImpl value,
+    $Res Function(_$BenchmarkErrorImpl) then,
+  ) = __$$BenchmarkErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String message});
 }
@@ -559,20 +586,22 @@ class __$$BenchmarkErrorImplCopyWithImpl<$Res>
     extends _$BenchmarkStateCopyWithImpl<$Res, _$BenchmarkErrorImpl>
     implements _$$BenchmarkErrorImplCopyWith<$Res> {
   __$$BenchmarkErrorImplCopyWithImpl(
-      _$BenchmarkErrorImpl _value, $Res Function(_$BenchmarkErrorImpl) _then)
-      : super(_value, _then);
+    _$BenchmarkErrorImpl _value,
+    $Res Function(_$BenchmarkErrorImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? message = null,
-  }) {
-    return _then(_$BenchmarkErrorImpl(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+  $Res call({Object? message = null}) {
+    return _then(
+      _$BenchmarkErrorImpl(
+        message:
+            null == message
+                ? _value.message
+                : message // ignore: cast_nullable_to_non_nullable
+                    as String,
+      ),
+    );
   }
 }
 
@@ -605,15 +634,20 @@ class _$BenchmarkErrorImpl implements BenchmarkError {
   @pragma('vm:prefer-inline')
   _$$BenchmarkErrorImplCopyWith<_$BenchmarkErrorImpl> get copyWith =>
       __$$BenchmarkErrorImplCopyWithImpl<_$BenchmarkErrorImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function(
-            String currentTask, int completedSteps, int totalSteps)
-        running,
+      String currentTask,
+      int completedSteps,
+      int totalSteps,
+    )
+    running,
     required TResult Function(List<BenchmarkResult> results) completed,
     required TResult Function(String message) error,
   }) {
@@ -625,7 +659,7 @@ class _$BenchmarkErrorImpl implements BenchmarkError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function(String currentTask, int completedSteps, int totalSteps)?
-        running,
+    running,
     TResult? Function(List<BenchmarkResult> results)? completed,
     TResult? Function(String message)? error,
   }) {
@@ -637,7 +671,7 @@ class _$BenchmarkErrorImpl implements BenchmarkError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function(String currentTask, int completedSteps, int totalSteps)?
-        running,
+    running,
     TResult Function(List<BenchmarkResult> results)? completed,
     TResult Function(String message)? error,
     required TResult orElse(),

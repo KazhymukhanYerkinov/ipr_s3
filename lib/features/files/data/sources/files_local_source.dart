@@ -30,20 +30,26 @@ class FilesLocalSourceImpl implements FilesLocalSource {
 
   @override
   Future<List<SecureFileEntity>> getAll() async {
-    final box = await _encryptionHelper.openEncryptedBox<SecureFileDto>(_boxName);
+    final box = await _encryptionHelper.openEncryptedBox<SecureFileDto>(
+      _boxName,
+    );
     return box.values.map((dto) => dto.toEntity()).toList();
   }
 
   @override
   Future<SecureFileEntity?> getById(String id) async {
-    final box = await _encryptionHelper.openEncryptedBox<SecureFileDto>(_boxName);
+    final box = await _encryptionHelper.openEncryptedBox<SecureFileDto>(
+      _boxName,
+    );
     final dto = box.get(id);
     return dto?.toEntity();
   }
 
   @override
   Future<void> save(SecureFileEntity entity) async {
-    final box = await _encryptionHelper.openEncryptedBox<SecureFileDto>(_boxName);
+    final box = await _encryptionHelper.openEncryptedBox<SecureFileDto>(
+      _boxName,
+    );
     final dto = SecureFileDto.fromEntity(entity);
     await box.put(entity.id, dto);
     _logger.info('File metadata saved: [REDACTED_PATH]');
@@ -51,7 +57,9 @@ class FilesLocalSourceImpl implements FilesLocalSource {
 
   @override
   Future<void> delete(String id) async {
-    final box = await _encryptionHelper.openEncryptedBox<SecureFileDto>(_boxName);
+    final box = await _encryptionHelper.openEncryptedBox<SecureFileDto>(
+      _boxName,
+    );
     final dto = box.get(id);
 
     if (dto != null) {

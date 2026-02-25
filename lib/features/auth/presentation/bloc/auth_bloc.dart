@@ -61,13 +61,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthState.loading());
     final result = await _signOutUseCase();
-    result.fold(
-      (failure) => emit(AuthState.error(message: failure.message)),
-      (_) {
-        _currentUser = null;
-        emit(const AuthState.unauthenticated());
-      },
-    );
+    result.fold((failure) => emit(AuthState.error(message: failure.message)), (
+      _,
+    ) {
+      _currentUser = null;
+      emit(const AuthState.unauthenticated());
+    });
   }
 
   Future<void> _onAuthCheck(
@@ -103,9 +102,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _verifyPinUseCase(event.pin);
     result.fold(
       (failure) => emit(AuthState.error(message: failure.message)),
-      (isValid) => isValid
-          ? emit(AuthState.authenticated(user: user))
-          : emit(const AuthState.error(message: 'Wrong PIN')),
+      (isValid) =>
+          isValid
+              ? emit(AuthState.authenticated(user: user))
+              : emit(const AuthState.error(message: 'Wrong PIN')),
     );
   }
 
@@ -140,22 +140,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authenticateBiometricsUseCase();
     result.fold(
       (failure) => emit(AuthState.pinRequired(user: user)),
-      (success) => success
-          ? emit(AuthState.authenticated(user: user))
-          : emit(AuthState.pinRequired(user: user)),
+      (success) =>
+          success
+              ? emit(AuthState.authenticated(user: user))
+              : emit(AuthState.pinRequired(user: user)),
     );
   }
 
-  Future<void> _checkPinStatus(
-    UserEntity user,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _checkPinStatus(UserEntity user, Emitter<AuthState> emit) async {
     final hasPinResult = await _hasPinUseCase();
     hasPinResult.fold(
       (_) => emit(AuthState.authenticated(user: user)),
-      (hasPin) => hasPin
-          ? emit(AuthState.pinRequired(user: user))
-          : emit(AuthState.pinSetupRequired(user: user)),
+      (hasPin) =>
+          hasPin
+              ? emit(AuthState.pinRequired(user: user))
+              : emit(AuthState.pinSetupRequired(user: user)),
     );
   }
 }

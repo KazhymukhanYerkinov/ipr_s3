@@ -21,8 +21,10 @@ class SecurityCard extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            leading: Icon(Icons.lock_outline_rounded,
-                color: theme.colorScheme.primary),
+            leading: Icon(
+              Icons.lock_outline_rounded,
+              color: theme.colorScheme.primary,
+            ),
             title: Text(l.changePin),
             subtitle: Text(hasPin ? l.pinIsSet : l.noPinSet),
             trailing: const Icon(Icons.chevron_right_rounded),

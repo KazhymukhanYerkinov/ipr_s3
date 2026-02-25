@@ -31,51 +31,53 @@ class _FolderTreeView extends StatelessWidget {
     final l = context.locale;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l.folders),
-      ),
+      appBar: AppBar(title: Text(l.folders)),
       body: BlocConsumer<FoldersBloc, FoldersState>(
         listener: (context, state) {
           if (state is FoldersError) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(
-                content: Text(state.message),
-                behavior: SnackBarBehavior.floating,
-              ));
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
           }
         },
         builder: (context, state) {
           return switch (state) {
             FoldersLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: CircularProgressIndicator(),
+            ),
             FoldersLoaded(:final folders) => FolderTreeWidget(
-                folders: folders,
-                onFolderDelete: (folder) =>
-                    _confirmDelete(context, folder),
-                onAddSubfolder: (folder) =>
-                    _showCreateDialog(context, parentId: folder.id),
-              ),
+              folders: folders,
+              onFolderDelete: (folder) => _confirmDelete(context, folder),
+              onAddSubfolder:
+                  (folder) => _showCreateDialog(context, parentId: folder.id),
+            ),
             FoldersError() => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error_outline_rounded,
-                        size: 48, color: theme.colorScheme.error),
-                    const SizedBox(height: 12),
-                    Text(l.somethingWentWrong,
-                        style: theme.textTheme.bodyLarge),
-                    const SizedBox(height: 16),
-                    FilledButton.tonal(
-                      onPressed: () => context
-                          .read<FoldersBloc>()
-                          .add(FoldersLoadRequested()),
-                      child: Text(l.retry),
-                    ),
-                  ],
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline_rounded,
+                    size: 48,
+                    color: theme.colorScheme.error,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(l.somethingWentWrong, style: theme.textTheme.bodyLarge),
+                  const SizedBox(height: 16),
+                  FilledButton.tonal(
+                    onPressed:
+                        () => context.read<FoldersBloc>().add(
+                          FoldersLoadRequested(),
+                        ),
+                    child: Text(l.retry),
+                  ),
+                ],
               ),
+            ),
             _ => const SizedBox.shrink(),
           };
         },
@@ -115,11 +117,8 @@ class _FolderTreeView extends StatelessWidget {
                 final name = controller.text.trim();
                 if (name.isNotEmpty) {
                   context.read<FoldersBloc>().add(
-                        FolderCreateRequested(
-                          name: name,
-                          parentId: parentId,
-                        ),
-                      );
+                    FolderCreateRequested(name: name, parentId: parentId),
+                  );
                   Navigator.pop(dialogContext);
                 }
               },
@@ -151,9 +150,9 @@ class _FolderTreeView extends StatelessWidget {
             FilledButton(
               onPressed: () {
                 Navigator.pop(dialogContext);
-                context
-                    .read<FoldersBloc>()
-                    .add(FolderDeleteRequested(folder.id));
+                context.read<FoldersBloc>().add(
+                  FolderDeleteRequested(folder.id),
+                );
               },
               style: FilledButton.styleFrom(
                 backgroundColor: theme.colorScheme.error,

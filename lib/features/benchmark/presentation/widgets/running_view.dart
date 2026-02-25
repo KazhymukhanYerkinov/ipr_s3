@@ -46,10 +46,7 @@ class RunningView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            Text(
-              currentTask,
-              style: theme.textTheme.titleMedium,
-            ),
+            Text(currentTask, style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             Text(
               'Step $completedSteps of $totalSteps',

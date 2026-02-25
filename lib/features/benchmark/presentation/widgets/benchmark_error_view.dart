@@ -21,14 +21,15 @@ class BenchmarkErrorView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 48,
-                color: theme.colorScheme.error),
+            Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
             const SizedBox(height: 12),
             Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 16),
             FilledButton.tonal(
-              onPressed: () =>
-                  context.read<BenchmarkBloc>().add(BenchmarkRunRequested()),
+              onPressed:
+                  () => context.read<BenchmarkBloc>().add(
+                    BenchmarkRunRequested(),
+                  ),
               child: const Text('Retry'),
             ),
           ],

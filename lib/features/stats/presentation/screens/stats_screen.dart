@@ -36,9 +36,7 @@ class _StatsView extends StatelessWidget {
       body: BlocBuilder<StatsBloc, StatsState>(
         builder: (context, state) {
           return switch (state) {
-            StatsLoading() => const Center(
-                child: CircularProgressIndicator(),
-              ),
+            StatsLoading() => const Center(child: CircularProgressIndicator()),
             StatsLoaded(
               :final totalFiles,
               :final totalSize,
@@ -78,23 +76,26 @@ class _StatsView extends StatelessWidget {
                 ],
               ),
             StatsError(:final message) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error_outline, size: 48,
-                        color: theme.colorScheme.error),
-                    const SizedBox(height: 12),
-                    Text(message),
-                    const SizedBox(height: 16),
-                    FilledButton.tonal(
-                      onPressed: () => context
-                          .read<StatsBloc>()
-                          .add(StatsLoadRequested()),
-                      child: Text(l.retry),
-                    ),
-                  ],
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: theme.colorScheme.error,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(message),
+                  const SizedBox(height: 16),
+                  FilledButton.tonal(
+                    onPressed:
+                        () =>
+                            context.read<StatsBloc>().add(StatsLoadRequested()),
+                    child: Text(l.retry),
+                  ),
+                ],
               ),
+            ),
             _ => const SizedBox.shrink(),
           };
         },

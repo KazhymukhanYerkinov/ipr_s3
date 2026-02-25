@@ -95,10 +95,12 @@ class _LockScreenState extends State<LockScreen>
           _onError();
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-              content: Text(state.message),
-              behavior: SnackBarBehavior.floating,
-            ));
+            ..showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
         }
       },
       child: Scaffold(
@@ -140,10 +142,13 @@ class _LockScreenState extends State<LockScreen>
               ),
               const SizedBox(height: 24),
               TextButton.icon(
-                onPressed: () =>
-                    context.read<AuthBloc>().add(SignOutRequested()),
-                icon: Icon(Icons.logout, size: 18,
-                    color: theme.colorScheme.error),
+                onPressed:
+                    () => context.read<AuthBloc>().add(SignOutRequested()),
+                icon: Icon(
+                  Icons.logout,
+                  size: 18,
+                  color: theme.colorScheme.error,
+                ),
                 label: Text(
                   context.locale.logOut,
                   style: TextStyle(color: theme.colorScheme.error),

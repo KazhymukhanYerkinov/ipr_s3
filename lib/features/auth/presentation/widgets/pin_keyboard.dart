@@ -35,10 +35,15 @@ class PinKeyboard extends StatelessWidget {
   Widget _buildRow(List<int> digits) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: digits.map((digit) => DigitButton(
-        digit: digit,
-        onPressed: () => onDigitPressed(digit),
-      )).toList(),
+      children:
+          digits
+              .map(
+                (digit) => DigitButton(
+                  digit: digit,
+                  onPressed: () => onDigitPressed(digit),
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -47,16 +52,10 @@ class PinKeyboard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         if (onBiometricPressed != null)
-          ActionButton(
-            icon: Icons.fingerprint,
-            onPressed: onBiometricPressed!,
-          )
+          ActionButton(icon: Icons.fingerprint, onPressed: onBiometricPressed!)
         else
           const SizedBox(width: 72, height: 72),
-        DigitButton(
-          digit: 0,
-          onPressed: () => onDigitPressed(0),
-        ),
+        DigitButton(digit: 0, onPressed: () => onDigitPressed(0)),
         ActionButton(
           icon: Icons.backspace_outlined,
           onPressed: onBackspacePressed,

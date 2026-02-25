@@ -42,17 +42,18 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
   ) async {
     emit(const FilesState.loading());
     final result = await _getFilesUseCase();
-    result.fold(
-      (failure) => emit(FilesState.error(message: failure.message)),
-      (files) {
-        final sorted = _currentSortStrategy.sort(files);
-        emit(FilesState.loaded(
+    result.fold((failure) => emit(FilesState.error(message: failure.message)), (
+      files,
+    ) {
+      final sorted = _currentSortStrategy.sort(files);
+      emit(
+        FilesState.loaded(
           files: sorted,
           viewMode: _currentViewMode,
           sortStrategy: _currentSortStrategy,
-        ));
-      },
-    );
+        ),
+      );
+    });
   }
 
   Future<void> _onImport(
@@ -110,18 +111,19 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     }
 
     final result = await _searchFilesUseCase(event.query);
-    result.fold(
-      (failure) => emit(FilesState.error(message: failure.message)),
-      (files) {
-        final sorted = _currentSortStrategy.sort(files);
-        emit(FilesState.loaded(
+    result.fold((failure) => emit(FilesState.error(message: failure.message)), (
+      files,
+    ) {
+      final sorted = _currentSortStrategy.sort(files);
+      emit(
+        FilesState.loaded(
           files: sorted,
           viewMode: _currentViewMode,
           searchQuery: event.query,
           sortStrategy: _currentSortStrategy,
-        ));
-      },
-    );
+        ),
+      );
+    });
   }
 
   Future<void> _onSearchCleared(
@@ -131,10 +133,7 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     add(FilesLoadRequested());
   }
 
-  void _onViewModeToggled(
-    ViewModeToggled event,
-    Emitter<FilesState> emit,
-  ) {
+  void _onViewModeToggled(ViewModeToggled event, Emitter<FilesState> emit) {
     _currentViewMode =
         _currentViewMode == ViewMode.list ? ViewMode.grid : ViewMode.list;
 
@@ -153,10 +152,12 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     final currentState = state;
     if (currentState is FilesLoaded) {
       final sorted = _currentSortStrategy.sort(currentState.files);
-      emit(currentState.copyWith(
-        files: sorted,
-        sortStrategy: _currentSortStrategy,
-      ));
+      emit(
+        currentState.copyWith(
+          files: sorted,
+          sortStrategy: _currentSortStrategy,
+        ),
+      );
     }
   }
 

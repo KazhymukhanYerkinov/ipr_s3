@@ -5,11 +5,7 @@ class ResultsTable extends StatelessWidget {
   final List<BenchmarkResult> results;
   final ThemeData theme;
 
-  const ResultsTable({
-    super.key,
-    required this.results,
-    required this.theme,
-  });
+  const ResultsTable({super.key, required this.results, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -37,19 +33,21 @@ class ResultsTable extends StatelessWidget {
             _headerCell('Speedup', theme),
           ],
         ),
-        ...results.map((r) => TableRow(
-              children: [
-                _dataCell('${r.sizeMb} MB', theme),
-                _dataCell('${r.dartMs} ms', theme),
-                _dataCell('${r.nativeMs} ms', theme, highlight: true),
-                _dataCell('${r.isolateMs} ms', theme),
-                _dataCell(
-                  '${r.speedup.toStringAsFixed(1)}x',
-                  theme,
-                  highlight: true,
-                ),
-              ],
-            )),
+        ...results.map(
+          (r) => TableRow(
+            children: [
+              _dataCell('${r.sizeMb} MB', theme),
+              _dataCell('${r.dartMs} ms', theme),
+              _dataCell('${r.nativeMs} ms', theme, highlight: true),
+              _dataCell('${r.isolateMs} ms', theme),
+              _dataCell(
+                '${r.speedup.toStringAsFixed(1)}x',
+                theme,
+                highlight: true,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -74,9 +72,10 @@ class ResultsTable extends StatelessWidget {
         text,
         style: theme.textTheme.bodySmall?.copyWith(
           fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
-          color: highlight
-              ? theme.colorScheme.primary
-              : theme.colorScheme.onSurface,
+          color:
+              highlight
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurface,
         ),
       ),
     );

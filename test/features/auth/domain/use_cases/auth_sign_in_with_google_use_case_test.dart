@@ -6,7 +6,8 @@ import 'package:ipr_s3/features/auth/domain/behaviors/sign_in_with_google_behavi
 import 'package:ipr_s3/features/auth/domain/models/user.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_in_with_google_use_case.dart';
 
-class MockSignInWithGoogleBehavior extends Mock implements SignInWithGoogleBehavior {}
+class MockSignInWithGoogleBehavior extends Mock
+    implements SignInWithGoogleBehavior {}
 
 void main() {
   late AuthSignInWithGoogleUseCase useCase;
@@ -26,8 +27,9 @@ void main() {
 
   group('AuthSignInWithGoogleUseCase', () {
     test('should return UserEntity on successful sign-in', () async {
-      when(() => mockSignInWithGoogleBehavior.signInWithGoogle())
-          .thenAnswer((_) async => const Right(testUser));
+      when(
+        () => mockSignInWithGoogleBehavior.signInWithGoogle(),
+      ).thenAnswer((_) async => const Right(testUser));
 
       final result = await useCase();
 
@@ -37,8 +39,9 @@ void main() {
 
     test('should return AuthFailure when sign-in fails', () async {
       const failure = AuthFailure(message: 'Failed to sign in');
-      when(() => mockSignInWithGoogleBehavior.signInWithGoogle())
-          .thenAnswer((_) async => const Left(failure));
+      when(
+        () => mockSignInWithGoogleBehavior.signInWithGoogle(),
+      ).thenAnswer((_) async => const Left(failure));
 
       final result = await useCase();
 
@@ -46,14 +49,18 @@ void main() {
       verify(() => mockSignInWithGoogleBehavior.signInWithGoogle()).called(1);
     });
 
-    test('should delegate call to SignInWithGoogleBehavior.signInWithGoogle', () async {
-      when(() => mockSignInWithGoogleBehavior.signInWithGoogle())
-          .thenAnswer((_) async => const Right(testUser));
+    test(
+      'should delegate call to SignInWithGoogleBehavior.signInWithGoogle',
+      () async {
+        when(
+          () => mockSignInWithGoogleBehavior.signInWithGoogle(),
+        ).thenAnswer((_) async => const Right(testUser));
 
-      await useCase();
+        await useCase();
 
-      verify(() => mockSignInWithGoogleBehavior.signInWithGoogle()).called(1);
-      verifyNoMoreInteractions(mockSignInWithGoogleBehavior);
-    });
+        verify(() => mockSignInWithGoogleBehavior.signInWithGoogle()).called(1);
+        verifyNoMoreInteractions(mockSignInWithGoogleBehavior);
+      },
+    );
   });
 }

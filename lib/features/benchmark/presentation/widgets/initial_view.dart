@@ -6,10 +6,7 @@ import 'package:ipr_s3/features/benchmark/presentation/bloc/benchmark_event.dart
 class InitialView extends StatelessWidget {
   final ThemeData theme;
 
-  const InitialView({
-    super.key,
-    required this.theme,
-  });
+  const InitialView({super.key, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +38,10 @@ class InitialView extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             FilledButton.icon(
-              onPressed: () =>
-                  context.read<BenchmarkBloc>().add(BenchmarkRunRequested()),
+              onPressed:
+                  () => context.read<BenchmarkBloc>().add(
+                    BenchmarkRunRequested(),
+                  ),
               icon: const Icon(Icons.play_arrow_rounded),
               label: const Text('Run Benchmark'),
             ),

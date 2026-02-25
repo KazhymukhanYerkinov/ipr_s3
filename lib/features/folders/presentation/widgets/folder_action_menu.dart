@@ -16,28 +16,29 @@ class FolderActionMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
-      itemBuilder: (_) => [
-        const PopupMenuItem(
-          value: 'add_subfolder',
-          child: Row(
-            children: [
-              Icon(Icons.create_new_folder_outlined, size: 20),
-              SizedBox(width: 8),
-              Text('Add subfolder'),
-            ],
-          ),
-        ),
-        const PopupMenuItem(
-          value: 'delete',
-          child: Row(
-            children: [
-              Icon(Icons.delete_outline, size: 20),
-              SizedBox(width: 8),
-              Text('Delete'),
-            ],
-          ),
-        ),
-      ],
+      itemBuilder:
+          (_) => [
+            const PopupMenuItem(
+              value: 'add_subfolder',
+              child: Row(
+                children: [
+                  Icon(Icons.create_new_folder_outlined, size: 20),
+                  SizedBox(width: 8),
+                  Text('Add subfolder'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_outline, size: 20),
+                  SizedBox(width: 8),
+                  Text('Delete'),
+                ],
+              ),
+            ),
+          ],
       onSelected: (value) {
         switch (value) {
           case 'add_subfolder':

@@ -18,8 +18,9 @@ void main() {
 
   group('AuthSignOutUseCase', () {
     test('should return Right(void) on successful sign-out', () async {
-      when(() => mockSignOutBehavior.signOut())
-          .thenAnswer((_) async => const Right(null));
+      when(
+        () => mockSignOutBehavior.signOut(),
+      ).thenAnswer((_) async => const Right(null));
 
       final result = await useCase();
 
@@ -29,8 +30,9 @@ void main() {
 
     test('should return AuthFailure when sign-out fails', () async {
       const failure = AuthFailure(message: 'Failed to sign out');
-      when(() => mockSignOutBehavior.signOut())
-          .thenAnswer((_) async => const Left(failure));
+      when(
+        () => mockSignOutBehavior.signOut(),
+      ).thenAnswer((_) async => const Left(failure));
 
       final result = await useCase();
 
@@ -39,8 +41,9 @@ void main() {
     });
 
     test('should delegate call to SignOutBehavior.signOut', () async {
-      when(() => mockSignOutBehavior.signOut())
-          .thenAnswer((_) async => const Right(null));
+      when(
+        () => mockSignOutBehavior.signOut(),
+      ).thenAnswer((_) async => const Right(null));
 
       await useCase();
 

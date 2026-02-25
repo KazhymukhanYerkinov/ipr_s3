@@ -23,14 +23,14 @@ class SortDropdown extends StatelessWidget {
     return PopupMenuButton<SortStrategy>(
       icon: const Icon(Icons.sort_rounded),
       tooltip: 'Sort',
-      onSelected: (strategy) =>
-          context.read<FilesBloc>().add(SortStrategyChanged(strategy)),
-      itemBuilder: (_) => _strategies
-          .map((s) => PopupMenuItem(
-                value: s,
-                child: Text(s.label),
-              ))
-          .toList(),
+      onSelected:
+          (strategy) =>
+              context.read<FilesBloc>().add(SortStrategyChanged(strategy)),
+      itemBuilder:
+          (_) =>
+              _strategies
+                  .map((s) => PopupMenuItem(value: s, child: Text(s.label)))
+                  .toList(),
     );
   }
 }

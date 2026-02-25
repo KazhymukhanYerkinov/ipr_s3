@@ -84,10 +84,12 @@ class _SetPinScreenState extends State<SetPinScreen>
     _shakeController.forward(from: 0);
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-        content: Text(context.locale.pinMismatch),
-        behavior: SnackBarBehavior.floating,
-      ));
+      ..showSnackBar(
+        SnackBar(
+          content: Text(context.locale.pinMismatch),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     setState(() {
       _enteredPin = '';
       _firstPin = null;
@@ -113,10 +115,12 @@ class _SetPinScreenState extends State<SetPinScreen>
         if (state is AuthError) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-              content: Text(state.message),
-              behavior: SnackBarBehavior.floating,
-            ));
+            ..showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
           setState(() {
             _enteredPin = '';
             _firstPin = null;

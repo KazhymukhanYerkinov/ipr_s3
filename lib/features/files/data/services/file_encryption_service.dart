@@ -62,8 +62,13 @@ class FileEncryptionService {
   }
 
   Future<Uint8List> decrypt(Uint8List encryptedData) async {
-    _logger.info('Decrypting ${encryptedData.length} bytes in background isolate');
+    _logger.info(
+      'Decrypting ${encryptedData.length} bytes in background isolate',
+    );
     final key = await _encryptionHelper.getEncryptionKey();
-    return compute(decryptBytes, EncryptionParams(data: encryptedData, key: key));
+    return compute(
+      decryptBytes,
+      EncryptionParams(data: encryptedData, key: key),
+    );
   }
 }

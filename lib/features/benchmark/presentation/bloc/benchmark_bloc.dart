@@ -15,7 +15,7 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
   final NativeHashService _nativeHashService;
 
   BenchmarkBloc(this._nativeHashService)
-      : super(const BenchmarkState.initial()) {
+    : super(const BenchmarkState.initial()) {
     on<BenchmarkRunRequested>(_onRun);
   }
 
@@ -32,36 +32,44 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
       for (final sizeMb in sizes) {
         final data = _generateTestData(sizeMb * 1024 * 1024);
 
-        emit(BenchmarkState.running(
-          currentTask: 'Dart CRC32 — ${sizeMb}MB',
-          completedSteps: completedSteps,
-          totalSteps: totalSteps,
-        ));
+        emit(
+          BenchmarkState.running(
+            currentTask: 'Dart CRC32 — ${sizeMb}MB',
+            completedSteps: completedSteps,
+            totalSteps: totalSteps,
+          ),
+        );
         final dartMs = await _benchmarkDartCrc32(data);
         completedSteps++;
 
-        emit(BenchmarkState.running(
-          currentTask: 'C (FFI) CRC32 — ${sizeMb}MB',
-          completedSteps: completedSteps,
-          totalSteps: totalSteps,
-        ));
+        emit(
+          BenchmarkState.running(
+            currentTask: 'C (FFI) CRC32 — ${sizeMb}MB',
+            completedSteps: completedSteps,
+            totalSteps: totalSteps,
+          ),
+        );
         final nativeMs = _benchmarkNativeCrc32(data);
         completedSteps++;
 
-        emit(BenchmarkState.running(
-          currentTask: 'C (FFI) + Isolate CRC32 — ${sizeMb}MB',
-          completedSteps: completedSteps,
-          totalSteps: totalSteps,
-        ));
+        emit(
+          BenchmarkState.running(
+            currentTask: 'C (FFI) + Isolate CRC32 — ${sizeMb}MB',
+            completedSteps: completedSteps,
+            totalSteps: totalSteps,
+          ),
+        );
         final isolateMs = await _benchmarkIsolateCrc32(data);
         completedSteps++;
 
-        results.add(BenchmarkResult(
-          sizeMb: sizeMb,
-          dartMs: dartMs,
-          nativeMs: nativeMs,
-          isolateMs: isolateMs,
-        ));
+        results.add(
+          BenchmarkResult(
+            sizeMb: sizeMb,
+            dartMs: dartMs,
+            nativeMs: nativeMs,
+            isolateMs: isolateMs,
+          ),
+        );
       }
 
       emit(BenchmarkState.completed(results: results));

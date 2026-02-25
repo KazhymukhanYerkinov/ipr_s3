@@ -119,7 +119,9 @@ class FilesRepositoryImpl
         if (currentChecksum != entity.checksum) {
           _logger.error('File integrity check failed for [REDACTED_ID]');
           return const Left(
-            FileFailure(message: 'File integrity check failed — data may be corrupted'),
+            FileFailure(
+              message: 'File integrity check failed — data may be corrupted',
+            ),
           );
         }
       }

@@ -80,17 +80,16 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [loading, pinRequired] when sign-in succeeds and PIN exists',
       build: () {
-        when(() => mockSignIn())
-            .thenAnswer((_) async => const Right(testUser));
-        when(() => mockHasPin())
-            .thenAnswer((_) async => const Right(true));
+        when(() => mockSignIn()).thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin()).thenAnswer((_) async => const Right(true));
         return authBloc;
       },
       act: (bloc) => bloc.add(GoogleSignInRequested()),
-      expect: () => [
-        const AuthState.loading(),
-        const AuthState.pinRequired(user: testUser),
-      ],
+      expect:
+          () => [
+            const AuthState.loading(),
+            const AuthState.pinRequired(user: testUser),
+          ],
       verify: (_) {
         verify(() => mockSignIn()).called(1);
         verify(() => mockHasPin()).called(1);
@@ -100,33 +99,33 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [loading, pinSetupRequired] when sign-in succeeds and no PIN',
       build: () {
-        when(() => mockSignIn())
-            .thenAnswer((_) async => const Right(testUser));
-        when(() => mockHasPin())
-            .thenAnswer((_) async => const Right(false));
+        when(() => mockSignIn()).thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin()).thenAnswer((_) async => const Right(false));
         return authBloc;
       },
       act: (bloc) => bloc.add(GoogleSignInRequested()),
-      expect: () => [
-        const AuthState.loading(),
-        const AuthState.pinSetupRequired(user: testUser),
-      ],
+      expect:
+          () => [
+            const AuthState.loading(),
+            const AuthState.pinSetupRequired(user: testUser),
+          ],
     );
 
     blocTest<AuthBloc, AuthState>(
       'emits [loading, authenticated] when sign-in succeeds and hasPin fails',
       build: () {
-        when(() => mockSignIn())
-            .thenAnswer((_) async => const Right(testUser));
+        when(() => mockSignIn()).thenAnswer((_) async => const Right(testUser));
         when(() => mockHasPin()).thenAnswer(
-            (_) async => const Left(CacheFailure(message: 'no pin data')));
+          (_) async => const Left(CacheFailure(message: 'no pin data')),
+        );
         return authBloc;
       },
       act: (bloc) => bloc.add(GoogleSignInRequested()),
-      expect: () => [
-        const AuthState.loading(),
-        const AuthState.authenticated(user: testUser),
-      ],
+      expect:
+          () => [
+            const AuthState.loading(),
+            const AuthState.authenticated(user: testUser),
+          ],
     );
 
     blocTest<AuthBloc, AuthState>(
@@ -138,10 +137,11 @@ void main() {
         return authBloc;
       },
       act: (bloc) => bloc.add(GoogleSignInRequested()),
-      expect: () => [
-        const AuthState.loading(),
-        const AuthState.error(message: 'Failed to sign in'),
-      ],
+      expect:
+          () => [
+            const AuthState.loading(),
+            const AuthState.error(message: 'Failed to sign in'),
+          ],
     );
   });
 
@@ -149,16 +149,12 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [loading, unauthenticated] when sign-out succeeds',
       build: () {
-        when(() => mockSignOut()).thenAnswer(
-          (_) async => const Right(null),
-        );
+        when(() => mockSignOut()).thenAnswer((_) async => const Right(null));
         return authBloc;
       },
       act: (bloc) => bloc.add(SignOutRequested()),
-      expect: () => [
-        const AuthState.loading(),
-        const AuthState.unauthenticated(),
-      ],
+      expect:
+          () => [const AuthState.loading(), const AuthState.unauthenticated()],
       verify: (_) {
         verify(() => mockSignOut()).called(1);
       },
@@ -173,10 +169,11 @@ void main() {
         return authBloc;
       },
       act: (bloc) => bloc.add(SignOutRequested()),
-      expect: () => [
-        const AuthState.loading(),
-        const AuthState.error(message: 'Failed to sign out'),
-      ],
+      expect:
+          () => [
+            const AuthState.loading(),
+            const AuthState.error(message: 'Failed to sign out'),
+          ],
     );
   });
 
@@ -184,16 +181,14 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [pinRequired] when user exists and has PIN',
       build: () {
-        when(() => mockGetCurrentUser())
-            .thenAnswer((_) async => const Right(testUser));
-        when(() => mockHasPin())
-            .thenAnswer((_) async => const Right(true));
+        when(
+          () => mockGetCurrentUser(),
+        ).thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin()).thenAnswer((_) async => const Right(true));
         return authBloc;
       },
       act: (bloc) => bloc.add(AuthCheckRequested()),
-      expect: () => [
-        const AuthState.pinRequired(user: testUser),
-      ],
+      expect: () => [const AuthState.pinRequired(user: testUser)],
       verify: (_) {
         verify(() => mockGetCurrentUser()).called(1);
         verify(() => mockHasPin()).called(1);
@@ -203,30 +198,26 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [pinSetupRequired] when user exists but no PIN',
       build: () {
-        when(() => mockGetCurrentUser())
-            .thenAnswer((_) async => const Right(testUser));
-        when(() => mockHasPin())
-            .thenAnswer((_) async => const Right(false));
+        when(
+          () => mockGetCurrentUser(),
+        ).thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin()).thenAnswer((_) async => const Right(false));
         return authBloc;
       },
       act: (bloc) => bloc.add(AuthCheckRequested()),
-      expect: () => [
-        const AuthState.pinSetupRequired(user: testUser),
-      ],
+      expect: () => [const AuthState.pinSetupRequired(user: testUser)],
     );
 
     blocTest<AuthBloc, AuthState>(
       'emits [unauthenticated] when no user exists',
       build: () {
-        when(() => mockGetCurrentUser()).thenAnswer(
-          (_) async => const Right(null),
-        );
+        when(
+          () => mockGetCurrentUser(),
+        ).thenAnswer((_) async => const Right(null));
         return authBloc;
       },
       act: (bloc) => bloc.add(AuthCheckRequested()),
-      expect: () => [
-        const AuthState.unauthenticated(),
-      ],
+      expect: () => [const AuthState.unauthenticated()],
     );
 
     blocTest<AuthBloc, AuthState>(
@@ -239,9 +230,7 @@ void main() {
         return authBloc;
       },
       act: (bloc) => bloc.add(AuthCheckRequested()),
-      expect: () => [
-        const AuthState.unauthenticated(),
-      ],
+      expect: () => [const AuthState.unauthenticated()],
     );
   });
 
@@ -249,12 +238,11 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [loading, authenticated] when PIN is correct',
       build: () {
-        when(() => mockSignIn())
-            .thenAnswer((_) async => const Right(testUser));
-        when(() => mockHasPin())
-            .thenAnswer((_) async => const Right(true));
-        when(() => mockVerifyPin('1234'))
-            .thenAnswer((_) async => const Right(true));
+        when(() => mockSignIn()).thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin()).thenAnswer((_) async => const Right(true));
+        when(
+          () => mockVerifyPin('1234'),
+        ).thenAnswer((_) async => const Right(true));
         return authBloc;
       },
       act: (bloc) async {
@@ -262,12 +250,13 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 100));
         bloc.add(PinSubmitted('1234'));
       },
-      expect: () => [
-        const AuthState.loading(),
-        const AuthState.pinRequired(user: testUser),
-        const AuthState.loading(),
-        const AuthState.authenticated(user: testUser),
-      ],
+      expect:
+          () => [
+            const AuthState.loading(),
+            const AuthState.pinRequired(user: testUser),
+            const AuthState.loading(),
+            const AuthState.authenticated(user: testUser),
+          ],
       verify: (_) {
         verify(() => mockVerifyPin('1234')).called(1);
       },
@@ -276,12 +265,11 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [loading, error] when PIN is wrong',
       build: () {
-        when(() => mockSignIn())
-            .thenAnswer((_) async => const Right(testUser));
-        when(() => mockHasPin())
-            .thenAnswer((_) async => const Right(true));
-        when(() => mockVerifyPin('0000'))
-            .thenAnswer((_) async => const Right(false));
+        when(() => mockSignIn()).thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin()).thenAnswer((_) async => const Right(true));
+        when(
+          () => mockVerifyPin('0000'),
+        ).thenAnswer((_) async => const Right(false));
         return authBloc;
       },
       act: (bloc) async {
@@ -289,21 +277,20 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 100));
         bloc.add(PinSubmitted('0000'));
       },
-      expect: () => [
-        const AuthState.loading(),
-        const AuthState.pinRequired(user: testUser),
-        const AuthState.loading(),
-        const AuthState.error(message: 'Wrong PIN'),
-      ],
+      expect:
+          () => [
+            const AuthState.loading(),
+            const AuthState.pinRequired(user: testUser),
+            const AuthState.loading(),
+            const AuthState.error(message: 'Wrong PIN'),
+          ],
     );
 
     blocTest<AuthBloc, AuthState>(
       'emits [unauthenticated] when no current user',
       build: () => authBloc,
       act: (bloc) => bloc.add(PinSubmitted('1234')),
-      expect: () => [
-        const AuthState.unauthenticated(),
-      ],
+      expect: () => [const AuthState.unauthenticated()],
     );
   });
 
@@ -311,12 +298,11 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [loading, authenticated] when PIN setup succeeds',
       build: () {
-        when(() => mockSignIn())
-            .thenAnswer((_) async => const Right(testUser));
-        when(() => mockHasPin())
-            .thenAnswer((_) async => const Right(false));
-        when(() => mockSetPin('1234'))
-            .thenAnswer((_) async => const Right(null));
+        when(() => mockSignIn()).thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin()).thenAnswer((_) async => const Right(false));
+        when(
+          () => mockSetPin('1234'),
+        ).thenAnswer((_) async => const Right(null));
         return authBloc;
       },
       act: (bloc) async {
@@ -324,12 +310,13 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 100));
         bloc.add(PinSetupSubmitted('1234'));
       },
-      expect: () => [
-        const AuthState.loading(),
-        const AuthState.pinSetupRequired(user: testUser),
-        const AuthState.loading(),
-        const AuthState.authenticated(user: testUser),
-      ],
+      expect:
+          () => [
+            const AuthState.loading(),
+            const AuthState.pinSetupRequired(user: testUser),
+            const AuthState.loading(),
+            const AuthState.authenticated(user: testUser),
+          ],
       verify: (_) {
         verify(() => mockSetPin('1234')).called(1);
       },
@@ -339,9 +326,7 @@ void main() {
       'emits [unauthenticated] when no current user',
       build: () => authBloc,
       act: (bloc) => bloc.add(PinSetupSubmitted('1234')),
-      expect: () => [
-        const AuthState.unauthenticated(),
-      ],
+      expect: () => [const AuthState.unauthenticated()],
     );
   });
 
@@ -349,12 +334,9 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [authenticated] when biometric succeeds',
       build: () {
-        when(() => mockSignIn())
-            .thenAnswer((_) async => const Right(testUser));
-        when(() => mockHasPin())
-            .thenAnswer((_) async => const Right(true));
-        when(() => mockBiometrics())
-            .thenAnswer((_) async => const Right(true));
+        when(() => mockSignIn()).thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin()).thenAnswer((_) async => const Right(true));
+        when(() => mockBiometrics()).thenAnswer((_) async => const Right(true));
         return authBloc;
       },
       act: (bloc) async {
@@ -362,11 +344,12 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 100));
         bloc.add(BiometricRequested());
       },
-      expect: () => [
-        const AuthState.loading(),
-        const AuthState.pinRequired(user: testUser),
-        const AuthState.authenticated(user: testUser),
-      ],
+      expect:
+          () => [
+            const AuthState.loading(),
+            const AuthState.pinRequired(user: testUser),
+            const AuthState.authenticated(user: testUser),
+          ],
       verify: (_) {
         verify(() => mockBiometrics()).called(1);
       },
@@ -375,12 +358,11 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'stays pinRequired when biometric fails',
       build: () {
-        when(() => mockSignIn())
-            .thenAnswer((_) async => const Right(testUser));
-        when(() => mockHasPin())
-            .thenAnswer((_) async => const Right(true));
-        when(() => mockBiometrics())
-            .thenAnswer((_) async => const Right(false));
+        when(() => mockSignIn()).thenAnswer((_) async => const Right(testUser));
+        when(() => mockHasPin()).thenAnswer((_) async => const Right(true));
+        when(
+          () => mockBiometrics(),
+        ).thenAnswer((_) async => const Right(false));
         return authBloc;
       },
       act: (bloc) async {
@@ -388,19 +370,18 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 100));
         bloc.add(BiometricRequested());
       },
-      expect: () => [
-        const AuthState.loading(),
-        const AuthState.pinRequired(user: testUser),
-      ],
+      expect:
+          () => [
+            const AuthState.loading(),
+            const AuthState.pinRequired(user: testUser),
+          ],
     );
 
     blocTest<AuthBloc, AuthState>(
       'emits [unauthenticated] when no current user',
       build: () => authBloc,
       act: (bloc) => bloc.add(BiometricRequested()),
-      expect: () => [
-        const AuthState.unauthenticated(),
-      ],
+      expect: () => [const AuthState.unauthenticated()],
     );
   });
 }

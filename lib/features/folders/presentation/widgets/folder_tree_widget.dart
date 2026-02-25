@@ -48,13 +48,14 @@ class FolderTreeWidget extends StatelessWidget {
     return ListView.builder(
       itemCount: folders.length,
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      itemBuilder: (context, index) => FolderNode(
-        folder: folders[index],
-        depth: 0,
-        onFolderTap: onFolderTap,
-        onFolderDelete: onFolderDelete,
-        onAddSubfolder: onAddSubfolder,
-      ),
+      itemBuilder:
+          (context, index) => FolderNode(
+            folder: folders[index],
+            depth: 0,
+            onFolderTap: onFolderTap,
+            onFolderDelete: onFolderDelete,
+            onAddSubfolder: onAddSubfolder,
+          ),
     );
   }
 }

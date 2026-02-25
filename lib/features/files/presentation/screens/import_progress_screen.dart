@@ -48,9 +48,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
     final progress = _currentProgress;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l.importingFiles),
-      ),
+      appBar: AppBar(title: Text(l.importingFiles)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -69,7 +67,8 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                       child: CircularProgressIndicator(
                         value: progress?.progress,
                         strokeWidth: 6,
-                        backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                        backgroundColor:
+                            theme.colorScheme.surfaceContainerHighest,
                       ),
                     ),
                     if (progress != null)
@@ -102,8 +101,11 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.check_circle_rounded,
-                          color: theme.colorScheme.primary, size: 20),
+                      Icon(
+                        Icons.check_circle_rounded,
+                        color: theme.colorScheme.primary,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         l.allFilesEncrypted,

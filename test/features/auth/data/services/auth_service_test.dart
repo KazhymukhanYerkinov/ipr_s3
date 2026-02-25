@@ -25,7 +25,11 @@ void main() {
     mockRemoteSource = MockAuthRemoteSource();
     mockLocalSource = MockAuthLocalSource();
     mockPinManager = MockPinManager();
-    authService = AuthService(mockRemoteSource, mockLocalSource, mockPinManager);
+    authService = AuthService(
+      mockRemoteSource,
+      mockLocalSource,
+      mockPinManager,
+    );
   });
 
   const testUserDto = UserDto(
@@ -37,54 +41,48 @@ void main() {
 
   group('signInWithGoogle', () {
     test('should return UserEntity on successful sign-in', () async {
-      when(() => mockRemoteSource.signInWithGoogle())
-          .thenAnswer((_) async => testUserDto);
+      when(
+        () => mockRemoteSource.signInWithGoogle(),
+      ).thenAnswer((_) async => testUserDto);
 
       final result = await authService.signInWithGoogle();
 
       expect(result.isRight(), true);
-      result.fold(
-        (_) => fail('Should be Right'),
-        (user) {
-          expect(user, isA<UserEntity>());
-          expect(user.uid, '123');
-          expect(user.email, 'test@example.com');
-          expect(user.displayName, 'Test User');
-        },
-      );
+      result.fold((_) => fail('Should be Right'), (user) {
+        expect(user, isA<UserEntity>());
+        expect(user.uid, '123');
+        expect(user.email, 'test@example.com');
+        expect(user.displayName, 'Test User');
+      });
       verify(() => mockRemoteSource.signInWithGoogle()).called(1);
     });
 
     test('should return AuthFailure when remote source throws', () async {
-      when(() => mockRemoteSource.signInWithGoogle())
-          .thenThrow(Exception('Google Sign-In cancelled'));
+      when(
+        () => mockRemoteSource.signInWithGoogle(),
+      ).thenThrow(Exception('Google Sign-In cancelled'));
 
       final result = await authService.signInWithGoogle();
 
       expect(result.isLeft(), true);
-      result.fold(
-        (failure) {
-          expect(failure, isA<AuthFailure>());
-          expect(failure.message, 'Failed to sign in');
-        },
-        (_) => fail('Should be Left'),
-      );
+      result.fold((failure) {
+        expect(failure, isA<AuthFailure>());
+        expect(failure.message, 'Failed to sign in');
+      }, (_) => fail('Should be Left'));
     });
 
     test('should not expose original error message in failure', () async {
-      when(() => mockRemoteSource.signInWithGoogle())
-          .thenThrow(Exception('Secret token abc123 leaked'));
+      when(
+        () => mockRemoteSource.signInWithGoogle(),
+      ).thenThrow(Exception('Secret token abc123 leaked'));
 
       final result = await authService.signInWithGoogle();
 
-      result.fold(
-        (failure) {
-          expect(failure.message, isNot(contains('Secret')));
-          expect(failure.message, isNot(contains('abc123')));
-          expect(failure.message, 'Failed to sign in');
-        },
-        (_) => fail('Should be Left'),
-      );
+      result.fold((failure) {
+        expect(failure.message, isNot(contains('Secret')));
+        expect(failure.message, isNot(contains('abc123')));
+        expect(failure.message, 'Failed to sign in');
+      }, (_) => fail('Should be Left'));
     });
   });
 
@@ -110,25 +108,24 @@ void main() {
     });
 
     test('should return AuthFailure when remote sign-out throws', () async {
-      when(() => mockRemoteSource.signOut())
-          .thenThrow(Exception('Network error'));
+      when(
+        () => mockRemoteSource.signOut(),
+      ).thenThrow(Exception('Network error'));
 
       final result = await authService.signOut();
 
       expect(result.isLeft(), true);
-      result.fold(
-        (failure) {
-          expect(failure, isA<AuthFailure>());
-          expect(failure.message, 'Failed to sign out');
-        },
-        (_) => fail('Should be Left'),
-      );
+      result.fold((failure) {
+        expect(failure, isA<AuthFailure>());
+        expect(failure.message, 'Failed to sign out');
+      }, (_) => fail('Should be Left'));
     });
 
     test('should return AuthFailure when local deleteToken throws', () async {
       when(() => mockRemoteSource.signOut()).thenAnswer((_) async {});
-      when(() => mockLocalSource.deleteToken())
-          .thenThrow(Exception('Storage error'));
+      when(
+        () => mockLocalSource.deleteToken(),
+      ).thenThrow(Exception('Storage error'));
 
       final result = await authService.signOut();
 
@@ -147,13 +144,10 @@ void main() {
       final result = await authService.getCurrentUser();
 
       expect(result.isRight(), true);
-      result.fold(
-        (_) => fail('Should be Right'),
-        (user) {
-          expect(user, isNotNull);
-          expect(user!.uid, '123');
-        },
-      );
+      result.fold((_) => fail('Should be Right'), (user) {
+        expect(user, isNotNull);
+        expect(user!.uid, '123');
+      });
       verify(() => mockRemoteSource.getCurrentUser()).called(1);
     });
 
@@ -170,19 +164,17 @@ void main() {
     });
 
     test('should return AuthFailure when getCurrentUser throws', () async {
-      when(() => mockRemoteSource.getCurrentUser())
-          .thenThrow(Exception('Firebase error'));
+      when(
+        () => mockRemoteSource.getCurrentUser(),
+      ).thenThrow(Exception('Firebase error'));
 
       final result = await authService.getCurrentUser();
 
       expect(result.isLeft(), true);
-      result.fold(
-        (failure) {
-          expect(failure, isA<AuthFailure>());
-          expect(failure.message, 'Failed to get current user');
-        },
-        (_) => fail('Should be Left'),
-      );
+      result.fold((failure) {
+        expect(failure, isA<AuthFailure>());
+        expect(failure.message, 'Failed to get current user');
+      }, (_) => fail('Should be Left'));
     });
   });
 
@@ -228,8 +220,9 @@ void main() {
     });
 
     test('should return AuthFailure when PinManager throws', () async {
-      when(() => mockPinManager.setPin('1234'))
-          .thenThrow(Exception('Write error'));
+      when(
+        () => mockPinManager.setPin('1234'),
+      ).thenThrow(Exception('Write error'));
 
       final result = await authService.setPin('1234');
 
@@ -243,8 +236,9 @@ void main() {
 
   group('verifyPin', () {
     test('should return true when PIN is correct', () async {
-      when(() => mockPinManager.verifyPin('1234'))
-          .thenAnswer((_) async => true);
+      when(
+        () => mockPinManager.verifyPin('1234'),
+      ).thenAnswer((_) async => true);
 
       final result = await authService.verifyPin('1234');
 
@@ -253,8 +247,9 @@ void main() {
     });
 
     test('should return false when PIN is wrong', () async {
-      when(() => mockPinManager.verifyPin('0000'))
-          .thenAnswer((_) async => false);
+      when(
+        () => mockPinManager.verifyPin('0000'),
+      ).thenAnswer((_) async => false);
 
       final result = await authService.verifyPin('0000');
 
@@ -262,8 +257,9 @@ void main() {
     });
 
     test('should return AuthFailure when PinManager throws', () async {
-      when(() => mockPinManager.verifyPin('1234'))
-          .thenThrow(Exception('Read error'));
+      when(
+        () => mockPinManager.verifyPin('1234'),
+      ).thenThrow(Exception('Read error'));
 
       final result = await authService.verifyPin('1234');
 
@@ -277,8 +273,9 @@ void main() {
 
   group('authenticateWithBiometrics', () {
     test('should return true when biometric succeeds', () async {
-      when(() => mockLocalSource.authenticateWithBiometrics())
-          .thenAnswer((_) async => true);
+      when(
+        () => mockLocalSource.authenticateWithBiometrics(),
+      ).thenAnswer((_) async => true);
 
       final result = await authService.authenticateWithBiometrics();
 
@@ -287,8 +284,9 @@ void main() {
     });
 
     test('should return false when biometric is rejected', () async {
-      when(() => mockLocalSource.authenticateWithBiometrics())
-          .thenAnswer((_) async => false);
+      when(
+        () => mockLocalSource.authenticateWithBiometrics(),
+      ).thenAnswer((_) async => false);
 
       final result = await authService.authenticateWithBiometrics();
 
@@ -296,15 +294,15 @@ void main() {
     });
 
     test('should return AuthFailure when biometric throws', () async {
-      when(() => mockLocalSource.authenticateWithBiometrics())
-          .thenThrow(Exception('Biometric unavailable'));
+      when(
+        () => mockLocalSource.authenticateWithBiometrics(),
+      ).thenThrow(Exception('Biometric unavailable'));
 
       final result = await authService.authenticateWithBiometrics();
 
       expect(result.isLeft(), true);
       result.fold(
-        (failure) =>
-            expect(failure.message, 'Biometric authentication failed'),
+        (failure) => expect(failure.message, 'Biometric authentication failed'),
         (_) => fail('Should be Left'),
       );
     });

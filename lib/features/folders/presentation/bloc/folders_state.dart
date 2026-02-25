@@ -7,8 +7,7 @@ part 'folders_state.freezed.dart';
 class FoldersState with _$FoldersState {
   const factory FoldersState.initial() = FoldersInitial;
   const factory FoldersState.loading() = FoldersLoading;
-  const factory FoldersState.loaded({
-    required List<FolderItem> folders,
-  }) = FoldersLoaded;
+  const factory FoldersState.loaded({required List<FolderItem> folders}) =
+      FoldersLoaded;
   const factory FoldersState.error({required String message}) = FoldersError;
 }

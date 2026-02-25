@@ -16,6 +16,7 @@ class FilesState with _$FilesState {
     @Default('') String searchQuery,
     SortStrategy? sortStrategy,
   }) = FilesLoaded;
-  const factory FilesState.importing({required String fileName}) = FilesImporting;
+  const factory FilesState.importing({required String fileName}) =
+      FilesImporting;
   const factory FilesState.error({required String message}) = FilesError;
 }

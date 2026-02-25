@@ -8,26 +8,19 @@ import 'package:ipr_s3/features/folders/domain/behaviors/move_file_to_folder_beh
 @module
 abstract class FoldersModule {
   @factoryMethod
-  GetFoldersBehavior getFoldersBehavior(
-    FoldersRepositoryImpl repository,
-  ) =>
+  GetFoldersBehavior getFoldersBehavior(FoldersRepositoryImpl repository) =>
       repository;
 
   @factoryMethod
-  CreateFolderBehavior createFolderBehavior(
-    FoldersRepositoryImpl repository,
-  ) =>
+  CreateFolderBehavior createFolderBehavior(FoldersRepositoryImpl repository) =>
       repository;
 
   @factoryMethod
-  DeleteFolderBehavior deleteFolderBehavior(
-    FoldersRepositoryImpl repository,
-  ) =>
+  DeleteFolderBehavior deleteFolderBehavior(FoldersRepositoryImpl repository) =>
       repository;
 
   @factoryMethod
   MoveFileToFolderBehavior moveFileToFolderBehavior(
     FoldersRepositoryImpl repository,
-  ) =>
-      repository;
+  ) => repository;
 }
