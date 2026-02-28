@@ -55,7 +55,6 @@ class _BenchmarkView extends StatelessWidget {
               message: message,
               theme: theme,
             ),
-            _ => const SizedBox.shrink(),
           };
         },
       ),

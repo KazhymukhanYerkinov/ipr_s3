@@ -13,6 +13,6 @@ class BenchmarkResult {
     this.label,
   });
 
-  String get sizeLabel => label ?? '${sizeMb} MB';
+  String get sizeLabel => label ?? '$sizeMb MB';
   double get speedup => dartMs > 0 ? dartMs / nativeMs : 0;
 }
