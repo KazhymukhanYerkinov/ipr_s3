@@ -73,9 +73,8 @@ dependencies:
   # Secure logging
   logger: ^2.5.0
 
-  # HTTP client
+  # HTTP client (Dio kept for potential future API integration)
   dio: ^5.7.0
-  retrofit: ^4.1.0
 
   # Cryptography
   crypto: ^3.0.6

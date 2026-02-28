@@ -22,7 +22,7 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
     Emitter<BenchmarkState> emit,
   ) async {
     final sizes = [1, 5, 10];
-    final totalSteps = sizes.length * 3;
+    final totalSteps = sizes.length * 3 + 2;
     var completedSteps = 0;
     final results = <BenchmarkResult>[];
 
@@ -70,6 +70,37 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
         );
       }
 
+      emit(
+        BenchmarkState.running(
+          currentTask: 'FFI djb2 string hash',
+          completedSteps: completedSteps,
+          totalSteps: totalSteps,
+        ),
+      );
+      final djb2Ms = _benchmarkDjb2Hash();
+      completedSteps++;
+
+      emit(
+        BenchmarkState.running(
+          currentTask: 'FFI countBytes',
+          completedSteps: completedSteps,
+          totalSteps: totalSteps,
+        ),
+      );
+      final lastData = _generateTestData(10 * 1024 * 1024);
+      final countBytesMs = _benchmarkCountBytes(lastData);
+      completedSteps++;
+
+      results.add(
+        BenchmarkResult(
+          sizeMb: 0,
+          dartMs: djb2Ms,
+          nativeMs: countBytesMs,
+          isolateMs: 0,
+          label: 'FFI extras',
+        ),
+      );
+
       emit(BenchmarkState.completed(results: results));
     } catch (e) {
       emit(BenchmarkState.error(message: 'Benchmark failed: $e'));
@@ -106,6 +137,22 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
     return stopwatch.elapsedMilliseconds;
   }
 
+  int _benchmarkDjb2Hash() {
+    final stopwatch = Stopwatch()..start();
+    for (var i = 0; i < 100000; i++) {
+      _nativeHashService.djb2Hash('benchmark-test-string-$i');
+    }
+    stopwatch.stop();
+    return stopwatch.elapsedMilliseconds;
+  }
+
+  int _benchmarkCountBytes(Uint8List data) {
+    final stopwatch = Stopwatch()..start();
+    _nativeHashService.countBytes(data, 0);
+    stopwatch.stop();
+    return stopwatch.elapsedMilliseconds;
+  }
+
   static int _dartCrc32(Uint8List data) {
     var crc = 0xFFFFFFFF;
     for (var i = 0; i < data.length; i++) {
@@ -118,7 +165,6 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
   }
 }
 
-/// Top-level function for compute() — runs native CRC32 in background isolate.
 int _isolateCrc32Worker(Uint8List data) {
   var crc = 0xFFFFFFFF;
   for (var i = 0; i < data.length; i++) {

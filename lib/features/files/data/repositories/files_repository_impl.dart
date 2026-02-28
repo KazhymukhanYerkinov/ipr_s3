@@ -13,7 +13,6 @@ import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/get_files_behavior.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/import_file_behavior.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/decrypt_file_behavior.dart';
-import 'package:ipr_s3/features/files/domain/behaviors/delete_file_behavior.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/search_files_behavior.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
@@ -23,7 +22,6 @@ class FilesRepositoryImpl
         GetFilesBehavior,
         ImportFileBehavior,
         DecryptFileBehavior,
-        DeleteFileBehavior,
         SearchFilesBehavior {
   final FilesLocalSource _localSource;
   final FileEncryptionService _encryptionService;
@@ -148,18 +146,6 @@ class FilesRepositoryImpl
     } catch (e, stackTrace) {
       _logger.error('Failed to decrypt file', e, stackTrace);
       return const Left(EncryptionFailure(message: 'Failed to decrypt file'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> deleteFile(String fileId) async {
-    try {
-      await _localSource.delete(fileId);
-      _logger.info('File deleted successfully');
-      return const Right(null);
-    } catch (e, stackTrace) {
-      _logger.error('Failed to delete file', e, stackTrace);
-      return const Left(FileFailure(message: 'Failed to delete file'));
     }
   }
 

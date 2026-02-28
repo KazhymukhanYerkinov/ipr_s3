@@ -332,5 +332,40 @@
   "benchmarkTitle": "Benchmark: Dart vs C (FFI)",
   "@benchmarkTitle": {
     "description": "Benchmark screen app bar title"
+  },
+
+  "undo": "Undo",
+  "@undo": {
+    "description": "Undo action label"
+  },
+
+  "fileDeleted": "\"{fileName}\" deleted",
+  "@fileDeleted": {
+    "description": "SnackBar message after file deletion",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "rename": "Rename",
+  "@rename": {
+    "description": "Rename action label"
+  },
+
+  "renameFile": "Rename file",
+  "@renameFile": {
+    "description": "Rename file dialog title"
+  },
+
+  "newName": "New name",
+  "@newName": {
+    "description": "New name text field hint"
+  },
+
+  "tags": "Tags",
+  "@tags": {
+    "description": "Tags section label"
   }
 }

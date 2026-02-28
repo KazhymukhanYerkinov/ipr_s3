@@ -17,10 +17,13 @@ class AuthHomeRoute extends PageRouteInfo<AuthHomeRouteArgs> {
     required UserEntity user,
     List<PageRouteInfo>? children,
   }) : super(
-         AuthHomeRoute.name,
-         args: AuthHomeRouteArgs(key: key, user: user),
-         initialChildren: children,
-       );
+          AuthHomeRoute.name,
+          args: AuthHomeRouteArgs(
+            key: key,
+            user: user,
+          ),
+          initialChildren: children,
+        );
 
   static const String name = 'AuthHomeRoute';
 
@@ -28,13 +31,19 @@ class AuthHomeRoute extends PageRouteInfo<AuthHomeRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<AuthHomeRouteArgs>();
-      return AuthHomeScreen(key: args.key, user: args.user);
+      return AuthHomeScreen(
+        key: args.key,
+        user: args.user,
+      );
     },
   );
 }
 
 class AuthHomeRouteArgs {
-  const AuthHomeRouteArgs({this.key, required this.user});
+  const AuthHomeRouteArgs({
+    this.key,
+    required this.user,
+  });
 
   final Key? key;
 
@@ -50,7 +59,10 @@ class AuthHomeRouteArgs {
 /// [AuthSignInScreen]
 class AuthSignInRoute extends PageRouteInfo<void> {
   const AuthSignInRoute({List<PageRouteInfo>? children})
-    : super(AuthSignInRoute.name, initialChildren: children);
+      : super(
+          AuthSignInRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'AuthSignInRoute';
 
@@ -66,7 +78,10 @@ class AuthSignInRoute extends PageRouteInfo<void> {
 /// [BenchmarkScreen]
 class BenchmarkRoute extends PageRouteInfo<void> {
   const BenchmarkRoute({List<PageRouteInfo>? children})
-    : super(BenchmarkRoute.name, initialChildren: children);
+      : super(
+          BenchmarkRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'BenchmarkRoute';
 
@@ -87,14 +102,14 @@ class FileViewerRoute extends PageRouteInfo<FileViewerRouteArgs> {
     required String fileName,
     List<PageRouteInfo>? children,
   }) : super(
-         FileViewerRoute.name,
-         args: FileViewerRouteArgs(
-           key: key,
-           fileId: fileId,
-           fileName: fileName,
-         ),
-         initialChildren: children,
-       );
+          FileViewerRoute.name,
+          args: FileViewerRouteArgs(
+            key: key,
+            fileId: fileId,
+            fileName: fileName,
+          ),
+          initialChildren: children,
+        );
 
   static const String name = 'FileViewerRoute';
 
@@ -134,7 +149,10 @@ class FileViewerRouteArgs {
 /// [FolderTreeScreen]
 class FolderTreeRoute extends PageRouteInfo<void> {
   const FolderTreeRoute({List<PageRouteInfo>? children})
-    : super(FolderTreeRoute.name, initialChildren: children);
+      : super(
+          FolderTreeRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'FolderTreeRoute';
 
@@ -150,7 +168,10 @@ class FolderTreeRoute extends PageRouteInfo<void> {
 /// [HomeScreen]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute({List<PageRouteInfo>? children})
-    : super(HomeRoute.name, initialChildren: children);
+      : super(
+          HomeRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'HomeRoute';
 
@@ -166,7 +187,10 @@ class HomeRoute extends PageRouteInfo<void> {
 /// [ImportProgressScreen]
 class ImportProgressRoute extends PageRouteInfo<void> {
   const ImportProgressRoute({List<PageRouteInfo>? children})
-    : super(ImportProgressRoute.name, initialChildren: children);
+      : super(
+          ImportProgressRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'ImportProgressRoute';
 
@@ -182,7 +206,10 @@ class ImportProgressRoute extends PageRouteInfo<void> {
 /// [LockScreen]
 class LockRoute extends PageRouteInfo<void> {
   const LockRoute({List<PageRouteInfo>? children})
-    : super(LockRoute.name, initialChildren: children);
+      : super(
+          LockRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'LockRoute';
 
@@ -198,7 +225,10 @@ class LockRoute extends PageRouteInfo<void> {
 /// [SetPinScreen]
 class SetPinRoute extends PageRouteInfo<void> {
   const SetPinRoute({List<PageRouteInfo>? children})
-    : super(SetPinRoute.name, initialChildren: children);
+      : super(
+          SetPinRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'SetPinRoute';
 
@@ -214,7 +244,10 @@ class SetPinRoute extends PageRouteInfo<void> {
 /// [SettingsScreen]
 class SettingsRoute extends PageRouteInfo<void> {
   const SettingsRoute({List<PageRouteInfo>? children})
-    : super(SettingsRoute.name, initialChildren: children);
+      : super(
+          SettingsRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'SettingsRoute';
 
@@ -230,7 +263,10 @@ class SettingsRoute extends PageRouteInfo<void> {
 /// [StatsScreen]
 class StatsRoute extends PageRouteInfo<void> {
   const StatsRoute({List<PageRouteInfo>? children})
-    : super(StatsRoute.name, initialChildren: children);
+      : super(
+          StatsRoute.name,
+          initialChildren: children,
+        );
 
   static const String name = 'StatsRoute';
 

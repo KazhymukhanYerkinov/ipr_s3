@@ -36,7 +36,7 @@ class ResultsTable extends StatelessWidget {
         ...results.map(
           (r) => TableRow(
             children: [
-              _dataCell('${r.sizeMb} MB', theme),
+              _dataCell(r.sizeLabel, theme),
               _dataCell('${r.dartMs} ms', theme),
               _dataCell('${r.nativeMs} ms', theme, highlight: true),
               _dataCell('${r.isolateMs} ms', theme),

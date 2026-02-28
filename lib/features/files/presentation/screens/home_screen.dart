@@ -246,7 +246,22 @@ class _HomeView extends StatelessWidget {
             FilledButton(
               onPressed: () {
                 Navigator.pop(dialogContext);
-                context.read<FilesBloc>().add(FileDeleteRequested(file));
+                final bloc = context.read<FilesBloc>();
+                bloc.add(FileDeleteRequested(file));
+
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text(l.fileDeleted(file.name)),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 5),
+                      action: SnackBarAction(
+                        label: l.undo,
+                        onPressed: () => bloc.add(UndoRequested()),
+                      ),
+                    ),
+                  );
               },
               style: FilledButton.styleFrom(
                 backgroundColor: theme.colorScheme.error,

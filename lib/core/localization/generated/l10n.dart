@@ -18,20 +18,17 @@ class GeneratedLocalization {
   static GeneratedLocalization? _current;
 
   static GeneratedLocalization get current {
-    assert(
-      _current != null,
-      'No instance of GeneratedLocalization was loaded. Try to initialize the GeneratedLocalization delegate before accessing GeneratedLocalization.current.',
-    );
+    assert(_current != null,
+        'No instance of GeneratedLocalization was loaded. Try to initialize the GeneratedLocalization delegate before accessing GeneratedLocalization.current.');
     return _current!;
   }
 
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<GeneratedLocalization> load(Locale locale) {
-    final name =
-        (locale.countryCode?.isEmpty ?? false)
-            ? locale.languageCode
-            : locale.toString();
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -44,18 +41,14 @@ class GeneratedLocalization {
 
   static GeneratedLocalization of(BuildContext context) {
     final instance = GeneratedLocalization.maybeOf(context);
-    assert(
-      instance != null,
-      'No instance of GeneratedLocalization present in the widget tree. Did you add GeneratedLocalization.delegate in localizationsDelegates?',
-    );
+    assert(instance != null,
+        'No instance of GeneratedLocalization present in the widget tree. Did you add GeneratedLocalization.delegate in localizationsDelegates?');
     return instance!;
   }
 
   static GeneratedLocalization? maybeOf(BuildContext context) {
     return Localizations.of<GeneratedLocalization>(
-      context,
-      GeneratedLocalization,
-    );
+        context, GeneratedLocalization);
   }
 
   /// `Secure App`
@@ -650,7 +643,12 @@ class GeneratedLocalization {
 
   /// `Add`
   String get add {
-    return Intl.message('Add', name: 'add', desc: 'Add button label', args: []);
+    return Intl.message(
+      'Add',
+      name: 'add',
+      desc: 'Add button label',
+      args: [],
+    );
   }
 
   /// `Add tag`
@@ -659,26 +657,6 @@ class GeneratedLocalization {
       'Add tag',
       name: 'addTagChip',
       desc: 'Add tag action chip label',
-      args: [],
-    );
-  }
-
-  /// `Import to folder`
-  String get importToFolder {
-    return Intl.message(
-      'Import to folder',
-      name: 'importToFolder',
-      desc: 'Folder picker bottom sheet title',
-      args: [],
-    );
-  }
-
-  /// `No folder`
-  String get noFolder {
-    return Intl.message(
-      'No folder',
-      name: 'noFolder',
-      desc: 'Option to import without folder',
       args: [],
     );
   }
@@ -692,6 +670,66 @@ class GeneratedLocalization {
       args: [],
     );
   }
+
+  /// `Undo`
+  String get undo {
+    return Intl.message(
+      'Undo',
+      name: 'undo',
+      desc: 'Undo action label',
+      args: [],
+    );
+  }
+
+  /// `"{fileName}" deleted`
+  String fileDeleted(String fileName) {
+    return Intl.message(
+      '"$fileName" deleted',
+      name: 'fileDeleted',
+      desc: 'SnackBar message after file deletion',
+      args: [fileName],
+    );
+  }
+
+  /// `Rename`
+  String get rename {
+    return Intl.message(
+      'Rename',
+      name: 'rename',
+      desc: 'Rename action label',
+      args: [],
+    );
+  }
+
+  /// `Rename file`
+  String get renameFile {
+    return Intl.message(
+      'Rename file',
+      name: 'renameFile',
+      desc: 'Rename file dialog title',
+      args: [],
+    );
+  }
+
+  /// `New name`
+  String get newName {
+    return Intl.message(
+      'New name',
+      name: 'newName',
+      desc: 'New name text field hint',
+      args: [],
+    );
+  }
+
+  /// `Tags`
+  String get tags {
+    return Intl.message(
+      'Tags',
+      name: 'tags',
+      desc: 'Tags section label',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate
@@ -699,7 +737,9 @@ class AppLocalizationDelegate
   const AppLocalizationDelegate();
 
   List<Locale> get supportedLocales {
-    return const <Locale>[Locale.fromSubtags(languageCode: 'en')];
+    return const <Locale>[
+      Locale.fromSubtags(languageCode: 'en'),
+    ];
   }
 
   @override

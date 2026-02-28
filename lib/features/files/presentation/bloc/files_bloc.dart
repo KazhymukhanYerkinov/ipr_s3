@@ -1,10 +1,14 @@
 import 'package:file_picker/file_picker.dart' as picker;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
+import 'package:ipr_s3/features/files/domain/commands/command_manager.dart';
+import 'package:ipr_s3/features/files/domain/commands/delete_file_command.dart';
+import 'package:ipr_s3/features/files/domain/commands/move_file_command.dart';
+import 'package:ipr_s3/features/files/domain/commands/rename_file_command.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_by_date.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_strategy.dart';
-import 'package:ipr_s3/features/files/domain/use_cases/delete_file.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/get_files.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/import_file.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/search_files.dart';
@@ -15,14 +19,16 @@ import 'package:ipr_s3/features/files/presentation/bloc/files_state.dart';
 class FilesBloc extends Bloc<FilesEvent, FilesState> {
   final GetFilesUseCase _getFilesUseCase;
   final ImportFileUseCase _importFileUseCase;
-  final DeleteFileUseCase _deleteFileUseCase;
   final SearchFilesUseCase _searchFilesUseCase;
+  final CommandManager _commandManager;
+  final FilesLocalSource _localSource;
 
   FilesBloc(
     this._getFilesUseCase,
     this._importFileUseCase,
-    this._deleteFileUseCase,
     this._searchFilesUseCase,
+    this._commandManager,
+    this._localSource,
   ) : super(const FilesState.initial()) {
     on<FilesLoadRequested>(_onLoad);
     on<FileImportRequested>(_onImport);
@@ -31,6 +37,10 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     on<FileSearchCleared>(_onSearchCleared);
     on<ViewModeToggled>(_onViewModeToggled);
     on<SortStrategyChanged>(_onSortStrategyChanged);
+    on<FileMoveRequested>(_onMove);
+    on<FileRenameRequested>(_onRename);
+    on<UndoRequested>(_onUndo);
+    on<RedoRequested>(_onRedo);
   }
 
   ViewMode _currentViewMode = ViewMode.list;
@@ -95,11 +105,73 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     FileDeleteRequested event,
     Emitter<FilesState> emit,
   ) async {
-    final result = await _deleteFileUseCase(event.file.id);
-    result.fold(
-      (failure) => emit(FilesState.error(message: failure.message)),
-      (_) => add(FilesLoadRequested()),
-    );
+    try {
+      final command = DeleteFileCommand(_localSource, event.file);
+      await _commandManager.execute(command);
+      add(FilesLoadRequested());
+    } catch (e) {
+      emit(const FilesState.error(message: 'Failed to delete file'));
+    }
+  }
+
+  Future<void> _onMove(
+    FileMoveRequested event,
+    Emitter<FilesState> emit,
+  ) async {
+    try {
+      final command = MoveFileCommand(
+        _localSource,
+        event.file,
+        event.targetFolderId,
+      );
+      await _commandManager.execute(command);
+      add(FilesLoadRequested());
+    } catch (e) {
+      emit(const FilesState.error(message: 'Failed to move file'));
+    }
+  }
+
+  Future<void> _onRename(
+    FileRenameRequested event,
+    Emitter<FilesState> emit,
+  ) async {
+    try {
+      final command = RenameFileCommand(
+        _localSource,
+        event.file,
+        event.newName,
+      );
+      await _commandManager.execute(command);
+      add(FilesLoadRequested());
+    } catch (e) {
+      emit(const FilesState.error(message: 'Failed to rename file'));
+    }
+  }
+
+  Future<void> _onUndo(
+    UndoRequested event,
+    Emitter<FilesState> emit,
+  ) async {
+    if (!_commandManager.canUndo) return;
+    try {
+      await _commandManager.undo();
+      add(FilesLoadRequested());
+    } catch (e) {
+      emit(const FilesState.error(message: 'Failed to undo'));
+    }
+  }
+
+  Future<void> _onRedo(
+    RedoRequested event,
+    Emitter<FilesState> emit,
+  ) async {
+    if (!_commandManager.canRedo) return;
+    try {
+      await _commandManager.redo();
+      add(FilesLoadRequested());
+    } catch (e) {
+      emit(const FilesState.error(message: 'Failed to redo'));
+    }
   }
 
   Future<void> _onSearch(

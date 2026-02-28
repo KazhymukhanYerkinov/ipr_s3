@@ -12,8 +12,7 @@ part of 'stats_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$StatsState {
@@ -22,61 +21,63 @@ mixin _$StatsState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)
+        loaded,
     required TResult Function(String message) error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )?
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)?
+        loaded,
     TResult? Function(String message)? error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )?
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(StatsInitial value) initial,
     required TResult Function(StatsLoading value) loading,
     required TResult Function(StatsLoaded value) loaded,
     required TResult Function(StatsError value) error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(StatsInitial value)? initial,
     TResult? Function(StatsLoading value)? loading,
     TResult? Function(StatsLoaded value)? loaded,
     TResult? Function(StatsError value)? error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(StatsInitial value)? initial,
@@ -84,15 +85,15 @@ mixin _$StatsState {
     TResult Function(StatsLoaded value)? loaded,
     TResult Function(StatsError value)? error,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $StatsStateCopyWith<$Res> {
   factory $StatsStateCopyWith(
-    StatsState value,
-    $Res Function(StatsState) then,
-  ) = _$StatsStateCopyWithImpl<$Res, StatsState>;
+          StatsState value, $Res Function(StatsState) then) =
+      _$StatsStateCopyWithImpl<$Res, StatsState>;
 }
 
 /// @nodoc
@@ -109,9 +110,8 @@ class _$StatsStateCopyWithImpl<$Res, $Val extends StatsState>
 /// @nodoc
 abstract class _$$StatsInitialImplCopyWith<$Res> {
   factory _$$StatsInitialImplCopyWith(
-    _$StatsInitialImpl value,
-    $Res Function(_$StatsInitialImpl) then,
-  ) = __$$StatsInitialImplCopyWithImpl<$Res>;
+          _$StatsInitialImpl value, $Res Function(_$StatsInitialImpl) then) =
+      __$$StatsInitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -119,9 +119,8 @@ class __$$StatsInitialImplCopyWithImpl<$Res>
     extends _$StatsStateCopyWithImpl<$Res, _$StatsInitialImpl>
     implements _$$StatsInitialImplCopyWith<$Res> {
   __$$StatsInitialImplCopyWithImpl(
-    _$StatsInitialImpl _value,
-    $Res Function(_$StatsInitialImpl) _then,
-  ) : super(_value, _then);
+      _$StatsInitialImpl _value, $Res Function(_$StatsInitialImpl) _then)
+      : super(_value, _then);
 }
 
 /// @nodoc
@@ -149,14 +148,13 @@ class _$StatsInitialImpl implements StatsInitial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -168,14 +166,13 @@ class _$StatsInitialImpl implements StatsInitial {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )?
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -187,14 +184,13 @@ class _$StatsInitialImpl implements StatsInitial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )?
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -249,9 +245,8 @@ abstract class StatsInitial implements StatsState {
 /// @nodoc
 abstract class _$$StatsLoadingImplCopyWith<$Res> {
   factory _$$StatsLoadingImplCopyWith(
-    _$StatsLoadingImpl value,
-    $Res Function(_$StatsLoadingImpl) then,
-  ) = __$$StatsLoadingImplCopyWithImpl<$Res>;
+          _$StatsLoadingImpl value, $Res Function(_$StatsLoadingImpl) then) =
+      __$$StatsLoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -259,9 +254,8 @@ class __$$StatsLoadingImplCopyWithImpl<$Res>
     extends _$StatsStateCopyWithImpl<$Res, _$StatsLoadingImpl>
     implements _$$StatsLoadingImplCopyWith<$Res> {
   __$$StatsLoadingImplCopyWithImpl(
-    _$StatsLoadingImpl _value,
-    $Res Function(_$StatsLoadingImpl) _then,
-  ) : super(_value, _then);
+      _$StatsLoadingImpl _value, $Res Function(_$StatsLoadingImpl) _then)
+      : super(_value, _then);
 }
 
 /// @nodoc
@@ -289,14 +283,13 @@ class _$StatsLoadingImpl implements StatsLoading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -308,14 +301,13 @@ class _$StatsLoadingImpl implements StatsLoading {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )?
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -327,14 +319,13 @@ class _$StatsLoadingImpl implements StatsLoading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )?
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -389,18 +380,16 @@ abstract class StatsLoading implements StatsState {
 /// @nodoc
 abstract class _$$StatsLoadedImplCopyWith<$Res> {
   factory _$$StatsLoadedImplCopyWith(
-    _$StatsLoadedImpl value,
-    $Res Function(_$StatsLoadedImpl) then,
-  ) = __$$StatsLoadedImplCopyWithImpl<$Res>;
+          _$StatsLoadedImpl value, $Res Function(_$StatsLoadedImpl) then) =
+      __$$StatsLoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({
-    int totalFiles,
-    int totalSize,
-    Map<FileType, int> countByType,
-    Map<FileType, int> sizeByType,
-    List<SecureFileEntity> recentFiles,
-    List<SecureFileEntity> largestFiles,
-  });
+  $Res call(
+      {int totalFiles,
+      int totalSize,
+      Map<FileType, int> countByType,
+      Map<FileType, int> sizeByType,
+      List<SecureFileEntity> recentFiles,
+      List<SecureFileEntity> largestFiles});
 }
 
 /// @nodoc
@@ -408,9 +397,8 @@ class __$$StatsLoadedImplCopyWithImpl<$Res>
     extends _$StatsStateCopyWithImpl<$Res, _$StatsLoadedImpl>
     implements _$$StatsLoadedImplCopyWith<$Res> {
   __$$StatsLoadedImplCopyWithImpl(
-    _$StatsLoadedImpl _value,
-    $Res Function(_$StatsLoadedImpl) _then,
-  ) : super(_value, _then);
+      _$StatsLoadedImpl _value, $Res Function(_$StatsLoadedImpl) _then)
+      : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -422,57 +410,49 @@ class __$$StatsLoadedImplCopyWithImpl<$Res>
     Object? recentFiles = null,
     Object? largestFiles = null,
   }) {
-    return _then(
-      _$StatsLoadedImpl(
-        totalFiles:
-            null == totalFiles
-                ? _value.totalFiles
-                : totalFiles // ignore: cast_nullable_to_non_nullable
-                    as int,
-        totalSize:
-            null == totalSize
-                ? _value.totalSize
-                : totalSize // ignore: cast_nullable_to_non_nullable
-                    as int,
-        countByType:
-            null == countByType
-                ? _value._countByType
-                : countByType // ignore: cast_nullable_to_non_nullable
-                    as Map<FileType, int>,
-        sizeByType:
-            null == sizeByType
-                ? _value._sizeByType
-                : sizeByType // ignore: cast_nullable_to_non_nullable
-                    as Map<FileType, int>,
-        recentFiles:
-            null == recentFiles
-                ? _value._recentFiles
-                : recentFiles // ignore: cast_nullable_to_non_nullable
-                    as List<SecureFileEntity>,
-        largestFiles:
-            null == largestFiles
-                ? _value._largestFiles
-                : largestFiles // ignore: cast_nullable_to_non_nullable
-                    as List<SecureFileEntity>,
-      ),
-    );
+    return _then(_$StatsLoadedImpl(
+      totalFiles: null == totalFiles
+          ? _value.totalFiles
+          : totalFiles // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalSize: null == totalSize
+          ? _value.totalSize
+          : totalSize // ignore: cast_nullable_to_non_nullable
+              as int,
+      countByType: null == countByType
+          ? _value._countByType
+          : countByType // ignore: cast_nullable_to_non_nullable
+              as Map<FileType, int>,
+      sizeByType: null == sizeByType
+          ? _value._sizeByType
+          : sizeByType // ignore: cast_nullable_to_non_nullable
+              as Map<FileType, int>,
+      recentFiles: null == recentFiles
+          ? _value._recentFiles
+          : recentFiles // ignore: cast_nullable_to_non_nullable
+              as List<SecureFileEntity>,
+      largestFiles: null == largestFiles
+          ? _value._largestFiles
+          : largestFiles // ignore: cast_nullable_to_non_nullable
+              as List<SecureFileEntity>,
+    ));
   }
 }
 
 /// @nodoc
 
 class _$StatsLoadedImpl implements StatsLoaded {
-  const _$StatsLoadedImpl({
-    required this.totalFiles,
-    required this.totalSize,
-    required final Map<FileType, int> countByType,
-    required final Map<FileType, int> sizeByType,
-    required final List<SecureFileEntity> recentFiles,
-    required final List<SecureFileEntity> largestFiles,
-  }) : _countByType = countByType,
-       _sizeByType = sizeByType,
-       _recentFiles = recentFiles,
-       _largestFiles = largestFiles;
+  const _$StatsLoadedImpl(
+      {required this.totalFiles,
+      required this.totalSize,
+      required final Map<FileType, int> countByType,
+      required final Map<FileType, int> sizeByType,
+      required final List<SecureFileEntity> recentFiles,
+      required final List<SecureFileEntity> largestFiles})
+      : _countByType = countByType,
+        _sizeByType = sizeByType,
+        _recentFiles = recentFiles,
+        _largestFiles = largestFiles;
 
   @override
   final int totalFiles;
@@ -524,34 +504,25 @@ class _$StatsLoadedImpl implements StatsLoaded {
                 other.totalFiles == totalFiles) &&
             (identical(other.totalSize, totalSize) ||
                 other.totalSize == totalSize) &&
-            const DeepCollectionEquality().equals(
-              other._countByType,
-              _countByType,
-            ) &&
-            const DeepCollectionEquality().equals(
-              other._sizeByType,
-              _sizeByType,
-            ) &&
-            const DeepCollectionEquality().equals(
-              other._recentFiles,
-              _recentFiles,
-            ) &&
-            const DeepCollectionEquality().equals(
-              other._largestFiles,
-              _largestFiles,
-            ));
+            const DeepCollectionEquality()
+                .equals(other._countByType, _countByType) &&
+            const DeepCollectionEquality()
+                .equals(other._sizeByType, _sizeByType) &&
+            const DeepCollectionEquality()
+                .equals(other._recentFiles, _recentFiles) &&
+            const DeepCollectionEquality()
+                .equals(other._largestFiles, _largestFiles));
   }
 
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    totalFiles,
-    totalSize,
-    const DeepCollectionEquality().hash(_countByType),
-    const DeepCollectionEquality().hash(_sizeByType),
-    const DeepCollectionEquality().hash(_recentFiles),
-    const DeepCollectionEquality().hash(_largestFiles),
-  );
+      runtimeType,
+      totalFiles,
+      totalSize,
+      const DeepCollectionEquality().hash(_countByType),
+      const DeepCollectionEquality().hash(_sizeByType),
+      const DeepCollectionEquality().hash(_recentFiles),
+      const DeepCollectionEquality().hash(_largestFiles));
 
   @JsonKey(ignore: true)
   @override
@@ -565,24 +536,17 @@ class _$StatsLoadedImpl implements StatsLoaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)
+        loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(
-      totalFiles,
-      totalSize,
-      countByType,
-      sizeByType,
-      recentFiles,
-      largestFiles,
-    );
+    return loaded(totalFiles, totalSize, countByType, sizeByType, recentFiles,
+        largestFiles);
   }
 
   @override
@@ -591,24 +555,17 @@ class _$StatsLoadedImpl implements StatsLoaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )?
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(
-      totalFiles,
-      totalSize,
-      countByType,
-      sizeByType,
-      recentFiles,
-      largestFiles,
-    );
+    return loaded?.call(totalFiles, totalSize, countByType, sizeByType,
+        recentFiles, largestFiles);
   }
 
   @override
@@ -617,26 +574,19 @@ class _$StatsLoadedImpl implements StatsLoaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )?
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(
-        totalFiles,
-        totalSize,
-        countByType,
-        sizeByType,
-        recentFiles,
-        largestFiles,
-      );
+      return loaded(totalFiles, totalSize, countByType, sizeByType, recentFiles,
+          largestFiles);
     }
     return orElse();
   }
@@ -680,14 +630,13 @@ class _$StatsLoadedImpl implements StatsLoaded {
 }
 
 abstract class StatsLoaded implements StatsState {
-  const factory StatsLoaded({
-    required final int totalFiles,
-    required final int totalSize,
-    required final Map<FileType, int> countByType,
-    required final Map<FileType, int> sizeByType,
-    required final List<SecureFileEntity> recentFiles,
-    required final List<SecureFileEntity> largestFiles,
-  }) = _$StatsLoadedImpl;
+  const factory StatsLoaded(
+      {required final int totalFiles,
+      required final int totalSize,
+      required final Map<FileType, int> countByType,
+      required final Map<FileType, int> sizeByType,
+      required final List<SecureFileEntity> recentFiles,
+      required final List<SecureFileEntity> largestFiles}) = _$StatsLoadedImpl;
 
   int get totalFiles;
   int get totalSize;
@@ -703,9 +652,8 @@ abstract class StatsLoaded implements StatsState {
 /// @nodoc
 abstract class _$$StatsErrorImplCopyWith<$Res> {
   factory _$$StatsErrorImplCopyWith(
-    _$StatsErrorImpl value,
-    $Res Function(_$StatsErrorImpl) then,
-  ) = __$$StatsErrorImplCopyWithImpl<$Res>;
+          _$StatsErrorImpl value, $Res Function(_$StatsErrorImpl) then) =
+      __$$StatsErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String message});
 }
@@ -715,22 +663,20 @@ class __$$StatsErrorImplCopyWithImpl<$Res>
     extends _$StatsStateCopyWithImpl<$Res, _$StatsErrorImpl>
     implements _$$StatsErrorImplCopyWith<$Res> {
   __$$StatsErrorImplCopyWithImpl(
-    _$StatsErrorImpl _value,
-    $Res Function(_$StatsErrorImpl) _then,
-  ) : super(_value, _then);
+      _$StatsErrorImpl _value, $Res Function(_$StatsErrorImpl) _then)
+      : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? message = null}) {
-    return _then(
-      _$StatsErrorImpl(
-        message:
-            null == message
-                ? _value.message
-                : message // ignore: cast_nullable_to_non_nullable
-                    as String,
-      ),
-    );
+  $Res call({
+    Object? message = null,
+  }) {
+    return _then(_$StatsErrorImpl(
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
   }
 }
 
@@ -770,14 +716,13 @@ class _$StatsErrorImpl implements StatsError {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -789,14 +734,13 @@ class _$StatsErrorImpl implements StatsError {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )?
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -808,14 +752,13 @@ class _$StatsErrorImpl implements StatsError {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-      int totalFiles,
-      int totalSize,
-      Map<FileType, int> countByType,
-      Map<FileType, int> sizeByType,
-      List<SecureFileEntity> recentFiles,
-      List<SecureFileEntity> largestFiles,
-    )?
-    loaded,
+            int totalFiles,
+            int totalSize,
+            Map<FileType, int> countByType,
+            Map<FileType, int> sizeByType,
+            List<SecureFileEntity> recentFiles,
+            List<SecureFileEntity> largestFiles)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

@@ -1,8 +1,10 @@
 import 'dart:collection';
 
+import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/collections/command_entry.dart';
 import 'package:ipr_s3/features/files/domain/commands/file_command.dart';
 
+@lazySingleton
 class CommandManager {
   final LinkedList<CommandEntry> _undoStack = LinkedList<CommandEntry>();
   final LinkedList<CommandEntry> _redoStack = LinkedList<CommandEntry>();
