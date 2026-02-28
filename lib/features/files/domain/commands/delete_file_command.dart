@@ -6,7 +6,6 @@ class DeleteFileCommand implements FileCommand {
   final FilesLocalSource _source;
   final SecureFileEntity _file;
 
-  /// Бэкап для undo — сохраняем метаданные перед удалением.
   SecureFileEntity? _backup;
 
   DeleteFileCommand(this._source, this._file);

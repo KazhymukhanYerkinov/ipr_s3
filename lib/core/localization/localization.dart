@@ -2,13 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'generated/l10n.dart';
 
-/// Wrapper around [GeneratedLocalization] that provides a clean API
-/// and a custom [LocalizationsDelegate].
-///
-/// To add a new language in the future:
-/// 1. Create `lib/core/localization/l10n/intl_<lang>.arb`
-/// 2. Run `dart run intl_utils:generate`
-/// 3. Add the new [Locale] to [LocalizationDelegate.supportedLocales]
 class Localization extends GeneratedLocalization {
   static Localization? _current;
 
@@ -41,9 +34,6 @@ class LocalizationDelegate
     extends LocalizationsDelegate<GeneratedLocalization> {
   const LocalizationDelegate();
 
-  /// Supported locales for the app.
-  ///
-  /// When adding a new language, add the corresponding [Locale] here.
   List<Locale> get supportedLocales => const [Locale('en')];
 
   @override

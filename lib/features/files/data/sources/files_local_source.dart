@@ -65,7 +65,8 @@ class FilesLocalSourceImpl implements FilesLocalSource {
     if (dto != null) {
       await deleteEncryptedFile(dto.encryptedPath);
       if (dto.thumbnailPath != null) {
-        await _deleteFileIfExists(dto.thumbnailPath!);
+        final thumbPath = await _resolveThumbnailPath(dto.thumbnailPath!);
+        await _deleteFileIfExists(thumbPath);
       }
       await box.delete(id);
       _logger.info('File deleted: [REDACTED_PATH]');
@@ -75,34 +76,62 @@ class FilesLocalSourceImpl implements FilesLocalSource {
   @override
   Future<String> saveEncryptedFile(String fileId, Uint8List data) async {
     final dir = await _getSecureDirectory();
-    final path = '${dir.path}/enc_$fileId';
-    final file = File(path);
+    final fileName = 'enc_$fileId';
+    final file = File('${dir.path}/$fileName');
     await file.writeAsBytes(data);
     _logger.info('Encrypted file saved: [REDACTED_PATH]');
-    return path;
+    return fileName;
   }
 
   @override
   Future<Uint8List> readEncryptedFile(String path) async {
-    final file = File(path);
+    final fullPath = await _resolveSecureFilePath(path);
+    final file = File(fullPath);
     if (!await file.exists()) {
-      throw FileSystemException('Encrypted file not found', path);
+      throw FileSystemException('Encrypted file not found', fullPath);
     }
     return file.readAsBytes();
   }
 
   @override
   Future<void> deleteEncryptedFile(String path) async {
-    await _deleteFileIfExists(path);
+    final fullPath = await _resolveSecureFilePath(path);
+    await _deleteFileIfExists(fullPath);
   }
 
   @override
   Future<String> saveThumbnail(String fileId, Uint8List data) async {
     final dir = await _getThumbnailDirectory();
-    final path = '${dir.path}/thumb_$fileId.png';
-    final file = File(path);
+    final fileName = 'thumb_$fileId.png';
+    final file = File('${dir.path}/$fileName');
     await file.writeAsBytes(data);
-    return path;
+    return fileName;
+  }
+
+  /// Resolves a stored path (relative or legacy absolute) to a current
+  /// absolute path inside the secure_files directory.
+  Future<String> _resolveSecureFilePath(String path) async {
+    if (path.startsWith('/')) {
+      if (await File(path).exists()) return path;
+      final fileName = path.split('/').last;
+      final dir = await _getSecureDirectory();
+      return '${dir.path}/$fileName';
+    }
+    final dir = await _getSecureDirectory();
+    return '${dir.path}/$path';
+  }
+
+  /// Resolves a stored path (relative or legacy absolute) to a current
+  /// absolute path inside the thumbnails directory.
+  Future<String> _resolveThumbnailPath(String path) async {
+    if (path.startsWith('/')) {
+      if (await File(path).exists()) return path;
+      final fileName = path.split('/').last;
+      final dir = await _getThumbnailDirectory();
+      return '${dir.path}/$fileName';
+    }
+    final dir = await _getThumbnailDirectory();
+    return '${dir.path}/$path';
   }
 
   Future<Directory> _getSecureDirectory() async {

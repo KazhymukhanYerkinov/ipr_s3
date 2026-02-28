@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:image/image.dart' as img;
+import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 
 class ThumbnailParams {
@@ -15,7 +15,6 @@ class ThumbnailParams {
   });
 }
 
-/// Top-level function for compute() — resizes an image to create a thumbnail.
 Uint8List? generateThumbnail(ThumbnailParams params) {
   final image = img.decodeImage(params.imageBytes);
   if (image == null) return null;
@@ -30,8 +29,6 @@ Uint8List? generateThumbnail(ThumbnailParams params) {
   return Uint8List.fromList(img.encodePng(thumbnail));
 }
 
-/// Service that generates image thumbnails in a background isolate
-/// via compute(), preventing jank on the UI thread.
 @lazySingleton
 class ThumbnailService {
   final _logger = SecureLogger();

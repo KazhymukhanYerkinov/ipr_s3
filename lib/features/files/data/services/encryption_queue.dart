@@ -6,7 +6,6 @@ import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/data/services/file_encryption_service.dart';
 
-/// Represents a single file encryption task in the queue.
 class FileTask {
   final String fileId;
   final String fileName;
@@ -19,7 +18,6 @@ class FileTask {
   });
 }
 
-/// Progress update emitted by the queue as tasks are processed.
 class QueueProgress {
   final String fileId;
   final String fileName;
@@ -40,9 +38,6 @@ class QueueProgress {
   double get progress => totalCount > 0 ? completedCount / totalCount : 0;
 }
 
-/// Sequential file encryption queue using [Queue] from dart:collection.
-/// Processes files one by one via addLast/removeFirst,
-/// emitting progress through a broadcast StreamController.
 @lazySingleton
 class EncryptionQueue {
   final FileEncryptionService _encryptionService;

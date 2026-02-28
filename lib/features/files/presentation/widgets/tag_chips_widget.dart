@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ipr_s3/core/collections/tag.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
 
-/// Виджет для отображения и управления тегами файла.
-///
-/// Использует [Set<Tag>] — дубликаты исключаются автоматически
-/// благодаря кастомным [operator==] и [hashCode] в [Tag].
 class TagChipsWidget extends StatefulWidget {
   final Set<Tag> tags;
   final ValueChanged<Set<Tag>> onTagsChanged;

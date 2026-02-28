@@ -3,16 +3,6 @@ import 'dart:collection';
 import 'package:ipr_s3/core/collections/command_entry.dart';
 import 'package:ipr_s3/features/files/domain/commands/file_command.dart';
 
-/// Менеджер Undo/Redo для файловых операций.
-///
-/// Хранит историю в двух [LinkedList]:
-/// - _undoStack — выполненные команды (отменяются по LIFO)
-/// - _redoStack — отменённые команды (повторяются по LIFO)
-///
-/// LinkedList выбран вместо List, потому что:
-/// - O(1) добавление/удаление с конца (vs O(n) для List при removeLast)
-/// - Элементы хранят ссылки на соседей — нет сдвигов массива
-/// - Демонстрация Цели 6 (LinkedList из dart:collection)
 class CommandManager {
   final LinkedList<CommandEntry> _undoStack = LinkedList<CommandEntry>();
   final LinkedList<CommandEntry> _redoStack = LinkedList<CommandEntry>();

@@ -9,7 +9,6 @@ class MoveFileToFolderUseCase {
 
   MoveFileToFolderUseCase(this._behavior);
 
-  /// [folderId] = null означает перемещение в корень (без папки).
   Future<Either<Failure, void>> call({
     required String fileId,
     required String? folderId,

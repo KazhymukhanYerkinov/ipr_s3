@@ -46,6 +46,11 @@ class FilesRepositoryImpl
     try {
       final files = await _localSource.getAll();
       return Right(files);
+    } on EncryptionKeyLostException {
+      _logger.error('Encryption key lost — cannot load files');
+      return const Left(EncryptionFailure(
+        message: 'Encryption key was lost. Files cannot be decrypted.',
+      ));
     } catch (e, stackTrace) {
       _logger.error('Failed to get files', e, stackTrace);
       return const Left(CacheFailure(message: 'Failed to load files'));
@@ -129,6 +134,11 @@ class FilesRepositoryImpl
       final decryptedBytes = await _encryptionService.decrypt(encryptedBytes);
       _logger.info('File decrypted successfully');
       return Right(decryptedBytes);
+    } on EncryptionKeyLostException {
+      _logger.error('Encryption key lost — cannot decrypt file');
+      return const Left(EncryptionFailure(
+        message: 'Encryption key was lost. File cannot be decrypted.',
+      ));
     } catch (e, stackTrace) {
       _logger.error('Failed to decrypt file', e, stackTrace);
       return const Left(EncryptionFailure(message: 'Failed to decrypt file'));

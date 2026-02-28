@@ -13,7 +13,10 @@ abstract class RegisterModule {
   GoogleSignIn get googleSignIn => GoogleSignIn();
 
   @lazySingleton
-  FlutterSecureStorage get secureStorage => const FlutterSecureStorage();
+  FlutterSecureStorage get secureStorage => const FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+  );
 
   @lazySingleton
   LocalAuthentication get localAuth => LocalAuthentication();

@@ -8,8 +8,6 @@ import 'package:ipr_s3/features/benchmark/domain/models/benchmark_result.dart';
 import 'package:ipr_s3/features/benchmark/presentation/bloc/benchmark_event.dart';
 import 'package:ipr_s3/features/benchmark/presentation/bloc/benchmark_state.dart';
 
-/// Benchmarks Dart CRC32 vs native C CRC32 (FFI) on different data sizes.
-/// Demonstrates Goal 7 (FFI) and Goal 3 (Isolate) performance comparison.
 @injectable
 class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
   final NativeHashService _nativeHashService;

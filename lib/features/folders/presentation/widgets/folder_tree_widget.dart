@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 import 'package:ipr_s3/features/folders/presentation/widgets/folder_node.dart';
 
-/// Рекурсивный виджет для отображения дерева папок (Composite pattern).
-///
-/// Каждый [FolderItem] рендерится как [ExpansionTile] и рекурсивно
-/// строит children. Показывает totalFiles и totalSize через Composite.
 class FolderTreeWidget extends StatelessWidget {
   final List<FolderItem> folders;
   final void Function(FolderItem folder)? onFolderTap;

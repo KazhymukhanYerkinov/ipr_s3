@@ -5,7 +5,6 @@ import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
-/// Message sent from the main isolate to the search worker.
 class SearchRequest {
   final String query;
   final List<Map<String, dynamic>> filesData;
@@ -13,7 +12,6 @@ class SearchRequest {
   const SearchRequest({required this.query, required this.filesData});
 }
 
-/// Message sent from the search worker back to the main isolate.
 class SearchResult {
   final String query;
   final List<Map<String, dynamic>> matchedFiles;
@@ -21,12 +19,6 @@ class SearchResult {
   const SearchResult({required this.query, required this.matchedFiles});
 }
 
-/// Top-level entry point for the search isolate.
-/// Demonstrates bidirectional communication via SendPort/ReceivePort:
-///   1. Receives main isolate's SendPort
-///   2. Creates its own ReceivePort and sends its SendPort back
-///   3. Listens for SearchRequest messages
-///   4. Sends SearchResult responses back
 void _searchIsolateEntry(SendPort mainSendPort) {
   final workerReceivePort = ReceivePort();
   mainSendPort.send(workerReceivePort.sendPort);
@@ -58,8 +50,6 @@ void _searchIsolateEntry(SendPort mainSendPort) {
   });
 }
 
-/// Service that performs full-text search on file metadata using
-/// Isolate.spawn() with bidirectional SendPort/ReceivePort communication.
 @lazySingleton
 class FileSearchService {
   final _logger = SecureLogger();
@@ -95,8 +85,6 @@ class FileSearchService {
     _logger.info('Search isolate initialized with bidirectional communication');
   }
 
-  /// Sends a search query to the worker isolate.
-  /// Files are serialized to Map since isolates cannot share object references.
   Future<List<SecureFileEntity>> search(
     String query,
     List<SecureFileEntity> files,

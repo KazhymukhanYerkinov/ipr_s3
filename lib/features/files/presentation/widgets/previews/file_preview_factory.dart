@@ -7,8 +7,6 @@ import 'package:ipr_s3/features/files/presentation/widgets/previews/pdf_preview.
 import 'package:ipr_s3/features/files/presentation/widgets/previews/text_preview.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/previews/unknown_preview.dart';
 
-/// Factory pattern — returns the appropriate preview widget
-/// based on the file type. Easily extensible for new formats.
 abstract class FilePreviewFactory {
   static Widget create({
     required SecureFileEntity file,

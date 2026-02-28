@@ -4,9 +4,6 @@ import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/security/encryption_helper.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 
-/// Parameters passed to the top-level encrypt/decrypt functions via compute().
-/// Must be a simple class — compute() requires a top-level function
-/// and cannot capture closures.
 class EncryptionParams {
   final Uint8List data;
   final Uint8List key;
@@ -14,8 +11,6 @@ class EncryptionParams {
   const EncryptionParams({required this.data, required this.key});
 }
 
-/// Top-level function for compute() — encrypts bytes with AES-256-CBC.
-/// IV is prepended to the output so it can be extracted during decryption.
 Uint8List encryptBytes(EncryptionParams params) {
   final key = enc.Key(params.key);
   final iv = enc.IV.fromSecureRandom(16);
@@ -29,8 +24,6 @@ Uint8List encryptBytes(EncryptionParams params) {
   return result;
 }
 
-/// Top-level function for compute() — decrypts AES-256-CBC encrypted bytes.
-/// Expects IV (first 16 bytes) prepended to the encrypted data.
 Uint8List decryptBytes(EncryptionParams params) {
   final key = enc.Key(params.key);
   final ivBytes = params.data.sublist(0, 16);
@@ -46,8 +39,6 @@ Uint8List decryptBytes(EncryptionParams params) {
   return Uint8List.fromList(decrypted);
 }
 
-/// Service that runs AES-256-CBC encryption/decryption in a background
-/// isolate via compute(), keeping the UI thread free.
 @lazySingleton
 class FileEncryptionService {
   final EncryptionHelper _encryptionHelper;

@@ -1,10 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:ipr_s3/features/folders/domain/models/file_system_item.dart';
 
-/// Composite node — папка, которая содержит файлы и вложенные папки.
-///
-/// Рекурсивный подсчёт [totalSize] и [totalFiles] через `fold` —
-/// демонстрация Цели 6 (коллекции, fold для рекурсии).
 class FolderItem extends Equatable implements FileSystemItem {
   @override
   final String id;
