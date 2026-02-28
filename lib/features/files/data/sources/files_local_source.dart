@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:ipr_s3/core/security/encryption_helper.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/data/dtos/secure_file_dto.dart';
+import 'package:ipr_s3/features/files/data/mappers/secure_file_mapper.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 abstract class FilesLocalSource {
@@ -108,8 +109,6 @@ class FilesLocalSourceImpl implements FilesLocalSource {
     return fileName;
   }
 
-  /// Resolves a stored path (relative or legacy absolute) to a current
-  /// absolute path inside the secure_files directory.
   Future<String> _resolveSecureFilePath(String path) async {
     if (path.startsWith('/')) {
       if (await File(path).exists()) return path;
@@ -121,8 +120,6 @@ class FilesLocalSourceImpl implements FilesLocalSource {
     return '${dir.path}/$path';
   }
 
-  /// Resolves a stored path (relative or legacy absolute) to a current
-  /// absolute path inside the thumbnails directory.
   Future<String> _resolveThumbnailPath(String path) async {
     if (path.startsWith('/')) {
       if (await File(path).exists()) return path;

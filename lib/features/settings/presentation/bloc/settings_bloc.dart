@@ -12,6 +12,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
   SettingsBloc(this._deviceInfo, this._pinManager)
     : super(const SettingsState.initial()) {
+    _setupHandlers();
+  }
+
+  void _setupHandlers() {
     on<SettingsLoadRequested>(_onLoad);
     on<PinChangeRequested>(_onPinChange);
     on<PinDeleteRequested>(_onPinDelete);

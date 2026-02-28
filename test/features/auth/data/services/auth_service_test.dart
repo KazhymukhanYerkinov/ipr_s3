@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ipr_s3/core/error/failures.dart';
@@ -47,13 +46,12 @@ void main() {
 
       final result = await authService.signInWithGoogle();
 
-      expect(result.isRight(), true);
-      result.fold((_) => fail('Should be Right'), (user) {
-        expect(user, isA<UserEntity>());
-        expect(user.uid, '123');
-        expect(user.email, 'test@example.com');
-        expect(user.displayName, 'Test User');
-      });
+      expect(result.isSuccess, true);
+      final user = result.value;
+      expect(user, isA<UserEntity>());
+      expect(user?.uid, '123');
+      expect(user?.email, 'test@example.com');
+      expect(user?.displayName, 'Test User');
       verify(() => mockRemoteSource.signInWithGoogle()).called(1);
     });
 
@@ -64,11 +62,9 @@ void main() {
 
       final result = await authService.signInWithGoogle();
 
-      expect(result.isLeft(), true);
-      result.fold((failure) {
-        expect(failure, isA<AuthFailure>());
-        expect(failure.message, 'Failed to sign in');
-      }, (_) => fail('Should be Left'));
+      expect(result.isError, true);
+      expect(result.failure, isA<AuthFailure>());
+      expect(result.failure?.message, 'Failed to sign in');
     });
 
     test('should not expose original error message in failure', () async {
@@ -78,22 +74,20 @@ void main() {
 
       final result = await authService.signInWithGoogle();
 
-      result.fold((failure) {
-        expect(failure.message, isNot(contains('Secret')));
-        expect(failure.message, isNot(contains('abc123')));
-        expect(failure.message, 'Failed to sign in');
-      }, (_) => fail('Should be Left'));
+      expect(result.failure?.message, isNot(contains('Secret')));
+      expect(result.failure?.message, isNot(contains('abc123')));
+      expect(result.failure?.message, 'Failed to sign in');
     });
   });
 
   group('signOut', () {
-    test('should return Right(void) on successful sign-out', () async {
+    test('should return success on successful sign-out', () async {
       when(() => mockRemoteSource.signOut()).thenAnswer((_) async {});
       when(() => mockLocalSource.deleteToken()).thenAnswer((_) async {});
 
       final result = await authService.signOut();
 
-      expect(result.isRight(), true);
+      expect(result.isSuccess, true);
       verify(() => mockRemoteSource.signOut()).called(1);
       verify(() => mockLocalSource.deleteToken()).called(1);
     });
@@ -114,11 +108,9 @@ void main() {
 
       final result = await authService.signOut();
 
-      expect(result.isLeft(), true);
-      result.fold((failure) {
-        expect(failure, isA<AuthFailure>());
-        expect(failure.message, 'Failed to sign out');
-      }, (_) => fail('Should be Left'));
+      expect(result.isError, true);
+      expect(result.failure, isA<AuthFailure>());
+      expect(result.failure?.message, 'Failed to sign out');
     });
 
     test('should return AuthFailure when local deleteToken throws', () async {
@@ -129,11 +121,8 @@ void main() {
 
       final result = await authService.signOut();
 
-      expect(result.isLeft(), true);
-      result.fold(
-        (failure) => expect(failure, isA<AuthFailure>()),
-        (_) => fail('Should be Left'),
-      );
+      expect(result.isError, true);
+      expect(result.failure, isA<AuthFailure>());
     });
   });
 
@@ -143,11 +132,9 @@ void main() {
 
       final result = await authService.getCurrentUser();
 
-      expect(result.isRight(), true);
-      result.fold((_) => fail('Should be Right'), (user) {
-        expect(user, isNotNull);
-        expect(user!.uid, '123');
-      });
+      expect(result.isSuccess, true);
+      expect(result.value, isNotNull);
+      expect(result.value!.uid, '123');
       verify(() => mockRemoteSource.getCurrentUser()).called(1);
     });
 
@@ -156,11 +143,8 @@ void main() {
 
       final result = await authService.getCurrentUser();
 
-      expect(result.isRight(), true);
-      result.fold(
-        (_) => fail('Should be Right'),
-        (user) => expect(user, isNull),
-      );
+      expect(result.isSuccess, true);
+      expect(result.value, isNull);
     });
 
     test('should return AuthFailure when getCurrentUser throws', () async {
@@ -170,11 +154,9 @@ void main() {
 
       final result = await authService.getCurrentUser();
 
-      expect(result.isLeft(), true);
-      result.fold((failure) {
-        expect(failure, isA<AuthFailure>());
-        expect(failure.message, 'Failed to get current user');
-      }, (_) => fail('Should be Left'));
+      expect(result.isError, true);
+      expect(result.failure, isA<AuthFailure>());
+      expect(result.failure?.message, 'Failed to get current user');
     });
   });
 
@@ -184,7 +166,8 @@ void main() {
 
       final result = await authService.hasPin();
 
-      expect(result, const Right(true));
+      expect(result.isSuccess, true);
+      expect(result.value, true);
       verify(() => mockPinManager.hasPin()).called(1);
     });
 
@@ -193,7 +176,8 @@ void main() {
 
       final result = await authService.hasPin();
 
-      expect(result, const Right(false));
+      expect(result.isSuccess, true);
+      expect(result.value, false);
     });
 
     test('should return AuthFailure when PinManager throws', () async {
@@ -201,21 +185,18 @@ void main() {
 
       final result = await authService.hasPin();
 
-      expect(result.isLeft(), true);
-      result.fold(
-        (failure) => expect(failure.message, 'Failed to check PIN'),
-        (_) => fail('Should be Left'),
-      );
+      expect(result.isError, true);
+      expect(result.failure?.message, 'Failed to check PIN');
     });
   });
 
   group('setPin', () {
-    test('should return Right(void) on success', () async {
+    test('should return success on success', () async {
       when(() => mockPinManager.setPin('1234')).thenAnswer((_) async {});
 
       final result = await authService.setPin('1234');
 
-      expect(result.isRight(), true);
+      expect(result.isSuccess, true);
       verify(() => mockPinManager.setPin('1234')).called(1);
     });
 
@@ -226,11 +207,8 @@ void main() {
 
       final result = await authService.setPin('1234');
 
-      expect(result.isLeft(), true);
-      result.fold(
-        (failure) => expect(failure.message, 'Failed to set PIN'),
-        (_) => fail('Should be Left'),
-      );
+      expect(result.isError, true);
+      expect(result.failure?.message, 'Failed to set PIN');
     });
   });
 
@@ -242,7 +220,8 @@ void main() {
 
       final result = await authService.verifyPin('1234');
 
-      expect(result, const Right(true));
+      expect(result.isSuccess, true);
+      expect(result.value, true);
       verify(() => mockPinManager.verifyPin('1234')).called(1);
     });
 
@@ -253,7 +232,8 @@ void main() {
 
       final result = await authService.verifyPin('0000');
 
-      expect(result, const Right(false));
+      expect(result.isSuccess, true);
+      expect(result.value, false);
     });
 
     test('should return AuthFailure when PinManager throws', () async {
@@ -263,11 +243,8 @@ void main() {
 
       final result = await authService.verifyPin('1234');
 
-      expect(result.isLeft(), true);
-      result.fold(
-        (failure) => expect(failure.message, 'Failed to verify PIN'),
-        (_) => fail('Should be Left'),
-      );
+      expect(result.isError, true);
+      expect(result.failure?.message, 'Failed to verify PIN');
     });
   });
 
@@ -279,7 +256,8 @@ void main() {
 
       final result = await authService.authenticateWithBiometrics();
 
-      expect(result, const Right(true));
+      expect(result.isSuccess, true);
+      expect(result.value, true);
       verify(() => mockLocalSource.authenticateWithBiometrics()).called(1);
     });
 
@@ -290,7 +268,8 @@ void main() {
 
       final result = await authService.authenticateWithBiometrics();
 
-      expect(result, const Right(false));
+      expect(result.isSuccess, true);
+      expect(result.value, false);
     });
 
     test('should return AuthFailure when biometric throws', () async {
@@ -300,11 +279,8 @@ void main() {
 
       final result = await authService.authenticateWithBiometrics();
 
-      expect(result.isLeft(), true);
-      result.fold(
-        (failure) => expect(failure.message, 'Biometric authentication failed'),
-        (_) => fail('Should be Left'),
-      );
+      expect(result.isError, true);
+      expect(result.failure?.message, 'Biometric authentication failed');
     });
   });
 }

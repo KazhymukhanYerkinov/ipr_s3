@@ -1,7 +1,7 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/result/result.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/sign_out_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_out_use_case.dart';
 
@@ -17,14 +17,14 @@ void main() {
   });
 
   group('AuthSignOutUseCase', () {
-    test('should return Right(void) on successful sign-out', () async {
+    test('should return success on successful sign-out', () async {
       when(
         () => mockSignOutBehavior.signOut(),
-      ).thenAnswer((_) async => const Right(null));
+      ).thenAnswer((_) async => SuccessResult(null));
 
       final result = await useCase();
 
-      expect(result, const Right(null));
+      expect(result.isSuccess, true);
       verify(() => mockSignOutBehavior.signOut()).called(1);
     });
 
@@ -32,18 +32,19 @@ void main() {
       const failure = AuthFailure(message: 'Failed to sign out');
       when(
         () => mockSignOutBehavior.signOut(),
-      ).thenAnswer((_) async => const Left(failure));
+      ).thenAnswer((_) async => ErrorResult(failure));
 
       final result = await useCase();
 
-      expect(result, const Left(failure));
+      expect(result.isError, true);
+      expect(result.failure?.message, 'Failed to sign out');
       verify(() => mockSignOutBehavior.signOut()).called(1);
     });
 
     test('should delegate call to SignOutBehavior.signOut', () async {
       when(
         () => mockSignOutBehavior.signOut(),
-      ).thenAnswer((_) async => const Right(null));
+      ).thenAnswer((_) async => SuccessResult(null));
 
       await useCase();
 

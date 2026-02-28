@@ -1,7 +1,6 @@
-import 'package:equatable/equatable.dart';
 import 'package:ipr_s3/features/folders/domain/models/file_system_item.dart';
 
-class FolderItem extends Equatable implements FileSystemItem {
+class FolderItem implements FileSystemItem {
   @override
   final String id;
 
@@ -43,7 +42,4 @@ class FolderItem extends Equatable implements FileSystemItem {
       children: children ?? this.children,
     );
   }
-
-  @override
-  List<Object?> get props => [id, name, parentId, createdAt];
 }

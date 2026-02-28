@@ -367,5 +367,15 @@
   "tags": "Tags",
   "@tags": {
     "description": "Tags section label"
+  },
+
+  "importToFolder": "Import to folder",
+  "@importToFolder": {
+    "description": "Folder picker sheet title"
+  },
+
+  "noFolder": "No folder",
+  "@noFolder": {
+    "description": "Option to import file without assigning to a folder"
   }
 }

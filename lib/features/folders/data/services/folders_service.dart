@@ -1,6 +1,7 @@
-import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:uuid/uuid.dart';
 import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/result/result.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
 import 'package:ipr_s3/features/folders/data/sources/folders_local_source.dart';
@@ -10,10 +11,9 @@ import 'package:ipr_s3/features/folders/domain/behaviors/get_folders_behavior.da
 import 'package:ipr_s3/features/folders/domain/behaviors/move_file_to_folder_behavior.dart';
 import 'package:ipr_s3/features/folders/domain/models/file_item.dart';
 import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
-import 'package:uuid/uuid.dart';
 
 @lazySingleton
-class FoldersRepositoryImpl
+class FoldersService
     implements
         GetFoldersBehavior,
         CreateFolderBehavior,
@@ -24,10 +24,10 @@ class FoldersRepositoryImpl
   final _logger = SecureLogger();
   final _uuid = const Uuid();
 
-  FoldersRepositoryImpl(this._foldersSource, this._filesSource);
+  FoldersService(this._foldersSource, this._filesSource);
 
   @override
-  Future<Either<Failure, List<FolderItem>>> getFolders() async {
+  Future<Result<List<FolderItem>>> getFolders() async {
     try {
       final folders = await _foldersSource.getAll();
       final files = await _filesSource.getAll();
@@ -43,10 +43,10 @@ class FoldersRepositoryImpl
 
       final enriched =
           folders.map((f) => _injectFiles(f, filesByFolder)).toList();
-      return Right(enriched);
+      return SuccessResult(enriched);
     } catch (e, st) {
       _logger.error('Failed to get folders', e, st);
-      return const Left(CacheFailure(message: 'Failed to load folders'));
+      return ErrorResult(const CacheFailure(message: 'Failed to load folders'));
     }
   }
 
@@ -65,7 +65,7 @@ class FoldersRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, FolderItem>> createFolder({
+  Future<Result<FolderItem>> createFolder({
     required String name,
     String? parentId,
   }) async {
@@ -78,43 +78,47 @@ class FoldersRepositoryImpl
       );
       await _foldersSource.save(folder);
       _logger.info('Folder created');
-      return Right(folder);
+      return SuccessResult(folder);
     } catch (e, st) {
       _logger.error('Failed to create folder', e, st);
-      return const Left(CacheFailure(message: 'Failed to create folder'));
+      return ErrorResult(
+        const CacheFailure(message: 'Failed to create folder'),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, void>> deleteFolder(String folderId) async {
+  Future<Result<void>> deleteFolder(String folderId) async {
     try {
       await _foldersSource.delete(folderId);
       _logger.info('Folder deleted');
-      return const Right(null);
+      return SuccessResult(null);
     } catch (e, st) {
       _logger.error('Failed to delete folder', e, st);
-      return const Left(CacheFailure(message: 'Failed to delete folder'));
+      return ErrorResult(
+        const CacheFailure(message: 'Failed to delete folder'),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, void>> moveFileToFolder({
+  Future<Result<void>> moveFileToFolder({
     required String fileId,
     required String? folderId,
   }) async {
     try {
       final file = await _filesSource.getById(fileId);
       if (file == null) {
-        return const Left(FileFailure(message: 'File not found'));
+        return ErrorResult(const FileFailure(message: 'File not found'));
       }
 
       final updated = file.copyWith(folderId: folderId);
       await _filesSource.save(updated);
       _logger.info('File moved to folder');
-      return const Right(null);
+      return SuccessResult(null);
     } catch (e, st) {
       _logger.error('Failed to move file', e, st);
-      return const Left(FileFailure(message: 'Failed to move file'));
+      return ErrorResult(const FileFailure(message: 'Failed to move file'));
     }
   }
 }

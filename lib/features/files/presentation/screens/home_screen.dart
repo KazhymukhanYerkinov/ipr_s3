@@ -322,12 +322,7 @@ class _FolderPickerSheet extends StatelessWidget {
                 );
               }
 
-              final folders =
-                  snapshot.data?.fold(
-                    (_) => <FolderItem>[],
-                    (folders) => folders,
-                  ) ??
-                  <FolderItem>[];
+              final folders = snapshot.data?.value ?? <FolderItem>[];
 
               if (folders.isEmpty) {
                 return const SizedBox.shrink();

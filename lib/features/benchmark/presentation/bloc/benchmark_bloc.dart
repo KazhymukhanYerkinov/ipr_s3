@@ -14,6 +14,10 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
 
   BenchmarkBloc(this._nativeHashService)
     : super(const BenchmarkState.initial()) {
+    _setupHandlers();
+  }
+
+  void _setupHandlers() {
     on<BenchmarkRunRequested>(_onRun);
   }
 

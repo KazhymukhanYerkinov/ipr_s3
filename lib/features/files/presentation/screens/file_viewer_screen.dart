@@ -52,44 +52,47 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     });
 
     final filesResult = await getIt<GetFilesUseCase>()();
-    filesResult.fold(
-      (failure) {
-        if (mounted) {
-          setState(() {
-            _error = failure.message;
-            _isLoading = false;
-          });
-        }
-      },
-      (files) async {
-        final file = files.where((f) => f.id == widget.fileId).firstOrNull;
-        if (file == null) {
-          if (mounted) {
-            setState(() {
-              _error = context.locale.fileNotFound;
-              _isLoading = false;
-            });
-          }
-          return;
-        }
+    final filesFailure = filesResult.failure;
 
-        _file = file;
+    if (filesFailure != null) {
+      if (mounted) {
+        setState(() {
+          _error = filesFailure.message;
+          _isLoading = false;
+        });
+      }
+      return;
+    }
 
-        final decryptResult = await getIt<DecryptFileUseCase>()(widget.fileId);
-        if (mounted) {
-          decryptResult.fold(
-            (failure) => setState(() {
-              _error = failure.message;
-              _isLoading = false;
-            }),
-            (bytes) => setState(() {
-              _decryptedBytes = bytes;
-              _isLoading = false;
-            }),
-          );
-        }
-      },
-    );
+    final files = filesResult.value ?? [];
+    final file = files.where((f) => f.id == widget.fileId).firstOrNull;
+    if (file == null) {
+      if (mounted) {
+        setState(() {
+          _error = context.locale.fileNotFound;
+          _isLoading = false;
+        });
+      }
+      return;
+    }
+
+    _file = file;
+
+    final decryptResult = await getIt<DecryptFileUseCase>()(widget.fileId);
+    if (mounted) {
+      final decryptFailure = decryptResult.failure;
+      if (decryptFailure != null) {
+        setState(() {
+          _error = decryptFailure.message;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _decryptedBytes = decryptResult.value;
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -171,7 +174,10 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
   Future<void> _onTagsChanged(Set<Tag> tags) async {
     if (_file == null) return;
     final tagStrings = tags.map((t) => t.name).toList();
-    final updated = _file!.copyWith(tags: tagStrings, updatedAt: DateTime.now());
+    final updated = _file!.copyWith(
+      tags: tagStrings,
+      updatedAt: DateTime.now(),
+    );
     await getIt<FilesLocalSource>().save(updated);
     setState(() => _file = updated);
   }

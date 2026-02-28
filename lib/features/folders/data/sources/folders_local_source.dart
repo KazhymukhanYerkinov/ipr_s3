@@ -2,6 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/security/encryption_helper.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/folders/data/dtos/folder_dto.dart';
+import 'package:ipr_s3/features/folders/data/mappers/folder_mapper.dart';
 import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 
 abstract class FoldersLocalSource {
@@ -29,7 +30,6 @@ class FoldersLocalSourceImpl implements FoldersLocalSource {
     return _buildTree(flatFolders);
   }
 
-  /// Строит дерево из плоского Map, привязывая children к parentId.
   List<FolderItem> _buildTree(Map<String, FolderItem> flatMap) {
     final roots = <FolderItem>[];
     final childrenMap = <String, List<FolderItem>>{};
@@ -57,7 +57,7 @@ class FoldersLocalSourceImpl implements FoldersLocalSource {
   @override
   Future<void> save(FolderItem folder) async {
     final box = await _encryptionHelper.openEncryptedBox<FolderDto>(_boxName);
-    await box.put(folder.id, FolderDto.fromEntity(folder));
+    await box.put(folder.id, folder.toDto());
     _logger.info('Folder saved: ${folder.name}');
   }
 

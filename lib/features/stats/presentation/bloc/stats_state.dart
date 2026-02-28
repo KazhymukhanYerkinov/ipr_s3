@@ -4,7 +4,7 @@ import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 part 'stats_state.freezed.dart';
 
 @freezed
-class StatsState with _$StatsState {
+sealed class StatsState with _$StatsState {
   const factory StatsState.initial() = StatsInitial;
   const factory StatsState.loading() = StatsLoading;
   const factory StatsState.loaded({

@@ -1,7 +1,7 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/result/result.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/get_current_user_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/models/user.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_get_current_user_use_case.dart';
@@ -28,25 +28,24 @@ void main() {
     test('should return UserEntity when user is authenticated', () async {
       when(
         () => mockGetCurrentUserBehavior.getCurrentUser(),
-      ).thenAnswer((_) async => const Right(testUser));
+      ).thenAnswer((_) async => SuccessResult(testUser));
 
       final result = await useCase();
 
-      expect(result, const Right(testUser));
+      expect(result.isSuccess, true);
+      expect(result.value?.uid, '123');
       verify(() => mockGetCurrentUserBehavior.getCurrentUser()).called(1);
     });
 
     test('should return null when no user is authenticated', () async {
       when(
         () => mockGetCurrentUserBehavior.getCurrentUser(),
-      ).thenAnswer((_) async => const Right(null));
+      ).thenAnswer((_) async => SuccessResult(null));
 
       final result = await useCase();
 
-      result.fold(
-        (_) => fail('Should be Right'),
-        (user) => expect(user, isNull),
-      );
+      expect(result.isSuccess, true);
+      expect(result.value, isNull);
       verify(() => mockGetCurrentUserBehavior.getCurrentUser()).called(1);
     });
 
@@ -54,11 +53,12 @@ void main() {
       const failure = AuthFailure(message: 'Failed to get current user');
       when(
         () => mockGetCurrentUserBehavior.getCurrentUser(),
-      ).thenAnswer((_) async => const Left(failure));
+      ).thenAnswer((_) async => ErrorResult(failure));
 
       final result = await useCase();
 
-      expect(result, const Left(failure));
+      expect(result.isError, true);
+      expect(result.failure?.message, 'Failed to get current user');
       verify(() => mockGetCurrentUserBehavior.getCurrentUser()).called(1);
     });
 
@@ -67,7 +67,7 @@ void main() {
       () async {
         when(
           () => mockGetCurrentUserBehavior.getCurrentUser(),
-        ).thenAnswer((_) async => const Right(testUser));
+        ).thenAnswer((_) async => SuccessResult(testUser));
 
         await useCase();
 

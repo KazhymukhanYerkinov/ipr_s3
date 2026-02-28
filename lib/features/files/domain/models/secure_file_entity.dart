@@ -1,8 +1,6 @@
-import 'package:equatable/equatable.dart';
-
 enum FileType { image, pdf, text, video, audio, unknown }
 
-class SecureFileEntity extends Equatable {
+class SecureFileEntity {
   final String id;
   final String name;
   final FileType type;
@@ -56,19 +54,4 @@ class SecureFileEntity extends Equatable {
       checksum: checksum ?? this.checksum,
     );
   }
-
-  @override
-  List<Object?> get props => [
-    id,
-    name,
-    type,
-    size,
-    encryptedPath,
-    thumbnailPath,
-    createdAt,
-    updatedAt,
-    tags,
-    folderId,
-    checksum,
-  ];
 }

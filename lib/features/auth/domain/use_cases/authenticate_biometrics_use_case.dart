@@ -1,15 +1,16 @@
-import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/result/result.dart';
+import 'package:ipr_s3/core/use_case/callable.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/authenticate_with_biometrics_behavior.dart';
 
-@lazySingleton
-class AuthenticateBiometricsUseCase {
+@injectable
+class AuthenticateBiometricsUseCase implements Callable<NoParams, bool> {
   final AuthenticateWithBiometricsBehavior _behavior;
 
   AuthenticateBiometricsUseCase(this._behavior);
 
-  Future<Either<Failure, bool>> call() async {
+  @override
+  Future<Result<bool>> call([_ = const NoParams()]) {
     return _behavior.authenticateWithBiometrics();
   }
 }

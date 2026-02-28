@@ -49,8 +49,14 @@ jobs:
         run: flutter pub get
 
       # Проверяет форматирование кода; падает если есть неотформатированные файлы
+      # Исключаем сгенерированные файлы (*.g.dart, *.freezed.dart, generated/)
       - name: Check formatting
-        run: dart format --set-exit-if-changed .
+        run: |
+          find lib test -name '*.dart' \
+            ! -name '*.g.dart' \
+            ! -name '*.freezed.dart' \
+            ! -path '*/generated/*' \
+            | xargs dart format --set-exit-if-changed
 
       # Статический анализ кода; падает даже на info-уровне предупреждений
       - name: Run analyzer

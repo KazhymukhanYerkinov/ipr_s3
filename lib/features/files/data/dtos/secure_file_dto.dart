@@ -54,10 +54,6 @@ class SecureFileDto extends HiveObject {
   });
 
   factory SecureFileDto.fromEntity(SecureFileEntity entity) {
-    return SecureFileMapper.toDto(entity);
-  }
-
-  SecureFileEntity toEntity() {
-    return SecureFileMapper.fromDto(this);
+    return entity.toDto();
   }
 }

@@ -1,17 +1,18 @@
 import 'dart:typed_data';
 
-import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/result/result.dart';
+import 'package:ipr_s3/core/use_case/callable.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/decrypt_file_behavior.dart';
 
-@lazySingleton
-class DecryptFileUseCase {
+@injectable
+class DecryptFileUseCase implements Callable<String, Uint8List> {
   final DecryptFileBehavior _behavior;
 
   DecryptFileUseCase(this._behavior);
 
-  Future<Either<Failure, Uint8List>> call(String fileId) async {
+  @override
+  Future<Result<Uint8List>> call(String fileId) {
     return _behavior.decryptFile(fileId);
   }
 }

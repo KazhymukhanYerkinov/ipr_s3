@@ -1,8 +1,7 @@
-import 'package:dartz/dartz.dart';
-import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/result/result.dart';
 
 abstract class MoveFileToFolderBehavior {
-  Future<Either<Failure, void>> moveFileToFolder({
+  Future<Result<void>> moveFileToFolder({
     required String fileId,
     required String? folderId,
   });

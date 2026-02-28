@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 import 'package:ipr_s3/core/error/failures.dart';
 import 'package:ipr_s3/core/platform/native_hash_service.dart';
+import 'package:ipr_s3/core/result/result.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/data/services/file_encryption_service.dart';
 import 'package:ipr_s3/features/files/data/services/file_search_service.dart';
@@ -17,7 +17,7 @@ import 'package:ipr_s3/features/files/domain/behaviors/search_files_behavior.dar
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 @lazySingleton
-class FilesRepositoryImpl
+class FilesService
     implements
         GetFilesBehavior,
         ImportFileBehavior,
@@ -31,7 +31,7 @@ class FilesRepositoryImpl
   final _logger = SecureLogger();
   final _uuid = const Uuid();
 
-  FilesRepositoryImpl(
+  FilesService(
     this._localSource,
     this._encryptionService,
     this._thumbnailService,
@@ -40,25 +40,25 @@ class FilesRepositoryImpl
   );
 
   @override
-  Future<Either<Failure, List<SecureFileEntity>>> getFiles() async {
+  Future<Result<List<SecureFileEntity>>> getFiles() async {
     try {
       final files = await _localSource.getAll();
-      return Right(files);
+      return SuccessResult(files);
     } on EncryptionKeyLostException {
       _logger.error('Encryption key lost — cannot load files');
-      return const Left(
-        EncryptionFailure(
+      return ErrorResult(
+        const EncryptionFailure(
           message: 'Encryption key was lost. Files cannot be decrypted.',
         ),
       );
     } catch (e, stackTrace) {
       _logger.error('Failed to get files', e, stackTrace);
-      return const Left(CacheFailure(message: 'Failed to load files'));
+      return ErrorResult(const CacheFailure(message: 'Failed to load files'));
     }
   }
 
   @override
-  Future<Either<Failure, SecureFileEntity>> importFile({
+  Future<Result<SecureFileEntity>> importFile({
     required String name,
     required Uint8List bytes,
     required FileType type,
@@ -102,19 +102,21 @@ class FilesRepositoryImpl
 
       await _localSource.save(entity);
       _logger.info('File imported successfully');
-      return Right(entity);
+      return SuccessResult(entity);
     } catch (e, stackTrace) {
       _logger.error('Failed to import file', e, stackTrace);
-      return const Left(EncryptionFailure(message: 'Failed to import file'));
+      return ErrorResult(
+        const EncryptionFailure(message: 'Failed to import file'),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, Uint8List>> decryptFile(String fileId) async {
+  Future<Result<Uint8List>> decryptFile(String fileId) async {
     try {
       final entity = await _localSource.getById(fileId);
       if (entity == null) {
-        return const Left(FileFailure(message: 'File not found'));
+        return ErrorResult(const FileFailure(message: 'File not found'));
       }
 
       final encryptedBytes = await _localSource.readEncryptedFile(
@@ -125,8 +127,8 @@ class FilesRepositoryImpl
         final currentChecksum = _nativeHashService.crc32(encryptedBytes);
         if (currentChecksum != entity.checksum) {
           _logger.error('File integrity check failed for [REDACTED_ID]');
-          return const Left(
-            FileFailure(
+          return ErrorResult(
+            const FileFailure(
               message: 'File integrity check failed — data may be corrupted',
             ),
           );
@@ -135,31 +137,31 @@ class FilesRepositoryImpl
 
       final decryptedBytes = await _encryptionService.decrypt(encryptedBytes);
       _logger.info('File decrypted successfully');
-      return Right(decryptedBytes);
+      return SuccessResult(decryptedBytes);
     } on EncryptionKeyLostException {
       _logger.error('Encryption key lost — cannot decrypt file');
-      return const Left(
-        EncryptionFailure(
+      return ErrorResult(
+        const EncryptionFailure(
           message: 'Encryption key was lost. File cannot be decrypted.',
         ),
       );
     } catch (e, stackTrace) {
       _logger.error('Failed to decrypt file', e, stackTrace);
-      return const Left(EncryptionFailure(message: 'Failed to decrypt file'));
+      return ErrorResult(
+        const EncryptionFailure(message: 'Failed to decrypt file'),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, List<SecureFileEntity>>> searchFiles(
-    String query,
-  ) async {
+  Future<Result<List<SecureFileEntity>>> searchFiles(String query) async {
     try {
       final allFiles = await _localSource.getAll();
       final results = await _searchService.search(query, allFiles);
-      return Right(results);
+      return SuccessResult(results);
     } catch (e, stackTrace) {
       _logger.error('Search failed', e, stackTrace);
-      return const Left(FileFailure(message: 'Search failed'));
+      return ErrorResult(const FileFailure(message: 'Search failed'));
     }
   }
 }

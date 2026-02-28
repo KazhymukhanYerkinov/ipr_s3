@@ -1,5 +1,5 @@
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/features/files/data/repositories/files_repository_impl.dart';
+import 'package:ipr_s3/features/files/data/services/files_service.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/decrypt_file_behavior.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/get_files_behavior.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/import_file_behavior.dart';
@@ -8,18 +8,14 @@ import 'package:ipr_s3/features/files/domain/behaviors/search_files_behavior.dar
 @module
 abstract class FilesModule {
   @factoryMethod
-  GetFilesBehavior getFilesBehavior(FilesRepositoryImpl repository) =>
-      repository;
+  GetFilesBehavior getFilesBehavior(FilesService service) => service;
 
   @factoryMethod
-  ImportFileBehavior importFileBehavior(FilesRepositoryImpl repository) =>
-      repository;
+  ImportFileBehavior importFileBehavior(FilesService service) => service;
 
   @factoryMethod
-  DecryptFileBehavior decryptFileBehavior(FilesRepositoryImpl repository) =>
-      repository;
+  DecryptFileBehavior decryptFileBehavior(FilesService service) => service;
 
   @factoryMethod
-  SearchFilesBehavior searchFilesBehavior(FilesRepositoryImpl repository) =>
-      repository;
+  SearchFilesBehavior searchFilesBehavior(FilesService service) => service;
 }

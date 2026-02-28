@@ -1,7 +1,7 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/result/result.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/sign_in_with_google_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/models/user.dart';
 import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_in_with_google_use_case.dart';
@@ -29,11 +29,12 @@ void main() {
     test('should return UserEntity on successful sign-in', () async {
       when(
         () => mockSignInWithGoogleBehavior.signInWithGoogle(),
-      ).thenAnswer((_) async => const Right(testUser));
+      ).thenAnswer((_) async => SuccessResult(testUser));
 
       final result = await useCase();
 
-      expect(result, const Right(testUser));
+      expect(result.isSuccess, true);
+      expect(result.value?.uid, '123');
       verify(() => mockSignInWithGoogleBehavior.signInWithGoogle()).called(1);
     });
 
@@ -41,11 +42,12 @@ void main() {
       const failure = AuthFailure(message: 'Failed to sign in');
       when(
         () => mockSignInWithGoogleBehavior.signInWithGoogle(),
-      ).thenAnswer((_) async => const Left(failure));
+      ).thenAnswer((_) async => ErrorResult(failure));
 
       final result = await useCase();
 
-      expect(result, const Left(failure));
+      expect(result.isError, true);
+      expect(result.failure?.message, 'Failed to sign in');
       verify(() => mockSignInWithGoogleBehavior.signInWithGoogle()).called(1);
     });
 
@@ -54,7 +56,7 @@ void main() {
       () async {
         when(
           () => mockSignInWithGoogleBehavior.signInWithGoogle(),
-        ).thenAnswer((_) async => const Right(testUser));
+        ).thenAnswer((_) async => SuccessResult(testUser));
 
         await useCase();
 

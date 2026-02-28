@@ -26,10 +26,6 @@ class FolderDto extends HiveObject {
   });
 
   factory FolderDto.fromEntity(FolderItem entity) {
-    return FolderMapper.toDto(entity);
-  }
-
-  FolderItem toEntity({List<FolderItem> children = const []}) {
-    return FolderMapper.fromDto(this, children: children);
+    return entity.toDto();
   }
 }

@@ -10,6 +10,10 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
   final GetFilesBehavior _getFilesBehavior;
 
   StatsBloc(this._getFilesBehavior) : super(const StatsState.initial()) {
+    _setupHandlers();
+  }
+
+  void _setupHandlers() {
     on<StatsLoadRequested>(_onLoad);
   }
 
@@ -20,36 +24,39 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
     emit(const StatsState.loading());
 
     final result = await _getFilesBehavior.getFiles();
+    final failure = result.failure;
 
-    result.fold((failure) => emit(StatsState.error(message: failure.message)), (
-      files,
-    ) {
-      final totalSize = files.fold<int>(0, (sum, f) => sum + f.size);
+    if (failure != null) {
+      emit(StatsState.error(message: failure.message));
+      return;
+    }
 
-      final countByType = <FileType, int>{};
-      final sizeByType = <FileType, int>{};
-      for (final file in files) {
-        countByType[file.type] = (countByType[file.type] ?? 0) + 1;
-        sizeByType[file.type] = (sizeByType[file.type] ?? 0) + file.size;
-      }
+    final files = result.value ?? [];
+    final totalSize = files.fold<int>(0, (sum, f) => sum + f.size);
 
-      final recentFiles = [...files]
-        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      final top5Recent = recentFiles.take(5).toList();
+    final countByType = <FileType, int>{};
+    final sizeByType = <FileType, int>{};
+    for (final file in files) {
+      countByType[file.type] = (countByType[file.type] ?? 0) + 1;
+      sizeByType[file.type] = (sizeByType[file.type] ?? 0) + file.size;
+    }
 
-      final largestFiles = [...files]..sort((a, b) => b.size.compareTo(a.size));
-      final top5Largest = largestFiles.take(5).toList();
+    final recentFiles = [...files]
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final top5Recent = recentFiles.take(5).toList();
 
-      emit(
-        StatsState.loaded(
-          totalFiles: files.length,
-          totalSize: totalSize,
-          countByType: countByType,
-          sizeByType: sizeByType,
-          recentFiles: top5Recent,
-          largestFiles: top5Largest,
-        ),
-      );
-    });
+    final largestFiles = [...files]..sort((a, b) => b.size.compareTo(a.size));
+    final top5Largest = largestFiles.take(5).toList();
+
+    emit(
+      StatsState.loaded(
+        totalFiles: files.length,
+        totalSize: totalSize,
+        countByType: countByType,
+        sizeByType: sizeByType,
+        recentFiles: top5Recent,
+        largestFiles: top5Largest,
+      ),
+    );
   }
 }

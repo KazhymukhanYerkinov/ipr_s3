@@ -1,15 +1,16 @@
-import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/result/result.dart';
+import 'package:ipr_s3/core/use_case/callable.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/verify_pin_behavior.dart';
 
-@lazySingleton
-class VerifyPinUseCase {
+@injectable
+class VerifyPinUseCase implements Callable<String, bool> {
   final VerifyPinBehavior _behavior;
 
   VerifyPinUseCase(this._behavior);
 
-  Future<Either<Failure, bool>> call(String pin) async {
+  @override
+  Future<Result<bool>> call(String pin) {
     return _behavior.verifyPin(pin);
   }
 }

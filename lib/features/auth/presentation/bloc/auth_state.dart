@@ -4,7 +4,7 @@ import 'package:ipr_s3/features/auth/domain/models/user.dart';
 part 'auth_state.freezed.dart';
 
 @freezed
-class AuthState with _$AuthState {
+sealed class AuthState with _$AuthState {
   const factory AuthState.initial() = AuthInitial;
   const factory AuthState.loading() = AuthLoading;
   const factory AuthState.authenticated({required UserEntity user}) =

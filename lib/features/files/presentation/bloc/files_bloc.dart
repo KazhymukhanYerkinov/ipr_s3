@@ -30,6 +30,13 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     this._commandManager,
     this._localSource,
   ) : super(const FilesState.initial()) {
+    _setupHandlers();
+  }
+
+  ViewMode _currentViewMode = ViewMode.list;
+  SortStrategy _currentSortStrategy = SortByDate();
+
+  void _setupHandlers() {
     on<FilesLoadRequested>(_onLoad);
     on<FileImportRequested>(_onImport);
     on<FileDeleteRequested>(_onDelete);
@@ -43,27 +50,28 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     on<RedoRequested>(_onRedo);
   }
 
-  ViewMode _currentViewMode = ViewMode.list;
-  SortStrategy _currentSortStrategy = SortByDate();
-
   Future<void> _onLoad(
     FilesLoadRequested event,
     Emitter<FilesState> emit,
   ) async {
     emit(const FilesState.loading());
     final result = await _getFilesUseCase();
-    result.fold((failure) => emit(FilesState.error(message: failure.message)), (
-      files,
-    ) {
-      final sorted = _currentSortStrategy.sort(files);
-      emit(
-        FilesState.loaded(
-          files: sorted,
-          viewMode: _currentViewMode,
-          sortStrategy: _currentSortStrategy,
-        ),
-      );
-    });
+    final failure = result.failure;
+
+    if (failure != null) {
+      emit(FilesState.error(message: failure.message));
+      return;
+    }
+
+    final files = result.value ?? [];
+    final sorted = _currentSortStrategy.sort(files);
+    emit(
+      FilesState.loaded(
+        files: sorted,
+        viewMode: _currentViewMode,
+        sortStrategy: _currentSortStrategy,
+      ),
+    );
   }
 
   Future<void> _onImport(
@@ -86,16 +94,21 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
 
       final fileType = _resolveFileType(pickedFile.extension);
       final importResult = await _importFileUseCase(
-        name: name,
-        bytes: pickedFile.bytes!,
-        type: fileType,
-        folderId: event.folderId,
+        ImportFileParams(
+          name: name,
+          bytes: pickedFile.bytes!,
+          type: fileType,
+          folderId: event.folderId,
+        ),
       );
 
-      importResult.fold(
-        (failure) => emit(FilesState.error(message: failure.message)),
-        (_) => add(FilesLoadRequested()),
-      );
+      final failure = importResult.failure;
+      if (failure != null) {
+        emit(FilesState.error(message: failure.message));
+        return;
+      }
+
+      add(FilesLoadRequested());
     } catch (e) {
       emit(FilesState.error(message: 'Failed to pick file: $e'));
     }
@@ -148,10 +161,7 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     }
   }
 
-  Future<void> _onUndo(
-    UndoRequested event,
-    Emitter<FilesState> emit,
-  ) async {
+  Future<void> _onUndo(UndoRequested event, Emitter<FilesState> emit) async {
     if (!_commandManager.canUndo) return;
     try {
       await _commandManager.undo();
@@ -161,10 +171,7 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     }
   }
 
-  Future<void> _onRedo(
-    RedoRequested event,
-    Emitter<FilesState> emit,
-  ) async {
+  Future<void> _onRedo(RedoRequested event, Emitter<FilesState> emit) async {
     if (!_commandManager.canRedo) return;
     try {
       await _commandManager.redo();
@@ -184,19 +191,23 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     }
 
     final result = await _searchFilesUseCase(event.query);
-    result.fold((failure) => emit(FilesState.error(message: failure.message)), (
-      files,
-    ) {
-      final sorted = _currentSortStrategy.sort(files);
-      emit(
-        FilesState.loaded(
-          files: sorted,
-          viewMode: _currentViewMode,
-          searchQuery: event.query,
-          sortStrategy: _currentSortStrategy,
-        ),
-      );
-    });
+    final failure = result.failure;
+
+    if (failure != null) {
+      emit(FilesState.error(message: failure.message));
+      return;
+    }
+
+    final files = result.value ?? [];
+    final sorted = _currentSortStrategy.sort(files);
+    emit(
+      FilesState.loaded(
+        files: sorted,
+        viewMode: _currentViewMode,
+        searchQuery: event.query,
+        sortStrategy: _currentSortStrategy,
+      ),
+    );
   }
 
   Future<void> _onSearchCleared(

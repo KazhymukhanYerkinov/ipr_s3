@@ -30,6 +30,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this._verifyPinUseCase,
     this._authenticateBiometricsUseCase,
   ) : super(const AuthState.initial()) {
+    _setupHandlers();
+  }
+
+  UserEntity? _currentUser;
+
+  void _setupHandlers() {
     on<GoogleSignInRequested>(_onGoogleSignIn);
     on<SignOutRequested>(_onSignOut);
     on<AuthCheckRequested>(_onAuthCheck);
@@ -38,19 +44,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<BiometricRequested>(_onBiometricRequested);
   }
 
-  UserEntity? _currentUser;
-
   Future<void> _onGoogleSignIn(
     GoogleSignInRequested event,
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthState.loading());
     final result = await _signInWithGoogleUseCase();
-    result.fold(
-      (failure) => emit(AuthState.error(message: failure.message)),
-      (user) => _currentUser = user,
-    );
-    if (_currentUser != null && result.isRight()) {
+    final failure = result.failure;
+
+    if (failure != null) {
+      emit(AuthState.error(message: failure.message));
+      return;
+    }
+
+    _currentUser = result.value;
+    if (_currentUser != null) {
       await _checkPinStatus(_currentUser!, emit);
     }
   }
@@ -61,12 +69,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthState.loading());
     final result = await _signOutUseCase();
-    result.fold((failure) => emit(AuthState.error(message: failure.message)), (
-      _,
-    ) {
-      _currentUser = null;
-      emit(const AuthState.unauthenticated());
-    });
+    final failure = result.failure;
+
+    if (failure != null) {
+      emit(AuthState.error(message: failure.message));
+      return;
+    }
+
+    _currentUser = null;
+    emit(const AuthState.unauthenticated());
   }
 
   Future<void> _onAuthCheck(
@@ -74,18 +85,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     final result = await _getCurrentUserUseCase();
-    UserEntity? user;
-    result.fold(
-      (_) => emit(const AuthState.unauthenticated()),
-      (u) => user = u,
-    );
-    if (result.isLeft()) return;
+    final failure = result.failure;
+
+    if (failure != null) {
+      emit(const AuthState.unauthenticated());
+      return;
+    }
+
+    final user = result.value;
     if (user == null) {
       emit(const AuthState.unauthenticated());
       return;
     }
+
     _currentUser = user;
-    await _checkPinStatus(user!, emit);
+    await _checkPinStatus(user, emit);
   }
 
   Future<void> _onPinSubmitted(
@@ -100,13 +114,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     emit(const AuthState.loading());
     final result = await _verifyPinUseCase(event.pin);
-    result.fold(
-      (failure) => emit(AuthState.error(message: failure.message)),
-      (isValid) =>
-          isValid
-              ? emit(AuthState.authenticated(user: user))
-              : emit(const AuthState.error(message: 'Wrong PIN')),
-    );
+    final failure = result.failure;
+
+    if (failure != null) {
+      emit(AuthState.error(message: failure.message));
+      return;
+    }
+
+    final isValid = result.value ?? false;
+    if (isValid) {
+      emit(AuthState.authenticated(user: user));
+    } else {
+      emit(const AuthState.error(message: 'Wrong PIN'));
+    }
   }
 
   Future<void> _onPinSetupSubmitted(
@@ -121,10 +141,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     emit(const AuthState.loading());
     final result = await _setPinUseCase(event.pin);
-    result.fold(
-      (failure) => emit(AuthState.error(message: failure.message)),
-      (_) => emit(AuthState.authenticated(user: user)),
-    );
+    final failure = result.failure;
+
+    if (failure != null) {
+      emit(AuthState.error(message: failure.message));
+      return;
+    }
+
+    emit(AuthState.authenticated(user: user));
   }
 
   Future<void> _onBiometricRequested(
@@ -138,23 +162,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     final result = await _authenticateBiometricsUseCase();
-    result.fold(
-      (failure) => emit(AuthState.pinRequired(user: user)),
-      (success) =>
-          success
-              ? emit(AuthState.authenticated(user: user))
-              : emit(AuthState.pinRequired(user: user)),
-    );
+    final success = result.value ?? false;
+
+    if (success) {
+      emit(AuthState.authenticated(user: user));
+    } else {
+      emit(AuthState.pinRequired(user: user));
+    }
   }
 
   Future<void> _checkPinStatus(UserEntity user, Emitter<AuthState> emit) async {
     final hasPinResult = await _hasPinUseCase();
-    hasPinResult.fold(
-      (_) => emit(AuthState.authenticated(user: user)),
-      (hasPin) =>
-          hasPin
-              ? emit(AuthState.pinRequired(user: user))
-              : emit(AuthState.pinSetupRequired(user: user)),
-    );
+    final hasPin = hasPinResult.value ?? false;
+
+    if (hasPin) {
+      emit(AuthState.pinRequired(user: user));
+    } else {
+      emit(AuthState.pinSetupRequired(user: user));
+    }
   }
 }

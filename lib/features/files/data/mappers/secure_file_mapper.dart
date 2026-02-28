@@ -1,36 +1,38 @@
 import 'package:ipr_s3/features/files/data/dtos/secure_file_dto.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
-class SecureFileMapper {
-  static SecureFileEntity fromDto(SecureFileDto dto) {
+extension SecureFileDtoMapperX on SecureFileDto {
+  SecureFileEntity toEntity() {
     return SecureFileEntity(
-      id: dto.id,
-      name: dto.name,
-      type: FileType.values[dto.typeIndex],
-      size: dto.size,
-      encryptedPath: dto.encryptedPath,
-      thumbnailPath: dto.thumbnailPath,
-      createdAt: dto.createdAt,
-      updatedAt: dto.updatedAt,
-      tags: dto.tags,
-      folderId: dto.folderId,
-      checksum: dto.checksum,
+      id: id,
+      name: name,
+      type: FileType.values[typeIndex],
+      size: size,
+      encryptedPath: encryptedPath,
+      thumbnailPath: thumbnailPath,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      tags: tags,
+      folderId: folderId,
+      checksum: checksum,
     );
   }
+}
 
-  static SecureFileDto toDto(SecureFileEntity entity) {
+extension SecureFileEntityMapperX on SecureFileEntity {
+  SecureFileDto toDto() {
     return SecureFileDto(
-      id: entity.id,
-      name: entity.name,
-      typeIndex: entity.type.index,
-      size: entity.size,
-      encryptedPath: entity.encryptedPath,
-      thumbnailPath: entity.thumbnailPath,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-      tags: entity.tags,
-      folderId: entity.folderId,
-      checksum: entity.checksum,
+      id: id,
+      name: name,
+      typeIndex: type.index,
+      size: size,
+      encryptedPath: encryptedPath,
+      thumbnailPath: thumbnailPath,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      tags: tags,
+      folderId: folderId,
+      checksum: checksum,
     );
   }
 }

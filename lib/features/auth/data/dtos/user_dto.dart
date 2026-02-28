@@ -1,12 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:ipr_s3/features/auth/domain/models/user.dart';
 
-class UserDto extends UserEntity {
+class UserDto implements UserEntity {
+  @override
+  final String uid;
+
+  @override
+  final String email;
+
+  @override
+  final String displayName;
+
+  @override
+  final String? photoUrl;
+
   const UserDto({
-    required super.uid,
-    required super.email,
-    required super.displayName,
-    super.photoUrl,
+    required this.uid,
+    required this.email,
+    required this.displayName,
+    this.photoUrl,
   });
 
   factory UserDto.fromFirebaseUser(firebase.User user) {

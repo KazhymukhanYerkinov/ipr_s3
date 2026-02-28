@@ -7,7 +7,7 @@ part 'files_state.freezed.dart';
 enum ViewMode { list, grid }
 
 @freezed
-class FilesState with _$FilesState {
+sealed class FilesState with _$FilesState {
   const factory FilesState.initial() = FilesInitial;
   const factory FilesState.loading() = FilesLoading;
   const factory FilesState.loaded({
