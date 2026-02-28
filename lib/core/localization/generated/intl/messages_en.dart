@@ -119,9 +119,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tapToImport": MessageLookupByLibrary.simpleMessage(
       "Tap + to import and encrypt your first file",
     ),
-    "importToFolder": MessageLookupByLibrary.simpleMessage(
-      "Import to folder",
-    ),
+    "importToFolder": MessageLookupByLibrary.simpleMessage("Import to folder"),
     "noFolder": MessageLookupByLibrary.simpleMessage("No folder"),
     "wrongPin": MessageLookupByLibrary.simpleMessage("Wrong PIN"),
   };

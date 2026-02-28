@@ -114,7 +114,10 @@ class _FileNodeTile extends StatelessWidget {
 
     return ListTile(
       contentPadding: EdgeInsets.only(left: 16.0 + depth * 24.0, right: 8),
-      leading: Icon(_iconForType(entity.type), color: theme.colorScheme.secondary),
+      leading: Icon(
+        _iconForType(entity.type),
+        color: theme.colorScheme.secondary,
+      ),
       title: Text(entity.name, maxLines: 1, overflow: TextOverflow.ellipsis),
       subtitle: Text(
         _formatSize(entity.size),

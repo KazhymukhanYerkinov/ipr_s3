@@ -276,15 +276,9 @@ class _FolderPickerSheet extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
               children: [
-                Icon(
-                  Icons.folder_rounded,
-                  color: theme.colorScheme.primary,
-                ),
+                Icon(Icons.folder_rounded, color: theme.colorScheme.primary),
                 const SizedBox(width: 12),
-                Text(
-                  l.importToFolder,
-                  style: theme.textTheme.titleMedium,
-                ),
+                Text(l.importToFolder, style: theme.textTheme.titleMedium),
               ],
             ),
           ),
@@ -313,10 +307,12 @@ class _FolderPickerSheet extends StatelessWidget {
                 );
               }
 
-              final folders = snapshot.data?.fold(
-                (_) => <FolderItem>[],
-                (folders) => folders,
-              ) ?? <FolderItem>[];
+              final folders =
+                  snapshot.data?.fold(
+                    (_) => <FolderItem>[],
+                    (folders) => folders,
+                  ) ??
+                  <FolderItem>[];
 
               if (folders.isEmpty) {
                 return const SizedBox.shrink();
@@ -354,11 +350,7 @@ class _FolderPickerSheet extends StatelessWidget {
     );
   }
 
-  void _flatten(
-    List<FolderItem> folders,
-    List<_FlatFolder> result,
-    int depth,
-  ) {
+  void _flatten(List<FolderItem> folders, List<_FlatFolder> result, int depth) {
     for (final folder in folders) {
       result.add(_FlatFolder(folder: folder, depth: depth));
       final subFolders = folder.children.whereType<FolderItem>().toList();
