@@ -48,9 +48,11 @@ class FilesRepositoryImpl
       return Right(files);
     } on EncryptionKeyLostException {
       _logger.error('Encryption key lost — cannot load files');
-      return const Left(EncryptionFailure(
-        message: 'Encryption key was lost. Files cannot be decrypted.',
-      ));
+      return const Left(
+        EncryptionFailure(
+          message: 'Encryption key was lost. Files cannot be decrypted.',
+        ),
+      );
     } catch (e, stackTrace) {
       _logger.error('Failed to get files', e, stackTrace);
       return const Left(CacheFailure(message: 'Failed to load files'));
@@ -62,6 +64,7 @@ class FilesRepositoryImpl
     required String name,
     required Uint8List bytes,
     required FileType type,
+    String? folderId,
   }) async {
     try {
       final fileId = _uuid.v4();
@@ -96,6 +99,7 @@ class FilesRepositoryImpl
         createdAt: now,
         updatedAt: now,
         checksum: checksum,
+        folderId: folderId,
       );
 
       await _localSource.save(entity);
@@ -136,9 +140,11 @@ class FilesRepositoryImpl
       return Right(decryptedBytes);
     } on EncryptionKeyLostException {
       _logger.error('Encryption key lost — cannot decrypt file');
-      return const Left(EncryptionFailure(
-        message: 'Encryption key was lost. File cannot be decrypted.',
-      ));
+      return const Left(
+        EncryptionFailure(
+          message: 'Encryption key was lost. File cannot be decrypted.',
+        ),
+      );
     } catch (e, stackTrace) {
       _logger.error('Failed to decrypt file', e, stackTrace);
       return const Left(EncryptionFailure(message: 'Failed to decrypt file'));

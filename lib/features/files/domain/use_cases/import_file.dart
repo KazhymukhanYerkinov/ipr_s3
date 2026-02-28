@@ -16,7 +16,13 @@ class ImportFileUseCase {
     required String name,
     required Uint8List bytes,
     required FileType type,
+    String? folderId,
   }) async {
-    return _behavior.importFile(name: name, bytes: bytes, type: type);
+    return _behavior.importFile(
+      name: name,
+      bytes: bytes,
+      type: type,
+      folderId: folderId,
+    );
   }
 }

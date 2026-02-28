@@ -5,7 +5,10 @@ sealed class FilesEvent {}
 
 final class FilesLoadRequested extends FilesEvent {}
 
-final class FileImportRequested extends FilesEvent {}
+final class FileImportRequested extends FilesEvent {
+  final String? folderId;
+  FileImportRequested({this.folderId});
+}
 
 final class FileDeleteRequested extends FilesEvent {
   final SecureFileEntity file;

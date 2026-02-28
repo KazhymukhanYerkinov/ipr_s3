@@ -663,6 +663,26 @@ class GeneratedLocalization {
     );
   }
 
+  /// `Import to folder`
+  String get importToFolder {
+    return Intl.message(
+      'Import to folder',
+      name: 'importToFolder',
+      desc: 'Folder picker bottom sheet title',
+      args: [],
+    );
+  }
+
+  /// `No folder`
+  String get noFolder {
+    return Intl.message(
+      'No folder',
+      name: 'noFolder',
+      desc: 'Option to import without folder',
+      args: [],
+    );
+  }
+
   /// `Benchmark: Dart vs C (FFI)`
   String get benchmarkTitle {
     return Intl.message(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 import 'package:ipr_s3/features/folders/presentation/widgets/folder_node.dart';
 
@@ -7,6 +8,7 @@ class FolderTreeWidget extends StatelessWidget {
   final void Function(FolderItem folder)? onFolderTap;
   final void Function(FolderItem folder)? onFolderDelete;
   final void Function(FolderItem folder)? onAddSubfolder;
+  final void Function(SecureFileEntity file)? onFileTap;
 
   const FolderTreeWidget({
     super.key,
@@ -14,6 +16,7 @@ class FolderTreeWidget extends StatelessWidget {
     this.onFolderTap,
     this.onFolderDelete,
     this.onAddSubfolder,
+    this.onFileTap,
   });
 
   @override
@@ -51,6 +54,7 @@ class FolderTreeWidget extends StatelessWidget {
             onFolderTap: onFolderTap,
             onFolderDelete: onFolderDelete,
             onAddSubfolder: onAddSubfolder,
+            onFileTap: onFileTap,
           ),
     );
   }

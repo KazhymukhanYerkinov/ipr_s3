@@ -13,6 +13,8 @@ import 'package:ipr_s3/features/files/presentation/widgets/file_grid.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/file_list_view.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/search_bar_widget.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/sort_dropdown.dart';
+import 'package:ipr_s3/features/folders/domain/behaviors/get_folders_behavior.dart';
+import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 
 @RoutePage()
 class HomeScreen extends StatelessWidget {
@@ -200,10 +202,28 @@ class _HomeView extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<FilesBloc>().add(FileImportRequested()),
+        onPressed: () => _showFolderPickerAndImport(context),
         child: const Icon(Icons.add_rounded),
       ),
     );
+  }
+
+  void _showFolderPickerAndImport(BuildContext context) async {
+    final l = context.locale;
+    final bloc = context.read<FilesBloc>();
+
+    final folderId = await showModalBottomSheet<String?>(
+      context: context,
+      builder: (sheetContext) {
+        final theme = Theme.of(sheetContext);
+        return _FolderPickerSheet(theme: theme, l: l);
+      },
+    );
+
+    // null means the sheet was dismissed without selection — do nothing.
+    // Empty string means "No folder" was explicitly chosen.
+    if (folderId == null) return;
+    bloc.add(FileImportRequested(folderId: folderId.isEmpty ? null : folderId));
   }
 
   void _confirmDelete(BuildContext context, SecureFileEntity file) {
@@ -238,4 +258,119 @@ class _HomeView extends StatelessWidget {
       },
     );
   }
+}
+
+class _FolderPickerSheet extends StatelessWidget {
+  final ThemeData theme;
+  final dynamic l;
+
+  const _FolderPickerSheet({required this.theme, required this.l});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.folder_rounded,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  l.importToFolder,
+                  style: theme.textTheme.titleMedium,
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: Icon(
+              Icons.file_download_rounded,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            title: Text(l.noFolder),
+            onTap: () => Navigator.pop(context, ''),
+          ),
+          FutureBuilder(
+            future: getIt<GetFoldersBehavior>().getFolders(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                );
+              }
+
+              final folders = snapshot.data?.fold(
+                (_) => <FolderItem>[],
+                (folders) => folders,
+              ) ?? <FolderItem>[];
+
+              if (folders.isEmpty) {
+                return const SizedBox.shrink();
+              }
+
+              final flat = <_FlatFolder>[];
+              _flatten(folders, flat, 0);
+
+              return Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: flat.length,
+                  itemBuilder: (context, index) {
+                    final item = flat[index];
+                    return ListTile(
+                      contentPadding: EdgeInsets.only(
+                        left: 16.0 + item.depth * 24.0,
+                        right: 16,
+                      ),
+                      leading: Icon(
+                        Icons.folder_rounded,
+                        color: theme.colorScheme.primary,
+                      ),
+                      title: Text(item.folder.name),
+                      onTap: () => Navigator.pop(context, item.folder.id),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  void _flatten(
+    List<FolderItem> folders,
+    List<_FlatFolder> result,
+    int depth,
+  ) {
+    for (final folder in folders) {
+      result.add(_FlatFolder(folder: folder, depth: depth));
+      final subFolders = folder.children.whereType<FolderItem>().toList();
+      if (subFolders.isNotEmpty) {
+        _flatten(subFolders, result, depth + 1);
+      }
+    }
+  }
+}
+
+class _FlatFolder {
+  final FolderItem folder;
+  final int depth;
+  const _FlatFolder({required this.folder, required this.depth});
 }

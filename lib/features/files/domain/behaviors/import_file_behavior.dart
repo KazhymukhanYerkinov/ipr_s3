@@ -9,5 +9,6 @@ abstract class ImportFileBehavior {
     required String name,
     required Uint8List bytes,
     required FileType type,
+    String? folderId,
   });
 }

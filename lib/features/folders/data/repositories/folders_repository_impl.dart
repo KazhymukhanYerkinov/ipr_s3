@@ -1,15 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:uuid/uuid.dart';
 import 'package:ipr_s3/core/error/failures.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
 import 'package:ipr_s3/features/folders/data/sources/folders_local_source.dart';
-import 'package:ipr_s3/features/folders/domain/behaviors/get_folders_behavior.dart';
 import 'package:ipr_s3/features/folders/domain/behaviors/create_folder_behavior.dart';
 import 'package:ipr_s3/features/folders/domain/behaviors/delete_folder_behavior.dart';
+import 'package:ipr_s3/features/folders/domain/behaviors/get_folders_behavior.dart';
 import 'package:ipr_s3/features/folders/domain/behaviors/move_file_to_folder_behavior.dart';
+import 'package:ipr_s3/features/folders/domain/models/file_item.dart';
 import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
+import 'package:uuid/uuid.dart';
 
 @lazySingleton
 class FoldersRepositoryImpl
@@ -29,11 +30,38 @@ class FoldersRepositoryImpl
   Future<Either<Failure, List<FolderItem>>> getFolders() async {
     try {
       final folders = await _foldersSource.getAll();
-      return Right(folders);
+      final files = await _filesSource.getAll();
+
+      final filesByFolder = <String, List<FileItem>>{};
+      for (final file in files) {
+        if (file.folderId != null) {
+          filesByFolder
+              .putIfAbsent(file.folderId!, () => [])
+              .add(FileItem(file));
+        }
+      }
+
+      final enriched =
+          folders.map((f) => _injectFiles(f, filesByFolder)).toList();
+      return Right(enriched);
     } catch (e, st) {
       _logger.error('Failed to get folders', e, st);
       return const Left(CacheFailure(message: 'Failed to load folders'));
     }
+  }
+
+  FolderItem _injectFiles(
+    FolderItem folder,
+    Map<String, List<FileItem>> filesByFolder,
+  ) {
+    final updatedChildren =
+        folder.children.map((child) {
+          if (child is FolderItem) return _injectFiles(child, filesByFolder);
+          return child;
+        }).toList();
+
+    final folderFiles = filesByFolder[folder.id] ?? [];
+    return folder.copyWith(children: [...updatedChildren, ...folderFiles]);
   }
 
   @override

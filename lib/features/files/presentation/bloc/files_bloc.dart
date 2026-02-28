@@ -79,6 +79,7 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
         name: name,
         bytes: pickedFile.bytes!,
         type: fileType,
+        folderId: event.folderId,
       );
 
       importResult.fold(
