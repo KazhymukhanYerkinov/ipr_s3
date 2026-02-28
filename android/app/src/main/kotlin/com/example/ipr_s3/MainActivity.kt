@@ -79,7 +79,7 @@ class MainActivity : FlutterActivity() {
     private fun handleGetTotalStorage(result: MethodChannel.Result) {
         try {
             val stat = StatFs(Environment.getDataDirectory().path)
-            val totalBytes = stat.totalBlocksLong * stat.blockSizeLong
+            val totalBytes = stat.blockCountLong * stat.blockSizeLong
             result.success(totalBytes)
         } catch (e: Exception) {
             result.error("ERROR", "Failed to get total storage: ${e.message}", null)
