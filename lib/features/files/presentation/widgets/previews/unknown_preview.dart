@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipr_s3/core/utils/format_utils.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 class UnknownPreview extends StatelessWidget {
@@ -29,7 +30,7 @@ class UnknownPreview extends StatelessWidget {
           Text(file.name, style: theme.textTheme.titleLarge),
           const SizedBox(height: 8),
           Text(
-            '${(file.size / 1024).toStringAsFixed(1)} KB',
+            formatSize(file.size),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

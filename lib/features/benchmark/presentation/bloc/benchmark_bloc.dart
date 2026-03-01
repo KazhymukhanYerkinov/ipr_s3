@@ -122,7 +122,7 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
 
   Future<int> _benchmarkDartCrc32(Uint8List data) async {
     final stopwatch = Stopwatch()..start();
-    _dartCrc32(data);
+    _dartCrc32Impl(data);
     stopwatch.stop();
     return stopwatch.elapsedMilliseconds;
   }
@@ -136,7 +136,7 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
 
   Future<int> _benchmarkIsolateCrc32(Uint8List data) async {
     final stopwatch = Stopwatch()..start();
-    await compute(_isolateCrc32Worker, data);
+    await compute(_crc32, data);
     stopwatch.stop();
     return stopwatch.elapsedMilliseconds;
   }
@@ -157,19 +157,11 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
     return stopwatch.elapsedMilliseconds;
   }
 
-  static int _dartCrc32(Uint8List data) {
-    var crc = 0xFFFFFFFF;
-    for (var i = 0; i < data.length; i++) {
-      crc ^= data[i];
-      for (var j = 0; j < 8; j++) {
-        crc = (crc >> 1) ^ (0xEDB88320 & (-(crc & 1)));
-      }
-    }
-    return crc ^ 0xFFFFFFFF;
-  }
+  static int _dartCrc32Impl(Uint8List data) => _crc32(data);
 }
 
-int _isolateCrc32Worker(Uint8List data) {
+/// Shared CRC32 implementation used both on main thread and in isolate.
+int _crc32(Uint8List data) {
   var crc = 0xFFFFFFFF;
   for (var i = 0; i < data.length; i++) {
     crc ^= data[i];

@@ -118,66 +118,62 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     FileDeleteRequested event,
     Emitter<FilesState> emit,
   ) async {
-    try {
-      final command = DeleteFileCommand(_localSource, event.file);
-      await _commandManager.execute(command);
-      add(FilesLoadRequested());
-    } catch (e) {
-      emit(const FilesState.error(message: 'Failed to delete file'));
-    }
+    final command = DeleteFileCommand(_localSource, event.file);
+    await _runCommand(
+      emit,
+      () => _commandManager.execute(command),
+      'Failed to delete file',
+    );
   }
 
   Future<void> _onMove(
     FileMoveRequested event,
     Emitter<FilesState> emit,
   ) async {
-    try {
-      final command = MoveFileCommand(
-        _localSource,
-        event.file,
-        event.targetFolderId,
-      );
-      await _commandManager.execute(command);
-      add(FilesLoadRequested());
-    } catch (e) {
-      emit(const FilesState.error(message: 'Failed to move file'));
-    }
+    final command = MoveFileCommand(
+      _localSource,
+      event.file,
+      event.targetFolderId,
+    );
+    await _runCommand(
+      emit,
+      () => _commandManager.execute(command),
+      'Failed to move file',
+    );
   }
 
   Future<void> _onRename(
     FileRenameRequested event,
     Emitter<FilesState> emit,
   ) async {
-    try {
-      final command = RenameFileCommand(
-        _localSource,
-        event.file,
-        event.newName,
-      );
-      await _commandManager.execute(command);
-      add(FilesLoadRequested());
-    } catch (e) {
-      emit(const FilesState.error(message: 'Failed to rename file'));
-    }
+    final command = RenameFileCommand(_localSource, event.file, event.newName);
+    await _runCommand(
+      emit,
+      () => _commandManager.execute(command),
+      'Failed to rename file',
+    );
   }
 
   Future<void> _onUndo(UndoRequested event, Emitter<FilesState> emit) async {
     if (!_commandManager.canUndo) return;
-    try {
-      await _commandManager.undo();
-      add(FilesLoadRequested());
-    } catch (e) {
-      emit(const FilesState.error(message: 'Failed to undo'));
-    }
+    await _runCommand(emit, () => _commandManager.undo(), 'Failed to undo');
   }
 
   Future<void> _onRedo(RedoRequested event, Emitter<FilesState> emit) async {
     if (!_commandManager.canRedo) return;
+    await _runCommand(emit, () => _commandManager.redo(), 'Failed to redo');
+  }
+
+  Future<void> _runCommand(
+    Emitter<FilesState> emit,
+    Future<void> Function() action,
+    String errorMessage,
+  ) async {
     try {
-      await _commandManager.redo();
+      await action();
       add(FilesLoadRequested());
     } catch (e) {
-      emit(const FilesState.error(message: 'Failed to redo'));
+      emit(FilesState.error(message: errorMessage));
     }
   }
 

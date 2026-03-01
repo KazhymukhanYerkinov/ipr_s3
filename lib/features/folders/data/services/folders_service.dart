@@ -27,8 +27,8 @@ class FoldersService
   FoldersService(this._foldersSource, this._filesSource);
 
   @override
-  Future<Result<List<FolderItem>>> getFolders() async {
-    try {
+  Future<Result<List<FolderItem>>> getFolders() => runGuarded(
+    action: () async {
       final folders = await _foldersSource.getAll();
       final files = await _filesSource.getAll();
 
@@ -41,14 +41,12 @@ class FoldersService
         }
       }
 
-      final enriched =
-          folders.map((f) => _injectFiles(f, filesByFolder)).toList();
-      return SuccessResult(enriched);
-    } catch (e, st) {
-      _logger.error('Failed to get folders', e, st);
-      return ErrorResult(const CacheFailure(message: 'Failed to load folders'));
-    }
-  }
+      return folders.map((f) => _injectFiles(f, filesByFolder)).toList();
+    },
+    onError: () => const CacheFailure(message: 'Failed to load folders'),
+    logger: _logger,
+    errorMessage: 'Failed to get folders',
+  );
 
   FolderItem _injectFiles(
     FolderItem folder,
@@ -68,8 +66,8 @@ class FoldersService
   Future<Result<FolderItem>> createFolder({
     required String name,
     String? parentId,
-  }) async {
-    try {
+  }) => runGuarded(
+    action: () async {
       final folder = FolderItem(
         id: _uuid.v4(),
         name: name,
@@ -78,28 +76,23 @@ class FoldersService
       );
       await _foldersSource.save(folder);
       _logger.info('Folder created');
-      return SuccessResult(folder);
-    } catch (e, st) {
-      _logger.error('Failed to create folder', e, st);
-      return ErrorResult(
-        const CacheFailure(message: 'Failed to create folder'),
-      );
-    }
-  }
+      return folder;
+    },
+    onError: () => const CacheFailure(message: 'Failed to create folder'),
+    logger: _logger,
+    errorMessage: 'Failed to create folder',
+  );
 
   @override
-  Future<Result<void>> deleteFolder(String folderId) async {
-    try {
+  Future<Result<void>> deleteFolder(String folderId) => runGuarded(
+    action: () async {
       await _foldersSource.delete(folderId);
       _logger.info('Folder deleted');
-      return SuccessResult(null);
-    } catch (e, st) {
-      _logger.error('Failed to delete folder', e, st);
-      return ErrorResult(
-        const CacheFailure(message: 'Failed to delete folder'),
-      );
-    }
-  }
+    },
+    onError: () => const CacheFailure(message: 'Failed to delete folder'),
+    logger: _logger,
+    errorMessage: 'Failed to delete folder',
+  );
 
   @override
   Future<Result<void>> moveFileToFolder({
@@ -111,7 +104,6 @@ class FoldersService
       if (file == null) {
         return ErrorResult(const FileFailure(message: 'File not found'));
       }
-
       final updated = file.copyWith(folderId: folderId);
       await _filesSource.save(updated);
       _logger.info('File moved to folder');

@@ -3,13 +3,12 @@ import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 class FileIcon extends StatelessWidget {
   final FileType type;
+  final double size;
 
-  const FileIcon({super.key, required this.type});
+  const FileIcon({super.key, required this.type, this.size = 24});
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final (IconData icon, Color color) = switch (type) {
+  static (IconData, Color) resolve(FileType type, ThemeData theme) {
+    return switch (type) {
       FileType.image => (Icons.image_outlined, theme.colorScheme.primary),
       FileType.pdf => (Icons.picture_as_pdf_rounded, theme.colorScheme.error),
       FileType.text => (Icons.description_outlined, theme.colorScheme.tertiary),
@@ -20,15 +19,22 @@ class FileIcon extends StatelessWidget {
         theme.colorScheme.onSurfaceVariant,
       ),
     };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final (IconData icon, Color color) = resolve(type, theme);
+    final containerSize = size + 20;
 
     return Container(
-      width: 44,
-      height: 44,
+      width: containerSize,
+      height: containerSize,
       decoration: BoxDecoration(
         color: color.withAlpha(25),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Icon(icon, color: color, size: 24),
+      child: Icon(icon, color: color, size: size),
     );
   }
 }

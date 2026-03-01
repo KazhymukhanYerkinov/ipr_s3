@@ -1,4 +1,5 @@
 import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/security/secure_logger.dart';
 
 abstract class Result<T> {
   T? get value;
@@ -30,4 +31,20 @@ class ErrorResult<T> extends Result<T> {
 
   @override
   Failure? get failure => _failure;
+}
+
+/// Executes [action] and wraps the result in [SuccessResult].
+/// On error, logs via [logger] and returns [ErrorResult] with [onError] failure.
+Future<Result<T>> runGuarded<T>({
+  required Future<T> Function() action,
+  required Failure Function() onError,
+  required SecureLogger logger,
+  required String errorMessage,
+}) async {
+  try {
+    return SuccessResult(await action());
+  } catch (e, stackTrace) {
+    logger.error(errorMessage, e, stackTrace);
+    return ErrorResult(onError());
+  }
 }

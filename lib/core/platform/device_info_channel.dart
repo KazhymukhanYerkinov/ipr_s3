@@ -7,38 +7,19 @@ class DeviceInfoChannel {
   static const _channel = MethodChannel('com.filesecure/device_info');
   final _logger = SecureLogger();
 
-  Future<int?> getBatteryLevel() async {
-    try {
-      final level = await _channel.invokeMethod<int>('getBatteryLevel');
-      return level;
-    } on PlatformException catch (e) {
-      _logger.warning('Battery level unavailable: ${e.code}');
-      return null;
-    } on MissingPluginException {
-      _logger.warning('MethodChannel not available (platform unsupported)');
-      return null;
-    }
-  }
+  Future<int?> getBatteryLevel() =>
+      _invokeInt('getBatteryLevel', 'Battery level');
 
-  Future<int?> getFreeStorage() async {
-    try {
-      final bytes = await _channel.invokeMethod<int>('getFreeStorage');
-      return bytes;
-    } on PlatformException catch (e) {
-      _logger.warning('Free storage unavailable: ${e.code}');
-      return null;
-    } on MissingPluginException {
-      _logger.warning('MethodChannel not available (platform unsupported)');
-      return null;
-    }
-  }
+  Future<int?> getFreeStorage() => _invokeInt('getFreeStorage', 'Free storage');
 
-  Future<int?> getTotalStorage() async {
+  Future<int?> getTotalStorage() =>
+      _invokeInt('getTotalStorage', 'Total storage');
+
+  Future<int?> _invokeInt(String method, String label) async {
     try {
-      final bytes = await _channel.invokeMethod<int>('getTotalStorage');
-      return bytes;
+      return await _channel.invokeMethod<int>(method);
     } on PlatformException catch (e) {
-      _logger.warning('Total storage unavailable: ${e.code}');
+      _logger.warning('$label unavailable: ${e.code}');
       return null;
     } on MissingPluginException {
       _logger.warning('MethodChannel not available (platform unsupported)');

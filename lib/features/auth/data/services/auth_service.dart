@@ -32,87 +32,70 @@ class AuthService
   AuthService(this._authRemoteSource, this._authLocalSource, this._pinManager);
 
   @override
-  Future<Result<UserEntity>> signInWithGoogle() async {
-    try {
+  Future<Result<UserEntity>> signInWithGoogle() => runGuarded(
+    action: () async {
       final user = await _authRemoteSource.signInWithGoogle();
       _logger.info('User signed in successfully');
-      return SuccessResult(user);
-    } catch (e, stackTrace) {
-      _logger.error('Google sign-in failed', e, stackTrace);
-      return ErrorResult(const AuthFailure(message: 'Failed to sign in'));
-    }
-  }
+      return user;
+    },
+    onError: () => const AuthFailure(message: 'Failed to sign in'),
+    logger: _logger,
+    errorMessage: 'Google sign-in failed',
+  );
 
   @override
-  Future<Result<void>> signOut() async {
-    try {
+  Future<Result<void>> signOut() => runGuarded(
+    action: () async {
       await _authRemoteSource.signOut();
       await _authLocalSource.deleteToken();
       _logger.info('User signed out successfully');
-      return SuccessResult(null);
-    } catch (e, stackTrace) {
-      _logger.error('Sign out failed', e, stackTrace);
-      return ErrorResult(const AuthFailure(message: 'Failed to sign out'));
-    }
-  }
+    },
+    onError: () => const AuthFailure(message: 'Failed to sign out'),
+    logger: _logger,
+    errorMessage: 'Sign out failed',
+  );
 
   @override
-  Future<Result<UserEntity?>> getCurrentUser() async {
-    try {
-      final user = _authRemoteSource.getCurrentUser();
-      return SuccessResult(user);
-    } catch (e, stackTrace) {
-      _logger.error('Get current user failed', e, stackTrace);
-      return ErrorResult(
-        const AuthFailure(message: 'Failed to get current user'),
-      );
-    }
-  }
+  Future<Result<UserEntity?>> getCurrentUser() => runGuarded(
+    action: () async => _authRemoteSource.getCurrentUser(),
+    onError: () => const AuthFailure(message: 'Failed to get current user'),
+    logger: _logger,
+    errorMessage: 'Get current user failed',
+  );
 
   @override
-  Future<Result<bool>> hasPin() async {
-    try {
-      final result = await _pinManager.hasPin();
-      return SuccessResult(result);
-    } catch (e, stackTrace) {
-      _logger.error('Check PIN failed', e, stackTrace);
-      return ErrorResult(const AuthFailure(message: 'Failed to check PIN'));
-    }
-  }
+  Future<Result<bool>> hasPin() => runGuarded(
+    action: () => _pinManager.hasPin(),
+    onError: () => const AuthFailure(message: 'Failed to check PIN'),
+    logger: _logger,
+    errorMessage: 'Check PIN failed',
+  );
 
   @override
-  Future<Result<void>> setPin(String pin) async {
-    try {
+  Future<Result<void>> setPin(String pin) => runGuarded(
+    action: () async {
       await _pinManager.setPin(pin);
       _logger.info('PIN set successfully');
-      return SuccessResult(null);
-    } catch (e, stackTrace) {
-      _logger.error('Set PIN failed', e, stackTrace);
-      return ErrorResult(const AuthFailure(message: 'Failed to set PIN'));
-    }
-  }
+    },
+    onError: () => const AuthFailure(message: 'Failed to set PIN'),
+    logger: _logger,
+    errorMessage: 'Set PIN failed',
+  );
 
   @override
-  Future<Result<bool>> verifyPin(String pin) async {
-    try {
-      final result = await _pinManager.verifyPin(pin);
-      return SuccessResult(result);
-    } catch (e, stackTrace) {
-      _logger.error('Verify PIN failed', e, stackTrace);
-      return ErrorResult(const AuthFailure(message: 'Failed to verify PIN'));
-    }
-  }
+  Future<Result<bool>> verifyPin(String pin) => runGuarded(
+    action: () => _pinManager.verifyPin(pin),
+    onError: () => const AuthFailure(message: 'Failed to verify PIN'),
+    logger: _logger,
+    errorMessage: 'Verify PIN failed',
+  );
 
   @override
-  Future<Result<bool>> authenticateWithBiometrics() async {
-    try {
-      final result = await _authLocalSource.authenticateWithBiometrics();
-      return SuccessResult(result);
-    } catch (e, stackTrace) {
-      _logger.error('Biometric auth failed', e, stackTrace);
-      return ErrorResult(
-        const AuthFailure(message: 'Biometric authentication failed'),
-      );
-    }
-  }
+  Future<Result<bool>> authenticateWithBiometrics() => runGuarded(
+    action: () => _authLocalSource.authenticateWithBiometrics(),
+    onError:
+        () => const AuthFailure(message: 'Biometric authentication failed'),
+    logger: _logger,
+    errorMessage: 'Biometric auth failed',
+  );
 }

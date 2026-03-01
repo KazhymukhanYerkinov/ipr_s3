@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:ipr_s3/core/utils/format_utils.dart';
 
 class PdfPreview extends StatelessWidget {
   final Uint8List bytes;
@@ -30,7 +31,7 @@ class PdfPreview extends StatelessWidget {
           Text('PDF Document', style: theme.textTheme.titleLarge),
           const SizedBox(height: 8),
           Text(
-            '${(bytes.length / 1024).toStringAsFixed(1)} KB',
+            formatSize(bytes.length),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

@@ -154,14 +154,14 @@ class FilesService
   }
 
   @override
-  Future<Result<List<SecureFileEntity>>> searchFiles(String query) async {
-    try {
-      final allFiles = await _localSource.getAll();
-      final results = await _searchService.search(query, allFiles);
-      return SuccessResult(results);
-    } catch (e, stackTrace) {
-      _logger.error('Search failed', e, stackTrace);
-      return ErrorResult(const FileFailure(message: 'Search failed'));
-    }
-  }
+  Future<Result<List<SecureFileEntity>>> searchFiles(String query) =>
+      runGuarded(
+        action: () async {
+          final allFiles = await _localSource.getAll();
+          return _searchService.search(query, allFiles);
+        },
+        onError: () => const FileFailure(message: 'Search failed'),
+        logger: _logger,
+        errorMessage: 'Search failed',
+      );
 }

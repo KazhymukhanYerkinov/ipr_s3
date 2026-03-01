@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ipr_s3/core/utils/format_utils.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/presentation/widgets/file_icon.dart';
 
 class GridCard extends StatelessWidget {
   final SecureFileEntity file;
@@ -16,7 +18,6 @@ class GridCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final (IconData icon, Color color) = _iconForType(file.type, theme);
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -24,13 +25,7 @@ class GridCard extends StatelessWidget {
         onTap: onTap,
         child: Column(
           children: [
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                color: color.withAlpha(15),
-                child: Center(child: Icon(icon, size: 48, color: color)),
-              ),
-            ),
+            Expanded(child: Center(child: FileIcon(type: file.type, size: 48))),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               child: Row(
@@ -46,7 +41,7 @@ class GridCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          _formatSize(file.size),
+                          formatSize(file.size),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 11,
@@ -75,25 +70,5 @@ class GridCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  (IconData, Color) _iconForType(FileType type, ThemeData theme) {
-    return switch (type) {
-      FileType.image => (Icons.image_outlined, theme.colorScheme.primary),
-      FileType.pdf => (Icons.picture_as_pdf_rounded, theme.colorScheme.error),
-      FileType.text => (Icons.description_outlined, theme.colorScheme.tertiary),
-      FileType.video => (Icons.videocam_outlined, Colors.deepPurple),
-      FileType.audio => (Icons.audiotrack_outlined, Colors.orange),
-      FileType.unknown => (
-        Icons.insert_drive_file_outlined,
-        theme.colorScheme.onSurfaceVariant,
-      ),
-    };
-  }
-
-  String _formatSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 }

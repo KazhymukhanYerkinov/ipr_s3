@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipr_s3/core/utils/format_utils.dart';
 
 class StorageSection extends StatelessWidget {
   final int? freeStorage;
@@ -54,7 +55,7 @@ class StorageSection extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           freeStorage != null && totalStorage != null
-              ? '${_formatSize(freeStorage!)} free of ${_formatSize(totalStorage!)}'
+              ? '${formatSize(freeStorage!)} free of ${formatSize(totalStorage!)}'
               : 'Storage info unavailable',
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
@@ -62,16 +63,5 @@ class StorageSection extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  String _formatSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) {
-      return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    }
-    if (bytes < 1024 * 1024 * 1024) {
-      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
-    }
-    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 }

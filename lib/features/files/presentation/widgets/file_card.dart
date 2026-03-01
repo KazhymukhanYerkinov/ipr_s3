@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipr_s3/core/utils/format_utils.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/file_icon.dart';
 
@@ -41,7 +42,7 @@ class FileCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${_formatSize(file.size)} • ${_formatDate(file.createdAt)}',
+                      '${formatSize(file.size)} • ${formatDate(file.createdAt)}',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -62,17 +63,5 @@ class FileCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _formatSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}.'
-        '${date.month.toString().padLeft(2, '0')}.'
-        '${date.year}';
   }
 }

@@ -220,8 +220,6 @@ class _HomeView extends StatelessWidget {
       },
     );
 
-    // null means the sheet was dismissed without selection — do nothing.
-    // Empty string means "No folder" was explicitly chosen.
     if (folderId == null) return;
     bloc.add(FileImportRequested(folderId: folderId.isEmpty ? null : folderId));
   }
