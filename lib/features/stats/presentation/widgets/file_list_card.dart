@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
-import 'package:ipr_s3/features/stats/presentation/utils/format_utils.dart';
+import 'package:ipr_s3/core/utils/format_utils.dart';
 
 class FileListCard extends StatelessWidget {
   final String title;

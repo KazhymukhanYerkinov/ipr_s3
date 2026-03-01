@@ -2,8 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
+import 'package:ipr_s3/core/extensions/snack_bar_x.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
 import 'package:ipr_s3/core/router/app_router.dart';
+import 'package:ipr_s3/core/widgets/destructive_dialog.dart';
+import 'package:ipr_s3/core/widgets/error_state_view.dart';
+import 'package:ipr_s3/core/widgets/loading_state_view.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_bloc.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_event.dart';
@@ -115,33 +119,14 @@ class _HomeView extends StatelessWidget {
             child: BlocConsumer<FilesBloc, FilesState>(
               listener: (context, state) {
                 if (state is FilesError) {
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
+                  context.showFloatingSnackBar(state.message);
                 }
               },
               builder: (context, state) {
                 return switch (state) {
-                  FilesLoading() => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  FilesImporting(:final fileName) => Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const CircularProgressIndicator(),
-                        const SizedBox(height: 16),
-                        Text(
-                          l.encryptingFile(fileName),
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                      ],
-                    ),
+                  FilesLoading() => const LoadingStateView(),
+                  FilesImporting(:final fileName) => LoadingStateView(
+                    message: l.encryptingFile(fileName),
                   ),
                   FilesLoaded(:final files, :final viewMode) =>
                     files.isEmpty
@@ -169,30 +154,11 @@ class _HomeView extends StatelessWidget {
                               ),
                           onFileDelete: (file) => _confirmDelete(context, file),
                         ),
-                  FilesError() => Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline_rounded,
-                          size: 48,
-                          color: theme.colorScheme.error,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          l.somethingWentWrong,
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                        const SizedBox(height: 16),
-                        FilledButton.tonal(
-                          onPressed:
-                              () => context.read<FilesBloc>().add(
-                                FilesLoadRequested(),
-                              ),
-                          child: Text(l.retry),
-                        ),
-                      ],
-                    ),
+                  FilesError() => ErrorStateView(
+                    message: l.somethingWentWrong,
+                    onRetry:
+                        () =>
+                            context.read<FilesBloc>().add(FilesLoadRequested()),
                   ),
                   _ => const SizedBox.shrink(),
                 };
@@ -224,51 +190,27 @@ class _HomeView extends StatelessWidget {
     bloc.add(FileImportRequested(folderId: folderId.isEmpty ? null : folderId));
   }
 
-  void _confirmDelete(BuildContext context, SecureFileEntity file) {
+  void _confirmDelete(BuildContext context, SecureFileEntity file) async {
     final l = context.locale;
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        final theme = Theme.of(dialogContext);
-        return AlertDialog(
-          title: Text(l.deleteFileTitle),
-          content: Text(
-            l.deleteFileContent(file.name),
-            style: theme.textTheme.bodyMedium,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l.cancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-                final bloc = context.read<FilesBloc>();
-                bloc.add(FileDeleteRequested(file));
+    final confirmed = await showDestructiveDialog(
+      context,
+      title: l.deleteFileTitle,
+      content: l.deleteFileContent(file.name),
+      confirmLabel: l.delete,
+    );
 
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(
-                      content: Text(l.fileDeleted(file.name)),
-                      behavior: SnackBarBehavior.floating,
-                      duration: const Duration(seconds: 5),
-                      action: SnackBarAction(
-                        label: l.undo,
-                        onPressed: () => bloc.add(UndoRequested()),
-                      ),
-                    ),
-                  );
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: theme.colorScheme.error,
-              ),
-              child: Text(l.delete),
-            ),
-          ],
-        );
-      },
+    if (!confirmed || !context.mounted) return;
+
+    final bloc = context.read<FilesBloc>();
+    bloc.add(FileDeleteRequested(file));
+
+    context.showFloatingSnackBar(
+      l.fileDeleted(file.name),
+      duration: const Duration(seconds: 5),
+      action: SnackBarAction(
+        label: l.undo,
+        onPressed: () => bloc.add(UndoRequested()),
+      ),
     );
   }
 }

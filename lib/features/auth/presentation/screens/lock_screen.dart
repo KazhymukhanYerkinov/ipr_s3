@@ -2,7 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ipr_s3/core/extensions/snack_bar_x.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
+import 'package:ipr_s3/core/widgets/shake_widget.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_state.dart';
@@ -18,27 +20,15 @@ class LockScreen extends StatefulWidget {
 }
 
 class _LockScreenState extends State<LockScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, ShakeAnimationMixin {
   static const _pinLength = 4;
 
   String _enteredPin = '';
-  late final AnimationController _shakeController;
-  late final Animation<double> _shakeAnimation;
 
   @override
   void initState() {
     super.initState();
-    _shakeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _shakeAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0, end: -10), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: -10, end: 10), weight: 2),
-      TweenSequenceItem(tween: Tween(begin: 10, end: -10), weight: 2),
-      TweenSequenceItem(tween: Tween(begin: -10, end: 10), weight: 2),
-      TweenSequenceItem(tween: Tween(begin: 10, end: 0), weight: 1),
-    ]).animate(_shakeController);
+    initShakeAnimation();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AuthBloc>().add(BiometricRequested());
@@ -47,7 +37,7 @@ class _LockScreenState extends State<LockScreen>
 
   @override
   void dispose() {
-    _shakeController.dispose();
+    disposeShakeAnimation();
     super.dispose();
   }
 
@@ -79,7 +69,7 @@ class _LockScreenState extends State<LockScreen>
 
   void _onError() {
     HapticFeedback.heavyImpact();
-    _shakeController.forward(from: 0);
+    triggerShake();
     setState(() {
       _enteredPin = '';
     });
@@ -93,14 +83,7 @@ class _LockScreenState extends State<LockScreen>
       listener: (context, state) {
         if (state is AuthError) {
           _onError();
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+          context.showFloatingSnackBar(state.message);
         }
       },
       child: Scaffold(
@@ -121,14 +104,8 @@ class _LockScreenState extends State<LockScreen>
                 ),
               ),
               const SizedBox(height: 32),
-              AnimatedBuilder(
-                animation: _shakeAnimation,
-                builder: (context, child) {
-                  return Transform.translate(
-                    offset: Offset(_shakeAnimation.value, 0),
-                    child: child,
-                  );
-                },
+              ShakeWidget(
+                animation: shakeAnimation,
                 child: PinIndicator(
                   length: _pinLength,
                   filledCount: _enteredPin.length,

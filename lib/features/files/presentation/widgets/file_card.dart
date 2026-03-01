@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ipr_s3/core/utils/format_utils.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/file_icon.dart';
+import 'package:ipr_s3/features/files/presentation/widgets/file_thumbnail.dart';
 
 class FileCard extends StatelessWidget {
   final SecureFileEntity file;
@@ -28,7 +29,7 @@ class FileCard extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              FileIcon(type: file.type),
+              _buildLeading(),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -63,5 +64,22 @@ class FileCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildLeading() {
+    if (file.thumbnailPath != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: SizedBox(
+          width: 44,
+          height: 44,
+          child: FileThumbnail(
+            thumbnailPath: file.thumbnailPath!,
+            fileType: file.type,
+          ),
+        ),
+      );
+    }
+    return FileIcon(type: file.type);
   }
 }

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:ipr_s3/core/collections/tag.dart';
 import 'package:ipr_s3/core/di/injection.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
+import 'package:ipr_s3/core/widgets/error_state_view.dart';
+import 'package:ipr_s3/core/widgets/loading_state_view.dart';
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/decrypt_file.dart';
@@ -109,43 +111,11 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     final l = context.locale;
 
     if (_isLoading) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text(
-              l.decrypting,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      );
+      return LoadingStateView(message: l.decrypting);
     }
 
     if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline_rounded,
-              size: 48,
-              color: theme.colorScheme.error,
-            ),
-            const SizedBox(height: 12),
-            Text(_error!, style: theme.textTheme.bodyLarge),
-            const SizedBox(height: 16),
-            FilledButton.tonal(
-              onPressed: _loadAndDecrypt,
-              child: Text(l.retry),
-            ),
-          ],
-        ),
-      );
+      return ErrorStateView(message: _error!, onRetry: _loadAndDecrypt);
     }
 
     if (_file != null && _decryptedBytes != null) {

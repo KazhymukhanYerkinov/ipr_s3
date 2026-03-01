@@ -2,7 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
+import 'package:ipr_s3/core/extensions/snack_bar_x.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
+import 'package:ipr_s3/core/widgets/destructive_dialog.dart';
+import 'package:ipr_s3/core/widgets/error_state_view.dart';
+import 'package:ipr_s3/core/widgets/loading_state_view.dart';
 import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_bloc.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_event.dart';
@@ -27,7 +31,6 @@ class _FolderTreeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l = context.locale;
 
     return Scaffold(
@@ -35,48 +38,22 @@ class _FolderTreeView extends StatelessWidget {
       body: BlocConsumer<FoldersBloc, FoldersState>(
         listener: (context, state) {
           if (state is FoldersError) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+            context.showFloatingSnackBar(state.message);
           }
         },
         builder: (context, state) {
           return switch (state) {
-            FoldersLoading() => const Center(
-              child: CircularProgressIndicator(),
-            ),
+            FoldersLoading() => const LoadingStateView(),
             FoldersLoaded(:final folders) => FolderTreeWidget(
               folders: folders,
               onFolderDelete: (folder) => _confirmDelete(context, folder),
               onAddSubfolder:
                   (folder) => _showCreateDialog(context, parentId: folder.id),
             ),
-            FoldersError() => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline_rounded,
-                    size: 48,
-                    color: theme.colorScheme.error,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(l.somethingWentWrong, style: theme.textTheme.bodyLarge),
-                  const SizedBox(height: 16),
-                  FilledButton.tonal(
-                    onPressed:
-                        () => context.read<FoldersBloc>().add(
-                          FoldersLoadRequested(),
-                        ),
-                    child: Text(l.retry),
-                  ),
-                ],
-              ),
+            FoldersError() => ErrorStateView(
+              message: l.somethingWentWrong,
+              onRetry:
+                  () => context.read<FoldersBloc>().add(FoldersLoadRequested()),
             ),
             _ => const SizedBox.shrink(),
           };
@@ -130,38 +107,17 @@ class _FolderTreeView extends StatelessWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, FolderItem folder) {
+  void _confirmDelete(BuildContext context, FolderItem folder) async {
     final l = context.locale;
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        final theme = Theme.of(dialogContext);
-        return AlertDialog(
-          title: Text(l.deleteFolderTitle),
-          content: Text(
-            l.deleteFolderContent(folder.name),
-            style: theme.textTheme.bodyMedium,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l.cancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-                context.read<FoldersBloc>().add(
-                  FolderDeleteRequested(folder.id),
-                );
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: theme.colorScheme.error,
-              ),
-              child: Text(l.delete),
-            ),
-          ],
-        );
-      },
+    final confirmed = await showDestructiveDialog(
+      context,
+      title: l.deleteFolderTitle,
+      content: l.deleteFolderContent(folder.name),
+      confirmLabel: l.delete,
     );
+
+    if (!confirmed || !context.mounted) return;
+
+    context.read<FoldersBloc>().add(FolderDeleteRequested(folder.id));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ipr_s3/core/result/result.dart';
 import 'package:ipr_s3/features/folders/domain/use_cases/create_folder.dart';
 import 'package:ipr_s3/features/folders/domain/use_cases/delete_folder.dart';
 import 'package:ipr_s3/features/folders/domain/use_cases/move_file_to_folder.dart';
@@ -36,14 +37,10 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
   ) async {
     emit(const FoldersState.loading());
     final result = await _getFoldersBehavior.getFolders();
-    final failure = result.failure;
-
-    if (failure != null) {
-      emit(FoldersState.error(message: failure.message));
-      return;
-    }
-
-    emit(FoldersState.loaded(folders: result.value ?? []));
+    result.when(
+      success: (folders) => emit(FoldersState.loaded(folders: folders)),
+      error: (f) => emit(FoldersState.error(message: f.message)),
+    );
   }
 
   Future<void> _onCreate(
@@ -53,14 +50,10 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
     final result = await _createFolder(
       CreateFolderParams(name: event.name, parentId: event.parentId),
     );
-    final failure = result.failure;
-
-    if (failure != null) {
-      emit(FoldersState.error(message: failure.message));
-      return;
-    }
-
-    add(FoldersLoadRequested());
+    result.when(
+      success: (_) => add(FoldersLoadRequested()),
+      error: (f) => emit(FoldersState.error(message: f.message)),
+    );
   }
 
   Future<void> _onDelete(
@@ -68,14 +61,10 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
     Emitter<FoldersState> emit,
   ) async {
     final result = await _deleteFolder(event.folderId);
-    final failure = result.failure;
-
-    if (failure != null) {
-      emit(FoldersState.error(message: failure.message));
-      return;
-    }
-
-    add(FoldersLoadRequested());
+    result.when(
+      success: (_) => add(FoldersLoadRequested()),
+      error: (f) => emit(FoldersState.error(message: f.message)),
+    );
   }
 
   Future<void> _onMoveFile(
@@ -85,13 +74,9 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
     final result = await _moveFileToFolder(
       MoveFileToFolderParams(fileId: event.fileId, folderId: event.folderId),
     );
-    final failure = result.failure;
-
-    if (failure != null) {
-      emit(FoldersState.error(message: failure.message));
-      return;
-    }
-
-    add(FoldersLoadRequested());
+    result.when(
+      success: (_) => add(FoldersLoadRequested()),
+      error: (f) => emit(FoldersState.error(message: f.message)),
+    );
   }
 }

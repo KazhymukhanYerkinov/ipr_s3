@@ -2,7 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
+import 'package:ipr_s3/core/extensions/snack_bar_x.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
+import 'package:ipr_s3/core/widgets/destructive_dialog.dart';
+import 'package:ipr_s3/core/widgets/error_state_view.dart';
+import 'package:ipr_s3/core/widgets/loading_state_view.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ipr_s3/features/auth/presentation/bloc/auth_event.dart';
 import 'package:ipr_s3/features/settings/presentation/bloc/settings_bloc.dart';
@@ -38,21 +42,12 @@ class _SettingsView extends StatelessWidget {
       body: BlocConsumer<SettingsBloc, SettingsState>(
         listener: (context, state) {
           if (state is SettingsLoaded && state.message.isNotEmpty) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+            context.showFloatingSnackBar(state.message);
           }
         },
         builder: (context, state) {
           return switch (state) {
-            SettingsLoading() => const Center(
-              child: CircularProgressIndicator(),
-            ),
+            SettingsLoading() => const LoadingStateView(),
             SettingsLoaded(
               :final batteryLevel,
               :final freeStorage,
@@ -94,27 +89,11 @@ class _SettingsView extends StatelessWidget {
                   ),
                 ],
               ),
-            SettingsError(:final message) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 48,
-                    color: theme.colorScheme.error,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(message),
-                  const SizedBox(height: 16),
-                  FilledButton.tonal(
-                    onPressed:
-                        () => context.read<SettingsBloc>().add(
-                          SettingsLoadRequested(),
-                        ),
-                    child: Text(l.retry),
-                  ),
-                ],
-              ),
+            SettingsError(:final message) => ErrorStateView(
+              message: message,
+              onRetry:
+                  () =>
+                      context.read<SettingsBloc>().add(SettingsLoadRequested()),
             ),
             _ => const SizedBox.shrink(),
           };
@@ -123,34 +102,18 @@ class _SettingsView extends StatelessWidget {
     );
   }
 
-  void _confirmLogout(BuildContext context) {
+  void _confirmLogout(BuildContext context) async {
     final l = context.locale;
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        final theme = Theme.of(dialogContext);
-        return AlertDialog(
-          title: Text(l.logOutTitle),
-          content: Text(l.logOutConfirm),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l.cancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-                context.read<AuthBloc>().add(SignOutRequested());
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: theme.colorScheme.error,
-              ),
-              child: Text(l.logOut),
-            ),
-          ],
-        );
-      },
+    final confirmed = await showDestructiveDialog(
+      context,
+      title: l.logOutTitle,
+      content: l.logOutConfirm,
+      confirmLabel: l.logOut,
     );
+
+    if (!confirmed || !context.mounted) return;
+
+    context.read<AuthBloc>().add(SignOutRequested());
   }
 
   void _showChangePinDialog(BuildContext context) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ipr_s3/core/utils/format_utils.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/file_icon.dart';
+import 'package:ipr_s3/features/files/presentation/widgets/file_thumbnail.dart';
 
 class GridCard extends StatelessWidget {
   final SecureFileEntity file;
@@ -25,7 +26,7 @@ class GridCard extends StatelessWidget {
         onTap: onTap,
         child: Column(
           children: [
-            Expanded(child: Center(child: FileIcon(type: file.type, size: 48))),
+            Expanded(child: _buildPreview()),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               child: Row(
@@ -70,5 +71,16 @@ class GridCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildPreview() {
+    if (file.thumbnailPath != null) {
+      return FileThumbnail(
+        thumbnailPath: file.thumbnailPath!,
+        fileType: file.type,
+        iconSize: 48,
+      );
+    }
+    return Center(child: FileIcon(type: file.type, size: 48));
   }
 }

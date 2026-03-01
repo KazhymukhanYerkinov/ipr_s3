@@ -24,10 +24,8 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
     emit(const StatsState.loading());
 
     final result = await _getFilesBehavior.getFiles();
-    final failure = result.failure;
-
-    if (failure != null) {
-      emit(StatsState.error(message: failure.message));
+    if (result.isError) {
+      emit(StatsState.error(message: result.failure!.message));
       return;
     }
 

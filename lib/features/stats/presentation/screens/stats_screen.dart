@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
+import 'package:ipr_s3/core/widgets/error_state_view.dart';
+import 'package:ipr_s3/core/widgets/loading_state_view.dart';
 import 'package:ipr_s3/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:ipr_s3/features/stats/presentation/bloc/stats_event.dart';
 import 'package:ipr_s3/features/stats/presentation/bloc/stats_state.dart';
@@ -36,7 +38,7 @@ class _StatsView extends StatelessWidget {
       body: BlocBuilder<StatsBloc, StatsState>(
         builder: (context, state) {
           return switch (state) {
-            StatsLoading() => const Center(child: CircularProgressIndicator()),
+            StatsLoading() => const LoadingStateView(),
             StatsLoaded(
               :final totalFiles,
               :final totalSize,
@@ -75,26 +77,10 @@ class _StatsView extends StatelessWidget {
                   ),
                 ],
               ),
-            StatsError(:final message) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 48,
-                    color: theme.colorScheme.error,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(message),
-                  const SizedBox(height: 16),
-                  FilledButton.tonal(
-                    onPressed:
-                        () =>
-                            context.read<StatsBloc>().add(StatsLoadRequested()),
-                    child: Text(l.retry),
-                  ),
-                ],
-              ),
+            StatsError(:final message) => ErrorStateView(
+              message: message,
+              onRetry:
+                  () => context.read<StatsBloc>().add(StatsLoadRequested()),
             ),
             _ => const SizedBox.shrink(),
           };

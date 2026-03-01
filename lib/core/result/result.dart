@@ -33,6 +33,17 @@ class ErrorResult<T> extends Result<T> {
   Failure? get failure => _failure;
 }
 
+extension ResultX<T> on Result<T> {
+  R when<R>({
+    required R Function(T value) success,
+    required R Function(Failure failure) error,
+  }) {
+    final f = failure;
+    if (f != null) return error(f);
+    return success(value as T);
+  }
+}
+
 /// Executes [action] and wraps the result in [SuccessResult].
 /// On error, logs via [logger] and returns [ErrorResult] with [onError] failure.
 Future<Result<T>> runGuarded<T>({

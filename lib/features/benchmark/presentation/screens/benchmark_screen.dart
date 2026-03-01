@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
+import 'package:ipr_s3/core/widgets/error_state_view.dart';
 import 'package:ipr_s3/features/benchmark/presentation/bloc/benchmark_bloc.dart';
+import 'package:ipr_s3/features/benchmark/presentation/bloc/benchmark_event.dart';
 import 'package:ipr_s3/features/benchmark/presentation/bloc/benchmark_state.dart';
-import 'package:ipr_s3/features/benchmark/presentation/widgets/benchmark_error_view.dart';
 import 'package:ipr_s3/features/benchmark/presentation/widgets/initial_view.dart';
 import 'package:ipr_s3/features/benchmark/presentation/widgets/results_view.dart';
 import 'package:ipr_s3/features/benchmark/presentation/widgets/running_view.dart';
@@ -51,9 +52,12 @@ class _BenchmarkView extends StatelessWidget {
               results: results,
               theme: theme,
             ),
-            BenchmarkError(:final message) => BenchmarkErrorView(
+            BenchmarkError(:final message) => ErrorStateView(
               message: message,
-              theme: theme,
+              onRetry:
+                  () => context.read<BenchmarkBloc>().add(
+                    BenchmarkRunRequested(),
+                  ),
             ),
           };
         },

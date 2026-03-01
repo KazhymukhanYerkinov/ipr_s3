@@ -18,6 +18,7 @@ abstract class FilesLocalSource {
   Future<Uint8List> readEncryptedFile(String path);
   Future<void> deleteEncryptedFile(String path);
   Future<String> saveThumbnail(String fileId, Uint8List data);
+  Future<Uint8List?> readThumbnail(String path);
 }
 
 @LazySingleton(as: FilesLocalSource)
@@ -107,6 +108,18 @@ class FilesLocalSourceImpl implements FilesLocalSource {
     final file = File('${dir.path}/$fileName');
     await file.writeAsBytes(data);
     return fileName;
+  }
+
+  @override
+  Future<Uint8List?> readThumbnail(String path) async {
+    try {
+      final fullPath = await _resolveThumbnailPath(path);
+      final file = File(fullPath);
+      if (!await file.exists()) return null;
+      return file.readAsBytes();
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<String> _resolveSecureFilePath(String path) async {

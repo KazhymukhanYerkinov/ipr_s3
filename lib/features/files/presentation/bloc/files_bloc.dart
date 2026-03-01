@@ -6,12 +6,12 @@ import 'package:ipr_s3/features/files/domain/commands/command_manager.dart';
 import 'package:ipr_s3/features/files/domain/commands/delete_file_command.dart';
 import 'package:ipr_s3/features/files/domain/commands/move_file_command.dart';
 import 'package:ipr_s3/features/files/domain/commands/rename_file_command.dart';
-import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_by_date.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_strategy.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/get_files.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/import_file.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/search_files.dart';
+import 'package:ipr_s3/features/files/domain/utils/file_type_resolver.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_event.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_state.dart';
 
@@ -92,7 +92,7 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
       final name = pickedFile.name;
       emit(FilesState.importing(fileName: name));
 
-      final fileType = _resolveFileType(pickedFile.extension);
+      final fileType = FileTypeResolver.fromExtension(pickedFile.extension);
       final importResult = await _importFileUseCase(
         ImportFileParams(
           name: name,
@@ -238,40 +238,6 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
           sortStrategy: _currentSortStrategy,
         ),
       );
-    }
-  }
-
-  FileType _resolveFileType(String? extension) {
-    if (extension == null) return FileType.unknown;
-    switch (extension.toLowerCase()) {
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif':
-      case 'webp':
-      case 'bmp':
-        return FileType.image;
-      case 'pdf':
-        return FileType.pdf;
-      case 'txt':
-      case 'md':
-      case 'json':
-      case 'xml':
-      case 'csv':
-      case 'log':
-        return FileType.text;
-      case 'mp4':
-      case 'mov':
-      case 'avi':
-      case 'mkv':
-        return FileType.video;
-      case 'mp3':
-      case 'wav':
-      case 'aac':
-      case 'flac':
-        return FileType.audio;
-      default:
-        return FileType.unknown;
     }
   }
 }
