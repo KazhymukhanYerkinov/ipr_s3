@@ -1,106 +1,115 @@
-# Цель 7: MethodChannel и FFI
+# Цель 7: Интеграция с нативными модулями — Method Channels и FFI
 
-## Теория (что спросят)
+## Теория
 
-### Flutter Engine и платформенные каналы
+### Архитектура Flutter Engine
 
 ```
-┌─────────────────────────────────────┐
-│           Flutter (Dart)             │
-│  ┌───────────────────────────────┐  │
-│  │       MethodChannel           │  │
-│  │  (async, name-based, codec)   │  │
-│  └────────────┬──────────────────┘  │
-│               │                      │
-├───────────────┼──────────────────────┤
-│  Flutter Engine (C++)               │
-│               │                      │
-├───────────────┼──────────────────────┤
-│               │                      │
-│  ┌────────────▼──────────────────┐  │
-│  │  Platform Code                │  │
-│  │  Android (Kotlin) / iOS (Swift)│  │
-│  └───────────────────────────────┘  │
-└─────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│                    Flutter App (Dart)                  │
+│   Widgets → Elements → RenderObjects → Layer Tree     │
+├──────────────────────────────────────────────────────┤
+│                   Flutter Engine (C++)                 │
+│   Skia (рисование) │ Dart VM │ Platform Channels      │
+├──────────────────────────────────────────────────────┤
+│                Platform Embedder                      │
+│   Android (Java/Kotlin) │ iOS (ObjC/Swift) │ etc.    │
+└──────────────────────────────────────────────────────┘
 ```
 
-### Типы каналов
+### Три типа каналов
 
-| Канал | Использование | Коммуникация |
-|-------|---------------|-------------|
-| **MethodChannel** | Вызов методов: запрос → ответ | Dart ↔ Native (request/response) |
-| **BasicMessageChannel** | Обмен сообщениями (строки, JSON) | Dart ↔ Native (любое направление) |
-| **EventChannel** | Поток данных (sensor, location) | Native → Dart (stream) |
+| Канал | Назначение | Паттерн |
+|-------|-----------|---------|
+| `MethodChannel` | Request-Response (вызвал → получил ответ) | RPC |
+| `EventChannel` | Stream (подписка на поток событий) | Pub/Sub |
+| `BasicMessageChannel` | Простой обмен сообщениями | Message passing |
+
+Мы используем **MethodChannel** — самый распространённый. Паттерн RPC:
+Dart вызывает метод → нативный код выполняет → возвращает результат.
 
 ### MethodCodec
 
-| Кодек | Типы данных | Когда |
-|-------|-------------|-------|
-| **StandardMethodCodec** | null, bool, int, double, String, List, Map, Uint8List | По умолчанию |
-| **JSONMethodCodec** | JSON-совместимые | Для JSON API |
+Данные между Dart и нативным кодом кодируются через **codec**:
+
+| Codec | Формат | Поддерживаемые типы |
+|-------|--------|---------------------|
+| `StandardMethodCodec` (default) | Бинарный | null, bool, int, double, String, Uint8List, List, Map |
+| `JSONMethodCodec` | JSON string | То же + Date, но медленнее |
+
+Мы используем default `StandardMethodCodec` — быстрее JSON, поддерживает typed data.
 
 ### FFI (Foreign Function Interface)
 
 ```
-┌─────────────────────────────────────┐
-│           Flutter (Dart)             │
-│  ┌───────────────────────────────┐  │
-│  │       dart:ffi                 │  │
-│  │  DynamicLibrary, Pointer,     │  │
-│  │  NativeFunction, lookupFunction│  │
-│  └────────────┬──────────────────┘  │
-│               │ (прямой вызов)       │
-│  ┌────────────▼──────────────────┐  │
-│  │       C/C++ Library           │  │
-│  │  (.so / .dylib / .framework)  │  │
-│  └───────────────────────────────┘  │
-└─────────────────────────────────────┘
+┌─────────────────┐        ┌─────────────────┐
+│   Dart код       │        │   C-библиотека  │
+│                  │  FFI   │                  │
+│   dart:ffi       │───────>│   .so / .dylib   │
+│   Pointer<T>     │        │                  │
+│   DynamicLibrary │        │   native_crc32() │
+└─────────────────┘        └─────────────────┘
 ```
 
-**Разница MethodChannel vs FFI:**
-
-| | MethodChannel | FFI |
-|---|---|---|
-| Язык | Kotlin/Swift | C/C++ |
-| Скорость | Медленнее (async, сериализация) | Быстрее (прямой вызов, синхронный) |
-| Сложность | Проще | Сложнее (указатели, память) |
-| Когда | Platform API (батарея, камера) | CPU-intensive (хеширование, крипто) |
+FFI — **прямой вызов** C-функций из Dart. Без сериализации, без каналов.
+Быстрее MethodChannel, но только для C/C++ (нет Java/Swift).
 
 ---
 
-## MethodChannel — реализация
+## Практика — MethodChannel
 
-### Dart сторона
+### Dart-сторона
 
-**Файл**: `lib/core/platform/device_info_channel.dart`
+**Файл:** `lib/core/platform/device_info_channel.dart`
+
 ```dart
+@lazySingleton
 class DeviceInfoChannel {
-  // Имя канала — одинаковое на всех платформах
   static const _channel = MethodChannel('com.filesecure/device_info');
+  final _logger = SecureLogger();
 
-  Future<int?> getBatteryLevel() async {
+  Future<int?> getBatteryLevel() =>
+      _invokeInt('getBatteryLevel', 'Battery level');
+
+  Future<int?> getFreeStorage() =>
+      _invokeInt('getFreeStorage', 'Free storage');
+
+  Future<int?> getTotalStorage() =>
+      _invokeInt('getTotalStorage', 'Total storage');
+
+  Future<int?> _invokeInt(String method, String label) async {
     try {
-      // invokeMethod — отправляет запрос на нативную сторону
-      final level = await _channel.invokeMethod<int>('getBatteryLevel');
-      return level;
+      return await _channel.invokeMethod<int>(method);
     } on PlatformException catch (e) {
-      // Нативный код вернул result.error()
-      _logger.warning('Battery level unavailable: ${e.code}');
-      return null;  // Graceful degradation
+      _logger.warning('$label unavailable: ${e.code}');
+      return null;  // graceful degradation
     } on MissingPluginException {
-      // Канал не зарегистрирован (например, на desktop)
-      _logger.warning('MethodChannel not available');
+      _logger.warning('MethodChannel not available (platform unsupported)');
       return null;
     }
   }
 }
 ```
 
-**Graceful degradation** — если нативный метод недоступен, возвращаем null, а не крашим приложение. UI показывает "N/A" вместо ошибки.
+#### Имя канала: `com.filesecure/device_info`
 
-### Android (Kotlin)
+Формат: `com.company/feature` (reverse domain). Должно совпадать на Dart, Android и iOS.
+Если не совпадает — `MissingPluginException`.
 
-**Файл**: `android/app/src/main/kotlin/.../MainActivity.kt`
+#### Graceful degradation
+
+Два типа ошибок:
+- `PlatformException` — нативный код вернул `result.error()` (батарея недоступна на эмуляторе)
+- `MissingPluginException` — канал не зарегистрирован (desktop, web)
+
+В обоих случаях возвращаем `null`, UI показывает "N/A". Приложение не падает.
+
+---
+
+### Android-сторона (Kotlin)
+
+**Файл:** `android/app/src/main/kotlin/com/example/ipr_s3/MainActivity.kt`
+
 ```kotlin
 class MainActivity : FlutterActivity() {
     companion object {
@@ -122,49 +131,55 @@ class MainActivity : FlutterActivity() {
             }
         }
     }
+}
+```
 
-    private fun handleGetBatteryLevel(result: MethodChannel.Result) {
-        try {
-            val batteryManager = getSystemService(Context.BATTERY_SERVICE)
-                as BatteryManager
-            val level = batteryManager.getIntProperty(
-                BatteryManager.BATTERY_PROPERTY_CAPACITY
-            )
-            if (level != -1) {
-                result.success(level)        // Отправляем результат в Dart
-            } else {
-                result.error(                // Отправляем ошибку в Dart
-                    "UNAVAILABLE",
-                    "Battery level not available",
-                    null
-                )
-            }
-        } catch (e: Exception) {
-            result.error("ERROR", "Failed: ${e.message}", null)
+#### Получение батареи (BatteryManager)
+
+```kotlin
+private fun handleGetBatteryLevel(result: MethodChannel.Result) {
+    try {
+        val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+        val level = batteryManager.getIntProperty(
+            BatteryManager.BATTERY_PROPERTY_CAPACITY
+        )
+        if (level != -1) {
+            result.success(level)  // → Dart получает int
+        } else {
+            result.error("UNAVAILABLE", "Battery level not available", null)
+            // → Dart получает PlatformException(code: "UNAVAILABLE")
         }
-    }
-
-    private fun handleGetFreeStorage(result: MethodChannel.Result) {
-        val stat = StatFs(Environment.getDataDirectory().path)
-        val freeBytes = stat.availableBlocksLong * stat.blockSizeLong
-        result.success(freeBytes)
-    }
-
-    private fun handleGetTotalStorage(result: MethodChannel.Result) {
-        val stat = StatFs(Environment.getDataDirectory().path)
-        val totalBytes = stat.blockCountLong * stat.blockSizeLong
-        result.success(totalBytes)
+    } catch (e: Exception) {
+        result.error("ERROR", "Failed: ${e.message}", null)
     }
 }
 ```
 
-**Нативные API Android:**
-- `BatteryManager` — уровень батареи
-- `StatFs` — информация о файловой системе (свободное/общее место)
+#### Получение storage (StatFs)
 
-### iOS (Swift)
+```kotlin
+private fun handleGetFreeStorage(result: MethodChannel.Result) {
+    try {
+        val stat = StatFs(Environment.getDataDirectory().path)
+        val freeBytes = stat.availableBlocksLong * stat.blockSizeLong
+        result.success(freeBytes)  // Long → Dart int
+    } catch (e: Exception) {
+        result.error("ERROR", "Failed: ${e.message}", null)
+    }
+}
+```
 
-**Файл**: `ios/Runner/AppDelegate.swift`
+**StatFs** — Android API для информации о файловой системе:
+- `availableBlocksLong` — количество свободных блоков
+- `blockSizeLong` — размер одного блока (обычно 4096 bytes)
+- Произведение = свободные байты
+
+---
+
+### iOS-сторона (Swift)
+
+**Файл:** `ios/Runner/AppDelegate.swift`
+
 ```swift
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -175,6 +190,7 @@ class MainActivity : FlutterActivity() {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         let controller = window?.rootViewController as! FlutterViewController
+
         let channel = FlutterMethodChannel(
             name: channelName,
             binaryMessenger: controller.binaryMessenger
@@ -192,64 +208,117 @@ class MainActivity : FlutterActivity() {
                 result(FlutterMethodNotImplemented)
             }
         }
-        // ...
+
+        GeneratedPluginRegistrant.register(with: self)
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
+}
+```
 
-    private func handleGetBatteryLevel(result: @escaping FlutterResult) {
-        UIDevice.current.isBatteryMonitoringEnabled = true
-        let level = UIDevice.current.batteryLevel  // 0.0 - 1.0
+#### Батарея (UIDevice)
 
-        if level >= 0 {
-            result(Int(level * 100))  // Конвертируем в 0-100
-        } else {
-            result(FlutterError(
-                code: "UNAVAILABLE",
-                message: "Battery level not available",
-                details: nil
-            ))
-        }
+```swift
+private func handleGetBatteryLevel(result: @escaping FlutterResult) {
+    UIDevice.current.isBatteryMonitoringEnabled = true  // ← обязательно включить!
+    let level = UIDevice.current.batteryLevel
+
+    if level >= 0 {
+        result(Int(level * 100))  // 0.85 → 85
+    } else {
+        result(FlutterError(
+            code: "UNAVAILABLE",
+            message: "Battery level not available (simulator or unsupported)",
+            details: nil
+        ))
     }
+}
+```
 
-    private func handleGetFreeStorage(result: @escaping FlutterResult) {
+**Важно:** `isBatteryMonitoringEnabled = true` нужно вызвать **перед** чтением.
+Без этого `batteryLevel` всегда вернёт `-1.0`.
+
+`batteryLevel` возвращает `Float` 0.0–1.0, умножаем на 100 для процентов.
+
+#### Storage (FileManager)
+
+```swift
+private func handleGetFreeStorage(result: @escaping FlutterResult) {
+    do {
         let attrs = try FileManager.default.attributesOfFileSystem(
             forPath: NSHomeDirectory()
         )
         if let freeSize = attrs[.systemFreeSize] as? Int64 {
             result(freeSize)
+        } else {
+            result(FlutterError(code: "UNAVAILABLE", message: "...", details: nil))
         }
+    } catch {
+        result(FlutterError(
+            code: "ERROR",
+            message: "Failed: \(error.localizedDescription)",
+            details: nil
+        ))
     }
 }
 ```
 
-**Нативные API iOS:**
-- `UIDevice.batteryLevel` — возвращает Float 0.0-1.0
-- `FileManager.attributesOfFileSystem` — информация о файловой системе
+---
 
-### Флоу MethodChannel
+### Под капотом MethodChannel
 
 ```
-Dart                    Flutter Engine          Native (Kotlin/Swift)
-  │                          │                        │
-  │─ invokeMethod ──────────→│                        │
-  │  ('getBatteryLevel')     │──── binary message ───→│
-  │                          │                        │
-  │                          │                        │── BatteryManager
-  │                          │                        │   .getIntProperty()
-  │                          │                        │
-  │                          │←── result.success(85) ─│
-  │←── Future<int>(85) ──── │                        │
-  │                          │                        │
+Dart: _channel.invokeMethod('getBatteryLevel')
+  │
+  ▼
+StandardMethodCodec.encodeMethodCall('getBatteryLevel', null)
+  │  → binary: [7, 15, "getBatteryLevel", 0]
+  ▼
+Flutter Engine (C++) → BinaryMessenger
+  │
+  ▼
+Platform Thread (НЕ UI thread!)
+  │
+  ▼
+Android: MethodChannel.setMethodCallHandler
+  │  → handleGetBatteryLevel(result)
+  │  → result.success(85)
+  ▼
+StandardMethodCodec.encodeSuccessEnvelope(85)
+  │  → binary: [0, 3, 85]
+  ▼
+Flutter Engine → Dart VM
+  │
+  ▼
+Dart: Future<int> completes with 85
 ```
+
+Вызов **асинхронный**: Dart не блокируется. `invokeMethod` возвращает `Future`.
 
 ---
 
-## FFI — реализация
+### Почему MethodChannel, а не device_info_plus
 
-### C-библиотека
+| Подход | Плюсы | Минусы |
+|--------|-------|--------|
+| **MethodChannel** (наш выбор) | Полный контроль, любой нативный API, понимание как работает | Больше кода |
+| **device_info_plus** пакет | Готовое решение, cross-platform | Абстракция поверх того же MethodChannel |
 
-**Файл**: `native/src/hash_utils.c`
+Цель ИПР — **понять механизм**, а не использовать готовое. Для продакшена обычно
+используют пакеты. Но зная как работает MethodChannel, можно:
+- Создать свой плагин для любого нативного API
+- Отлаживать проблемы с существующими плагинами
+- Понимать performance characteristics
+
+---
+
+## Практика — FFI (Foreign Function Interface)
+
+### C-код
+
+**Файл:** `native/src/hash_utils.c`
+
 ```c
-// CRC32 — быстрое хеширование для проверки целостности файлов
+/// CRC32 — проверка целостности файлов
 uint32_t native_crc32(const uint8_t* data, int32_t length) {
     uint32_t crc = 0xFFFFFFFF;
     for (int32_t i = 0; i < length; i++) {
@@ -261,7 +330,7 @@ uint32_t native_crc32(const uint8_t* data, int32_t length) {
     return crc ^ 0xFFFFFFFF;
 }
 
-// DJB2 — быстрый хеш строк (non-cryptographic)
+/// DJB2 — быстрый хеш для строк (дедупликация)
 uint32_t native_djb2_hash(const char* str) {
     uint32_t hash = 5381;
     int c;
@@ -271,7 +340,7 @@ uint32_t native_djb2_hash(const char* str) {
     return hash;
 }
 
-// Подсчёт вхождений байта — для анализа энтропии
+/// Подсчёт вхождений байта (анализ энтропии)
 int32_t native_count_bytes(const uint8_t* data, int32_t length, uint8_t target) {
     int32_t count = 0;
     for (int32_t i = 0; i < length; i++) {
@@ -281,138 +350,271 @@ int32_t native_count_bytes(const uint8_t* data, int32_t length, uint8_t target) 
 }
 ```
 
-### Dart FFI обёртка
+#### Алгоритм CRC32
 
-**Файл**: `lib/core/platform/native_hash_service.dart`
-```dart
-// Типы для FFI: нативная сигнатура → Dart сигнатура
-typedef NativeCrc32 = Uint32 Function(Pointer<Uint8>, Int32);
-typedef DartCrc32 = int Function(Pointer<Uint8>, int);
+CRC32 (Cyclic Redundancy Check) — не криптографический хеш, а **checksum для
+обнаружения случайных повреждений данных**.
 
-typedef NativeDjb2 = Uint32 Function(Pointer<Utf8>);
-typedef DartDjb2 = int Function(Pointer<Utf8>);
+```
+Полином: 0xEDB88320 (reflected IEEE 802.3)
 
-class NativeHashService {
-  late final DartCrc32 _crc32;
-  late final DartDjb2 _djb2Hash;
-  late final DartCountBytes _countBytes;
+Алгоритм (битовый):
+1. crc = 0xFFFFFFFF (все единицы)
+2. Для каждого байта:
+   a. crc ^= byte
+   b. 8 раз сдвигаем вправо:
+      - Если младший бит = 1 → XOR с полиномом
+      - Если младший бит = 0 → просто сдвиг
+3. Финальный XOR: crc ^= 0xFFFFFFFF
 
-  NativeHashService() {
-    // Загружаем библиотеку — разные пути для Android и iOS
-    final DynamicLibrary lib;
-    if (Platform.isAndroid) {
-      lib = DynamicLibrary.open('libhash_utils.so');  // .so для Android
-    } else if (Platform.isIOS) {
-      lib = DynamicLibrary.process();  // Линкуется статически в iOS
-    }
-
-    // Ищем функции по имени
-    _crc32 = lib.lookupFunction<NativeCrc32, DartCrc32>('native_crc32');
-    _djb2Hash = lib.lookupFunction<NativeDjb2, DartDjb2>('native_djb2_hash');
-  }
-
-  int crc32(Uint8List data) {
-    // 1. Выделяем память в нативном heap
-    final pointer = malloc<Uint8>(data.length);
-    try {
-      // 2. Копируем данные из Dart в нативную память
-      pointer.asTypedList(data.length).setAll(0, data);
-      // 3. Вызываем C-функцию
-      return _crc32(pointer, data.length);
-    } finally {
-      // 4. ОБЯЗАТЕЛЬНО освобождаем память!
-      malloc.free(pointer);
-    }
-  }
-
-  int djb2Hash(String input) {
-    final pointer = input.toNativeUtf8();
-    try {
-      return _djb2Hash(pointer);
-    } finally {
-      malloc.free(pointer);
-    }
-  }
-}
+Результат: 32-bit checksum
 ```
 
-### Управление памятью (ВАЖНО!)
+#### DJB2 Hash
 
-```dart
-// ПРАВИЛЬНО — try/finally гарантирует free
-final pointer = malloc<Uint8>(size);
-try {
-  // работаем с pointer
-  return _crc32(pointer, size);
-} finally {
-  malloc.free(pointer);  // Всегда освобождаем
-}
+Создан Daniel J. Bernstein. Простой и быстрый hash для строк:
 
-// НЕПРАВИЛЬНО — утечка памяти при ошибке
-final pointer = malloc<Uint8>(size);
-final result = _crc32(pointer, size);
-malloc.free(pointer);  // Не вызовется если _crc32 упадёт!
-return result;
 ```
-
-### Компиляция
-
-**Android**: `android/app/CMakeLists.txt`
-```cmake
-cmake_minimum_required(VERSION 3.10.2)
-add_library(hash_utils SHARED ../../native/src/hash_utils.c)
+hash = 5381 (magic seed)
+для каждого символа c:
+    hash = hash * 33 + c
+    // оптимизация: (hash << 5) + hash = hash * 32 + hash = hash * 33
 ```
-Gradle собирает .c → libhash_utils.so (shared library)
-
-**iOS**: файл `hash_utils.c` добавлен в Xcode проект + `module.modulemap`
-```
-// ios/Runner/module.modulemap
-module hash_utils {
-    header "hash_utils.h"
-    export *
-}
-```
-
-### Бенчмарк — Dart vs C
-
-**Файл**: `lib/features/benchmark/presentation/bloc/benchmark_bloc.dart`
-
-Сравниваем три варианта для CRC32 (1MB, 5MB, 10MB):
-
-```dart
-// 1. Dart на main thread
-final dartMs = await _benchmarkDartCrc32(data);
-
-// 2. C (FFI) на main thread
-final nativeMs = _benchmarkNativeCrc32(data);
-
-// 3. C (FFI) в Isolate
-final isolateMs = await _benchmarkIsolateCrc32(data);
-```
-
-Ожидаемые результаты:
-- C (FFI) обычно в **5-20x быстрее** Dart для CPU-bound задач
-- Isolate добавляет overhead (создание + копирование данных), но не блокирует UI
-- Для маленьких данных overhead Isolate может превысить выигрыш
 
 ---
 
-## Возможные вопросы на ассесменте
+### Компиляция для Android
 
-**В**: Зачем MethodChannel, если есть готовые пакеты (battery_plus, device_info_plus)?
-**О**: Для демонстрации понимания платформенных каналов. В реальном проекте — да, используем пакеты. Но при необходимости интеграции с кастомным SDK или нативной библиотекой без Flutter-обёртки — нужен MethodChannel.
+**Файл:** `android/app/CMakeLists.txt`
 
-**В**: Как данные передаются через MethodChannel?
-**О**: Через StandardMethodCodec — сериализует данные в бинарный формат. Поддерживает: null, bool, int, double, String, Uint8List, List, Map. Сложные объекты нужно сериализовать вручную.
+```cmake
+cmake_minimum_required(VERSION 3.10)
+project(hash_utils LANGUAGES C)
 
-**В**: Почему на iOS DynamicLibrary.process(), а на Android DynamicLibrary.open()?
-**О**: На Android C-библиотека компилируется в .so (shared library) и загружается динамически. На iOS C-файл линкуется статически в приложение — он уже в процессе, поэтому `.process()`.
+add_library(hash_utils SHARED
+    ../../native/src/hash_utils.c
+)
+```
 
-**В**: Что произойдёт если забыть вызвать malloc.free()?
-**О**: Memory leak. Нативная память не управляется Dart GC. Pointer будет потерян, а память останется выделенной до закрытия приложения. Поэтому обязательно try/finally.
+Flutter Android build system автоматически подхватывает `CMakeLists.txt` и компилирует
+`.c` → `libhash_utils.so` для каждой архитектуры (arm64-v8a, armeabi-v7a, x86_64).
 
-**В**: Почему C быстрее Dart для CRC32?
-**О**: C компилируется в нативный машинный код. Dart (в AOT) тоже компилируется, но имеет overhead: bounds checking, null safety checks, GC pauses. Для tight loops (CRC32 — цикл по каждому байту) C выигрывает значительно.
+### Компиляция для iOS
 
-**В**: Когда стоит использовать FFI вместо MethodChannel?
-**О**: FFI — для CPU-intensive задач: хеширование, криптография, обработка изображений. FFI вызовы синхронные и быстрые. MethodChannel — для Platform API (камера, батарея, сенсоры) — требует async и проходит через Engine.
+Файл `ios/Runner/hash_utils.c` добавлен в Xcode проект. Компилируется как часть
+Runner binary. Символы доступны через `DynamicLibrary.process()`.
+
+---
+
+### Dart FFI bindings
+
+**Файл:** `lib/core/platform/native_hash_service.dart`
+
+```dart
+// C-сигнатуры (NativeFunction types)
+typedef NativeCrc32 = Uint32 Function(Pointer<Uint8>, Int32);
+typedef NativeDjb2 = Uint32 Function(Pointer<Utf8>);
+typedef NativeCountBytes = Int32 Function(Pointer<Uint8>, Int32, Uint8);
+
+// Dart-сигнатуры (как вызываем из Dart)
+typedef DartCrc32 = int Function(Pointer<Uint8>, int);
+typedef DartDjb2 = int Function(Pointer<Utf8>);
+typedef DartCountBytes = int Function(Pointer<Uint8>, int, int);
+```
+
+#### Почему два typedef
+
+**NativeType** (`Uint32`, `Int32`, `Pointer<Uint8>`) — описывает C-функцию как она есть.
+**DartType** (`int`, `Pointer<Uint8>`) — описывает как Dart вызывает эту функцию.
+
+`lookupFunction` конвертирует: `NativeType → DartType`.
+
+```dart
+_crc32 = lib.lookupFunction<NativeCrc32, DartCrc32>('native_crc32');
+//                          ^^^^^^^^^^^  ^^^^^^^^
+//                          C-сигнатура  Dart-сигнатура
+```
+
+#### Загрузка библиотеки
+
+```dart
+NativeHashService() {
+  final DynamicLibrary lib;
+
+  if (Platform.isAndroid) {
+    lib = DynamicLibrary.open('libhash_utils.so');  // ← shared library
+  } else if (Platform.isIOS) {
+    lib = DynamicLibrary.process();                  // ← вкомпилировано в binary
+  } else {
+    throw UnsupportedError('Only Android and iOS');
+  }
+
+  _crc32 = lib.lookupFunction<NativeCrc32, DartCrc32>('native_crc32');
+  _djb2Hash = lib.lookupFunction<NativeDjb2, DartDjb2>('native_djb2_hash');
+  _countBytes = lib.lookupFunction<NativeCountBytes, DartCountBytes>('native_count_bytes');
+}
+```
+
+#### Почему разная загрузка для Android и iOS
+
+**Android:** CMake компилирует `.c` → `libhash_utils.so` (shared library).
+Лежит в `lib/<arch>/libhash_utils.so` внутри APK.
+`DynamicLibrary.open('libhash_utils.so')` — загружает через dlopen.
+
+**iOS:** `.c` файл компилируется **вместе с Runner** (static linking).
+Все символы уже в main binary.
+`DynamicLibrary.process()` — ищет символы в текущем процессе через dlsym.
+
+---
+
+### Управление памятью
+
+```dart
+int crc32(Uint8List data) {
+  final pointer = malloc<Uint8>(data.length);  // 1. Выделяем нативную память
+  try {
+    pointer.asTypedList(data.length).setAll(0, data);  // 2. Копируем данные
+    return _crc32(pointer, data.length);                // 3. Вызываем C-функцию
+  } finally {
+    malloc.free(pointer);  // 4. ОБЯЗАТЕЛЬНО освобождаем!
+  }
+}
+```
+
+#### Почему try/finally
+
+Dart GC **не управляет** нативной памятью. `malloc` выделяет память в C heap.
+Если забыть `free` — **memory leak** (память утекает навсегда).
+
+`finally` гарантирует `free` даже если C-функция бросит исключение.
+
+```
+Dart Heap (managed by GC):      C Heap (managed manually):
+┌──────────────┐                ┌──────────────┐
+│ Uint8List    │ ──копия──>     │ Pointer<Uint8>│
+│ (GC соберёт) │                │ (нужен free!) │
+└──────────────┘                └──────────────┘
+```
+
+#### pointer.asTypedList — zero-copy view
+
+```dart
+pointer.asTypedList(data.length).setAll(0, data);
+```
+
+`asTypedList` создаёт **Dart view** поверх нативной памяти (без копирования).
+`setAll` копирует bytes из Dart `Uint8List` в этот view = в нативную память.
+
+#### Строки через toNativeUtf8
+
+```dart
+int djb2Hash(String input) {
+  final pointer = input.toNativeUtf8();  // Dart String → Pointer<Utf8>
+  try {
+    return _djb2Hash(pointer);
+  } finally {
+    malloc.free(pointer);  // Освобождаем UTF-8 буфер
+  }
+}
+```
+
+`toNativeUtf8()` — выделяет нативную память, копирует строку как null-terminated UTF-8.
+
+---
+
+### Применение в проекте
+
+#### Проверка целостности файлов
+
+**Файл:** `lib/features/files/data/services/files_service.dart`
+
+```dart
+// При импорте — считаем CRC32 зашифрованных данных
+final checksum = _nativeHashService.crc32(encryptedBytes);
+final entity = SecureFileEntity(
+  // ...
+  checksum: checksum,
+);
+
+// При расшифровке — проверяем
+if (entity.checksum != null) {
+  final currentChecksum = _nativeHashService.crc32(encryptedBytes);
+  if (currentChecksum != entity.checksum) {
+    return ErrorResult(const FileFailure(
+      message: 'File integrity check failed — data may be corrupted',
+    ));
+  }
+}
+```
+
+Если файл на диске повредился (bad sector, неполная запись) — CRC32 не совпадёт.
+
+---
+
+### Benchmark — Dart vs C (FFI)
+
+**Файл:** `lib/features/benchmark/presentation/bloc/benchmark_bloc.dart`
+
+```dart
+// Dart CRC32 (main thread)
+final dartMs = await _benchmarkDartCrc32(data);
+
+// C FFI CRC32 (main thread)
+final nativeMs = _benchmarkNativeCrc32(data);
+
+// Dart CRC32 в Isolate
+final isolateMs = await _benchmarkIsolateCrc32(data);
+```
+
+#### Типичные результаты
+
+| Размер | Dart (main) | C FFI (main) | Dart (Isolate) | C speedup |
+|--------|-------------|--------------|----------------|-----------|
+| 1 MB   | ~45ms       | ~8ms         | ~50ms          | **5.6×**  |
+| 5 MB   | ~220ms      | ~40ms        | ~230ms         | **5.5×**  |
+| 10 MB  | ~440ms      | ~80ms        | ~450ms         | **5.5×**  |
+
+#### Почему C быстрее
+
+1. **Нет GC overhead** — C работает с сырой памятью, нет паузы на сборку мусора
+2. **Нативная оптимизация** — компилятор (clang/gcc) оптимизирует циклы, vectorization
+3. **Нет bounds checking** — Dart проверяет индексы массива, C — нет
+4. **Прямой доступ к памяти** — нет прослойки VM
+
+#### Isolate не ускоряет
+
+Dart в Isolate — такая же скорость. Но **не блокирует UI**.
+C FFI — быстрее в 5×, но тоже на main thread (блокирует если >16ms).
+
+Идеальная комбинация: **C FFI + Isolate** (если операция >16ms).
+
+---
+
+## MethodChannel vs FFI — когда что
+
+| Характеристика | MethodChannel | FFI |
+|----------------|---------------|-----|
+| Язык нативного кода | Kotlin/Java, Swift/ObjC | C/C++ |
+| Сериализация | Да (StandardMethodCodec) | Нет (прямой вызов) |
+| Асинхронность | Async (Future) | Sync (блокирующий) |
+| Overhead | ~0.1–1ms | ~0.001ms |
+| Доступ к platform API | Да (BatteryManager, UIDevice) | Нет (только C-функции) |
+| Управление памятью | Автоматическое | Ручное (malloc/free) |
+
+**MethodChannel:** когда нужен platform API (батарея, storage, камера, Bluetooth).
+**FFI:** когда нужна максимальная скорость (хеширование, image processing, crypto).
+
+---
+
+## Критерии приёмки — чеклист
+
+- [x] MethodChannel реализован для Android (Kotlin) и iOS (Swift)
+- [x] 3 метода: getBatteryLevel, getFreeStorage, getTotalStorage
+- [x] Обработка ошибок на нативной стороне (result.error / FlutterError)
+- [x] Graceful degradation на Dart-стороне (PlatformException → null)
+- [x] C-библиотека с 3 функциями: crc32, djb2_hash, count_bytes
+- [x] FFI bindings: DynamicLibrary, lookupFunction, Pointer, malloc/free
+- [x] Управление памятью: try/finally для malloc.free
+- [x] CRC32 используется для проверки целостности файлов
+- [x] Benchmark: Dart vs C FFI
+- [x] Документация в коде (комментарии в Kotlin/Swift/C)

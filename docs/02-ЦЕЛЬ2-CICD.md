@@ -1,108 +1,180 @@
-# Цель 2: CI/CD с GitHub Actions
+# Цель 2: Настройка CI/CD с GitHub Actions
 
-## Теория (что спросят)
+## Теория
 
-### Что такое CI/CD?
+### Что такое CI/CD
 
-- **CI (Continuous Integration)** — каждый push/PR автоматически проверяется: форматирование, анализ, тесты. Цель — ловить баги как можно раньше.
-- **CD (Continuous Delivery)** — после успешного CI, автоматически собираются артефакты (APK, AAB, IPA) и могут деплоиться.
+**CI (Continuous Integration)** — автоматическая проверка кода при каждом коммите/PR:
+форматирование, анализ, тесты. Ловит ошибки **до** попадания в main.
 
-### GitHub Actions — основные понятия
+**CD (Continuous Delivery)** — автоматическая сборка артефактов (APK, AAB, IPA),
+готовых к деплою. Разработчику не нужно вручную собирать релиз.
 
-| Понятие | Что это |
-|---------|---------|
-| **Workflow** | Один YAML-файл в `.github/workflows/`. Описывает весь pipeline |
-| **Trigger** | Событие запуска: `on: push`, `on: pull_request` |
-| **Job** | Набор шагов, выполняется на одном runner |
-| **Step** | Одна команда или action |
-| **Runner** | Виртуальная машина (ubuntu-latest, macos-latest) |
-| **Action** | Готовый переиспользуемый блок (actions/checkout, flutter-action) |
-| **Artifact** | Файл-результат сборки (APK, coverage report) |
-| **Secret** | Зашифрованные переменные (токены, ключи) |
+### GitHub Actions — основные концепции
 
-### Кэширование
+```
+Workflow (.yml файл)
+  │
+  ├── Trigger (on: push, pull_request)
+  │
+  ├── Job 1: quality (runs-on: ubuntu-latest)
+  │     ├── Step 1: checkout
+  │     ├── Step 2: setup flutter
+  │     ├── Step 3: format check
+  │     ├── Step 4: analyze
+  │     └── Step 5: test
+  │
+  ├── Job 2: build-android (needs: quality)
+  │     └── ...
+  │
+  └── Job 3: build-ios (needs: quality)
+        └── ...
+```
 
-GitHub Actions может кэшировать зависимости между запусками:
-- `flutter-action` с `cache: true` кэширует Flutter SDK
-- `actions/cache` может кэшировать pub-cache
-
-Без кэша: каждый раз скачивает Flutter (~1.5 GB) + все пакеты.
-С кэшом: берёт из кэша, экономит 3-5 минут.
+- **Workflow** — весь pipeline, описанный в YAML
+- **Job** — группа шагов, выполняемых на одном runner'е
+- **Step** — отдельная команда или action
+- **Runner** — виртуальная машина (Ubuntu / macOS) от GitHub
+- **Trigger** — событие, запускающее workflow (push, PR, schedule)
 
 ---
 
-## Что реализовано в проекте
+## Практика — наш workflow
 
-### Файл: `.github/workflows/flutter-ci.yaml`
+**Файл:** `.github/workflows/flutter-ci.yaml`
 
-Pipeline состоит из **3 jobs**:
+### Триггеры
 
+```yaml
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
 ```
-quality  ──→  build-android
-         └──→  build-ios
+
+#### Почему `paths-ignore`
+
+Если я обновил только `README.md` или `docs/` — нет смысла запускать lint, тесты, сборку.
+Экономим минуты раннера (у приватных репо лимит — 2000 мин/месяц).
+
+#### Альтернатива — `paths` (whitelist)
+
+```yaml
+# Запускать ТОЛЬКО если изменились .dart или .yaml файлы
+on:
+  push:
+    paths:
+      - 'lib/**'
+      - 'test/**'
+      - 'pubspec.yaml'
 ```
 
-`build-android` и `build-ios` запускаются **параллельно**, но только после успешного `quality`.
+Но это рискованно — можно пропустить изменения в `android/`, `ios/`, `.github/`.
+`paths-ignore` безопаснее — запускается по умолчанию, исключаем только очевидное.
 
-### Job 1: Quality (Качество кода)
+---
+
+### Concurrency — отмена дублирующих pipeline
+
+```yaml
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+```
+
+#### Почему
+
+Если я запушил 3 коммита подряд за 1 минуту:
+- **Без concurrency:** запустятся 3 pipeline-а → 3× расход ресурсов
+- **С concurrency:** запустится только последний, предыдущие два отменятся
+
+`group` = workflow name + branch → каждая ветка имеет свою группу.
+
+---
+
+### Job 1: Quality
 
 ```yaml
 quality:
+  name: Quality
   runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v4           # Клонирует репозиторий
-    - name: Setup Flutter                  # Устанавливает Flutter SDK
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.38.9'
-        cache: true                        # Кэширование SDK
-    - run: flutter pub get                 # Зависимости
-    - name: Check formatting               # dart format --set-exit-if-changed
-    - name: Run analyzer                   # flutter analyze --fatal-infos
-    - name: Run tests with coverage        # flutter test --coverage
-    - name: Upload coverage report         # Артефакт с покрытием
-    - name: SonarCloud Scan                # Анализ качества
+  timeout-minutes: 25
 ```
 
-**Как объяснить каждый шаг**:
+#### Step: Check formatting
 
-1. **Check formatting** — проверяет что код отформатирован по стандартам Dart. Исключает сгенерированные файлы (*.g.dart, *.freezed.dart). Если есть неформатированный файл → pipeline падает.
+```yaml
+- name: Check formatting
+  run: |
+    find lib test -name '*.dart' \
+      ! -name '*.g.dart' \
+      ! -name '*.freezed.dart' \
+      ! -path '*/generated/*' \
+      | xargs dart format --set-exit-if-changed
+```
 
-2. **Run analyzer** — `flutter analyze --fatal-infos` — статический анализ. Ловит типизацию, unused imports, потенциальные null errors. `--fatal-infos` означает что даже info-уровень ломает pipeline.
+##### Почему исключаем `*.g.dart` и `*.freezed.dart`
 
-3. **Tests with coverage** — запускает все тесты и генерирует lcov.info (отчёт покрытия).
+Это сгенерированные файлы (build_runner). Их форматирование зависит от генератора,
+а не от разработчика. Проверять их бессмысленно — они перезаписываются при каждом
+`build_runner build`.
 
-4. **SonarCloud Scan** — облачный анализ качества кода (подробнее ниже).
+##### Альтернатива — `dart format .`
 
----
+```bash
+# ❌ Проверит ВСЁ, включая generated файлы
+dart format --set-exit-if-changed .
+```
 
-### SonarCloud — детально
+Будет падать на сгенерированных файлах.
 
-#### Что это?
+#### Step: Static analysis
 
-**SonarCloud** — облачный сервис статического анализа кода от компании Sonar. Анализирует код на:
-- **Bugs** — реальные ошибки (null pointer, logic errors)
-- **Vulnerabilities** — уязвимости безопасности (hardcoded passwords, SQL injection)
-- **Code Smells** — "плохой запах" кода (слишком сложные функции, дублирование, мёртвый код)
-- **Coverage** — процент покрытия тестами
-- **Duplications** — процент дублированного кода
+```yaml
+- name: Run analyzer
+  run: flutter analyze --fatal-infos
+```
 
-#### Зачем, если уже есть flutter analyze?
+##### Почему `--fatal-infos`
 
-| | `flutter analyze` | SonarCloud |
-|---|---|---|
-| Что проверяет | Dart/Flutter lint rules | Баги, уязвимости, code smells, дубликаты |
-| Покрытие тестами | Нет | Да (читает lcov.info) |
-| Dashboard | Нет (только CLI) | Веб-интерфейс с графиками и трендами |
-| History | Нет | Да — показывает динамику качества |
-| Quality Gate | Нет | Да — можно задать "не мержить если coverage < 80%" |
-| Security | Базовые lint | Глубокий анализ уязвимостей (OWASP) |
+Без флага `flutter analyze` предупреждает, но exit code = 0 (pipeline не падает).
+`--fatal-infos` — exit code = 1 даже на info-уровне. Строгая дисциплина кода.
 
-**Как объяснить**: "`flutter analyze` — это линтер (стиль кода, типизация). SonarCloud — глубже: ищет реальные баги, уязвимости, считает покрытие тестами, отслеживает тренды. Это как рентген для кода."
+Уровни серьёзности:
+- `info` — подсказки (unused import, missing return type)
+- `warning` — потенциальные баги
+- `error` — ошибки компиляции
 
-#### Как настроено в проекте
+#### Step: Tests with coverage
 
-**1. GitHub Actions шаг:**
+```yaml
+- name: Run tests with coverage
+  run: flutter test --coverage
+
+- name: Upload coverage report
+  uses: actions/upload-artifact@v4
+  with:
+    name: coverage-report-${{ github.sha }}
+    path: coverage/lcov.info
+    retention-days: 7
+```
+
+##### Почему `--coverage`
+
+Генерирует `lcov.info` — файл с информацией о покрытии каждой строки кода.
+Загружаем как artifact — можно скачать и проанализировать.
+
+#### Step: SonarCloud
+
 ```yaml
 - name: SonarCloud Scan
   uses: SonarSource/sonarcloud-github-action@v3
@@ -110,131 +182,8 @@ quality:
     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 ```
 
-- `SonarSource/sonarcloud-github-action@v3` — официальный action от SonarCloud
-- `SONAR_TOKEN` — токен аутентификации, хранится в **GitHub Secrets** (не в коде!)
-
-**2. Конфигурация — `sonar-project.properties`:**
-```properties
-# Идентификация проекта на SonarCloud
-sonar.projectKey=KazhymukhanYerkinov_ipr_s3
-sonar.organization=kazhymukhanyerkinov
-sonar.host.url=https://sonarcloud.io
-
-# Где исходный код и тесты
-sonar.sources=lib
-sonar.tests=test
-
-# Путь к отчёту покрытия (lcov.info генерируется flutter test --coverage)
-sonar.dart.coverage.reportPaths=coverage/lcov.info
-
-# Исключаем из анализа: сгенерированный код, нативные платформы, билды
-sonar.exclusions=**/*.g.dart,**/*.freezed.dart,**/*.mocks.dart,android/**,ios/**,web/**,linux/**,macos/**,windows/**,build/**,.dart_tool/**
-
-sonar.sourceEncoding=UTF-8
-```
-
-**Разбор каждого параметра:**
-
-| Параметр | Зачем |
-|----------|-------|
-| `sonar.projectKey` | Уникальный идентификатор проекта на SonarCloud |
-| `sonar.organization` | Организация/аккаунт на SonarCloud |
-| `sonar.sources=lib` | Анализировать только `lib/` (исходный код) |
-| `sonar.tests=test` | Папка с тестами (не считается в метриках дублирования) |
-| `sonar.dart.coverage.reportPaths` | Путь к lcov.info — SonarCloud читает этот файл и показывает покрытие |
-| `sonar.exclusions` | Что НЕ анализировать: `.g.dart`, `.freezed.dart` — сгенерированный код |
-
-#### Почему исключаем сгенерированные файлы?
-
-Файлы `*.g.dart` (json_serializable, hive_generator) и `*.freezed.dart` (freezed) — **автоматически сгенерированы**. Анализировать их бессмысленно:
-- Мы не пишем этот код — его генерирует build_runner
-- Он часто "некрасивый" (длинные функции, дублирование) — это нормально для codegen
-- Покрытие тестами генерированного кода не показательно
-
-#### Как работает флоу
-
-```
-flutter test --coverage
-        │
-        ▼
-   coverage/lcov.info  ◄── содержит данные: какие строки выполнялись в тестах
-        │
-        ▼
-   SonarCloud Scan
-        │
-        ├── Читает lib/ (исходники)
-        ├── Читает test/ (тесты)
-        ├── Читает coverage/lcov.info (покрытие)
-        ├── Исключает *.g.dart, *.freezed.dart
-        │
-        ▼
-   SonarCloud Dashboard (sonarcloud.io)
-        │
-        ├── Bugs: 0
-        ├── Vulnerabilities: 0
-        ├── Code Smells: 12
-        ├── Coverage: 45%
-        ├── Duplications: 3.2%
-        └── Quality Gate: Passed ✓
-```
-
-#### Quality Gate
-
-**Quality Gate** — набор условий, при невыполнении которых код считается "не готов". Стандартные условия SonarCloud:
-
-| Метрика | Порог |
-|---------|-------|
-| New bugs | 0 |
-| New vulnerabilities | 0 |
-| New code coverage | >= 80% |
-| New duplicated lines | <= 3% |
-
-Если Quality Gate не пройден — SonarCloud помечает PR как failed. Это можно показать как status check в GitHub.
-
-#### Что такое SONAR_TOKEN?
-
-```yaml
-env:
-  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-```
-
-- `SONAR_TOKEN` — токен аутентификации, позволяет GitHub Actions отправлять данные на SonarCloud
-- Хранится в **GitHub Secrets** (Settings → Secrets → Actions)
-- **Не виден** в логах, не попадает в код
-- Это пример **secrets management** — один из критериев Цели 2
-
-#### Почему fetch-depth: 0?
-
-```yaml
-- uses: actions/checkout@v4
-  with:
-    fetch-depth: 0  # SonarCloud нужна полная git-история
-```
-
-По умолчанию `actions/checkout` клонирует только **последний коммит** (shallow clone, depth=1). SonarCloud нужна **полная история** чтобы:
-- Определить какие строки новые (new code vs old code)
-- Сравнить текущий PR с целевой веткой
-- Посчитать метрики "на новом коде" (Quality Gate применяется к новому коду)
-
-#### Возможные вопросы по SonarCloud
-
-**В**: Что такое SonarCloud и зачем он в CI?
-**О**: SonarCloud — облачный сервис анализа качества кода. Находит баги, уязвимости, code smells. Считает покрытие тестами и дублирование. В отличие от flutter analyze (который проверяет только стиль), SonarCloud делает глубокий анализ: сложность функций, безопасность (OWASP), тренды качества. Dashboard с графиками показывает динамику — улучшается код или деградирует.
-
-**В**: Чем SonarCloud отличается от SonarQube?
-**О**: SonarQube — self-hosted (ставишь на свой сервер). SonarCloud — облачный (SaaS), бесплатный для open-source. Функционал одинаковый. Для ИПР-проекта SonarCloud удобнее — не нужно поднимать сервер.
-
-**В**: Что такое Quality Gate?
-**О**: Набор пороговых условий: 0 новых багов, 0 уязвимостей, покрытие >= 80%, дупликация <= 3%. Если хотя бы одно условие не выполнено — Quality Gate "красный". Можно настроить чтобы PR не мёрджился при непройденном Quality Gate.
-
-**В**: Зачем исключать *.g.dart и *.freezed.dart?
-**О**: Это сгенерированный код (build_runner). Мы его не пишем и не контролируем. Анализировать его бессмысленно — он всегда "некрасивый" и не покрыт тестами. Включение его исказит реальные метрики.
-
-**В**: Что такое SONAR_TOKEN и почему он в secrets?
-**О**: Токен аутентификации для SonarCloud API. Хранится в GitHub Secrets — зашифрован, не виден в логах, недоступен в форках. Это пример secrets management из CI/CD best practices.
-
-**В**: Зачем fetch-depth: 0?
-**О**: SonarCloud анализирует "новый код" (new code period) — код добавленный в текущем PR. Для этого ему нужна полная git-история чтобы сравнить с базовой веткой. Shallow clone (depth=1) не содержит истории — SonarCloud не сможет определить что нового.
+SonarCloud анализирует code quality: code smells, duplications, complexity, security hotspots.
+`SONAR_TOKEN` хранится в GitHub Secrets — не в коде.
 
 ---
 
@@ -242,68 +191,158 @@ env:
 
 ```yaml
 build-android:
-  needs: quality    # Ждёт успешного quality
+  name: Build Android
+  needs: quality          # ← запустится ТОЛЬКО после прохождения quality
   runs-on: ubuntu-latest
-  steps:
-    - Setup Flutter + Java 17
-    - flutter build apk --release      # Релизный APK
-    - flutter build appbundle --release # AAB для Google Play
-    - Upload APK artifact               # Хранится 14 дней
-    - Upload AAB artifact
+  timeout-minutes: 40
 ```
 
-**Зачем два формата?**
-- **APK** — можно установить напрямую на устройство
-- **AAB (App Bundle)** — для публикации в Google Play (оптимизирован по размеру)
+#### Почему `needs: quality`
+
+Нет смысла собирать APK, если код не прошёл lint/test. Экономим ~40 минут раннера.
+
+#### Steps
+
+```yaml
+- name: Setup Java
+  uses: actions/setup-java@v4
+  with:
+    distribution: 'zulu'
+    java-version: '17'
+
+- name: Build APK
+  run: flutter build apk --release
+
+- name: Build AAB
+  run: flutter build appbundle --release
+```
+
+##### Почему JDK 17 (Zulu)
+
+Android Gradle Plugin (AGP) 8.x требует минимум JDK 17.
+Zulu — бесплатный OpenJDK от Azul, популярен в CI.
+
+##### APK vs AAB
+
+| Формат | Для чего |
+|--------|----------|
+| APK | Тестирование, прямая установка |
+| AAB (App Bundle) | Публикация в Google Play — Google оптимизирует размер под устройство |
+
+#### Upload artifacts
+
+```yaml
+- name: Upload APK
+  uses: actions/upload-artifact@v4
+  with:
+    name: android-apk-${{ github.sha }}
+    path: build/app/outputs/flutter-apk/app-release.apk
+    retention-days: 14
+```
+
+Имя артефакта включает `${{ github.sha }}` — уникальный хеш коммита.
+14 дней хранения — достаточно для тестирования, не засоряет storage.
+
+---
 
 ### Job 3: Build iOS
 
 ```yaml
 build-ios:
+  name: Build iOS
   needs: quality
-  runs-on: macos-latest        # iOS собирается только на macOS
-  steps:
-    - Setup Flutter
-    - flutter build ios --release --no-codesign  # Без подписи
-    - Upload iOS build artifact
+  runs-on: macos-latest    # ← ОБЯЗАТЕЛЬНО macOS для iOS
 ```
 
-**`--no-codesign`** — собираем без подписи, потому что для подписи нужен Apple Developer сертификат (платный). Для ИПР достаточно показать что сборка проходит.
+#### Почему macOS
 
-### Важные детали
+Xcode и iOS SDK доступны **только на macOS**. GitHub предоставляет macOS runners,
+но они дороже (10× от Linux) — поэтому iOS билд запускаем только после quality.
 
-**Concurrency** — отменяет предыдущий pipeline если пришёл новый push:
 ```yaml
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+- name: Build iOS (no codesign)
+  run: flutter build ios --release --no-codesign
 ```
 
-**paths-ignore** — не запускает pipeline при изменении .md файлов:
-```yaml
-paths-ignore:
-  - '**.md'
-  - 'docs/**'
-```
+#### Почему `--no-codesign`
+
+Code signing требует сертификаты Apple Developer Program ($99/год).
+Для CI/ИПР достаточно собрать без подписи — убедиться что компилируется.
+Для реального проекта нужно добавить signing через Fastlane + GitHub Secrets.
 
 ---
 
-## Возможные вопросы на ассесменте
+### Параллельность jobs
 
-**В**: Что происходит когда ты делаешь PR в main?
-**О**: Автоматически запускается workflow: сначала quality (format, analyze, test), потом параллельно build-android и build-ios. Если quality упал — билды не запускаются. Результат виден в PR как status check.
+```
+quality ──┬──→ build-android
+          │
+          └──→ build-ios
+```
 
-**В**: Зачем нужно кэширование?
-**О**: Flutter SDK занимает ~1.5 GB. Без кэша каждый CI запуск скачивает его заново — это 3-5 минут. С `cache: true` SDK берётся из кэша GitHub, экономим время и трафик.
+`build-android` и `build-ios` запускаются **параллельно** (оба `needs: quality`).
+Вместо последовательных ~80 минут получаем ~40 минут.
 
-**В**: Что такое artifact?
-**О**: Файл-результат сборки. В нашем случае — APK, AAB и iOS build. Хранится на GitHub 14 дней. Можно скачать и протестировать.
+---
 
-**В**: Зачем `--fatal-infos` в analyze?
-**О**: Это строгий режим — даже info-уровень предупреждений ломает pipeline. Заставляет поддерживать чистый код. Без этого только errors и warnings ломают билд.
+### Кэширование
 
-**В**: Почему build-ios запускается на macos-latest, а не ubuntu?
-**О**: iOS-сборка требует Xcode, который работает только на macOS. Android можно собирать на Linux.
+```yaml
+- name: Setup Flutter
+  uses: subosito/flutter-action@v2
+  with:
+    flutter-version: '3.38.9'
+    channel: 'stable'
+    cache: true            # ← кэширует Flutter SDK и pub cache
+```
 
-**В**: Что такое concurrency и cancel-in-progress?
-**О**: Если я запушил коммит и pipeline запустился, а потом быстро запушил ещё один коммит — cancel-in-progress отменит первый (устаревший) pipeline и запустит только второй. Экономит ресурсы.
+#### Под капотом
+
+`cache: true` использует `actions/cache` для сохранения `~/.pub-cache` между запусками.
+
+| Без кэша | С кэшем |
+|-----------|---------|
+| `flutter pub get` ~30с | `flutter pub get` ~3с |
+| Скачивает все пакеты | Берёт из кэша |
+
+---
+
+## Альтернативы GitHub Actions
+
+| Решение | Плюсы | Минусы |
+|---------|-------|--------|
+| **GitHub Actions** (наш выбор) | Бесплатно для публичных репо, нативная интеграция, macOS runners | Лимит минут для приватных |
+| **Codemagic** | Заточен под Flutter, GUI | Платный для команд |
+| **Bitrise** | GUI workflow builder | Медленнее, сложнее debug |
+| **CircleCI** | Мощный, Docker support | Нет macOS для бесплатных |
+| **Fastlane** | Code signing, deploy | Нужен Ruby, дополняет, не заменяет CI |
+
+---
+
+## Secrets Management
+
+```yaml
+env:
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+```
+
+GitHub Secrets — зашифрованные переменные окружения:
+- Не видны в логах (маскируются `***`)
+- Не доступны в fork PR (безопасность)
+- Управляются через Settings → Secrets → Actions
+
+Для реального проекта здесь хранились бы:
+- `SIGNING_KEY` — keystore для Android
+- `APPLE_CERTIFICATE` — p12 для iOS signing
+- `FIREBASE_TOKEN` — для Firebase App Distribution
+
+---
+
+## Критерии приёмки — чеклист
+
+- [x] Рабочий workflow с этапами lint, test и build
+- [x] Все PR автоматически запускают проверки
+- [x] Проект собирается через GitHub Actions на Android и iOS
+- [x] CI использует кэширование зависимостей для ускорения
+- [x] `paths-ignore` исключает ненужные триггеры
+- [x] `concurrency` отменяет дублирующие pipeline-ы

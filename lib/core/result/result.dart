@@ -44,8 +44,6 @@ extension ResultX<T> on Result<T> {
   }
 }
 
-/// Executes [action] and wraps the result in [SuccessResult].
-/// On error, logs via [logger] and returns [ErrorResult] with [onError] failure.
 Future<Result<T>> runGuarded<T>({
   required Future<T> Function() action,
   required Failure Function() onError,
