@@ -28,6 +28,7 @@ class FileGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final file = files[index];
         return RepaintBoundary(
+          key: ValueKey(file.id),
           child: GridCard(
             file: file,
             onTap: () => onFileTap(file),

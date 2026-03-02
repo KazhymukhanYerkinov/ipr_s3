@@ -96,7 +96,7 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
         return;
       }
 
-      add(FilesLoadRequested());
+      await _silentReload(emit);
     } catch (e) {
       emit(FilesState.error(message: 'Failed to pick file: $e'));
     }
@@ -106,12 +106,19 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     FileDeleteRequested event,
     Emitter<FilesState> emit,
   ) async {
-    final command = DeleteFileCommand(_localSource, event.file);
-    await _runCommand(
-      emit,
-      () => _commandManager.execute(command),
-      'Failed to delete file',
-    );
+    final currentState = state;
+    if (currentState is FilesLoaded) {
+      final updated =
+          currentState.files.where((f) => f.id != event.file.id).toList();
+      emit(currentState.copyWith(files: updated));
+    }
+
+    try {
+      final command = DeleteFileCommand(_localSource, event.file);
+      await _commandManager.execute(command);
+    } catch (e) {
+      await _silentReload(emit);
+    }
   }
 
   Future<void> _onUndo(UndoRequested event, Emitter<FilesState> emit) async {
@@ -131,10 +138,24 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
   ) async {
     try {
       await action();
-      add(FilesLoadRequested());
+      await _silentReload(emit);
     } catch (e) {
       emit(FilesState.error(message: errorMessage));
     }
+  }
+
+  Future<void> _silentReload(Emitter<FilesState> emit) async {
+    final result = await _getFilesUseCase();
+    final failure = result.failure;
+
+    if (failure != null) {
+      emit(FilesState.error(message: failure.message));
+      return;
+    }
+
+    final files = result.value ?? [];
+    final sorted = _currentSortStrategy.sort(files);
+    emit(FilesState.loaded(files: sorted, sortStrategy: _currentSortStrategy));
   }
 
   Future<void> _onSearch(

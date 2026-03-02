@@ -8,6 +8,11 @@ import 'package:ipr_s3/features/files/presentation/widgets/file_icon.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 class FileThumbnail extends StatefulWidget {
+  static final _cache = <String, Uint8List>{};
+
+  static void evict(String path) => _cache.remove(path);
+  static void clearCache() => _cache.clear();
+
   final String thumbnailPath;
   final FileType fileType;
   final double iconSize;
@@ -32,7 +37,12 @@ class _FileThumbnailState extends State<FileThumbnail> {
   @override
   void initState() {
     super.initState();
-    _load();
+    final cached = FileThumbnail._cache[widget.thumbnailPath];
+    if (cached != null) {
+      _bytes = cached;
+    } else {
+      _load();
+    }
   }
 
   Future<void> _load() async {
@@ -44,6 +54,7 @@ class _FileThumbnailState extends State<FileThumbnail> {
       if (encrypted == null || !mounted) return;
 
       final decrypted = await encryptionService.decrypt(encrypted);
+      FileThumbnail._cache[widget.thumbnailPath] = decrypted;
       if (mounted) {
         setState(() => _bytes = decrypted);
       }
