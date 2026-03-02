@@ -12,7 +12,8 @@ part of 'files_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$FilesState {
@@ -20,36 +21,42 @@ mixin _$FilesState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)
-        loaded,
+    required TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )
+    loaded,
     required TResult Function(String fileName) importing,
     required TResult Function(String message) error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult? Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult? Function(String fileName)? importing,
     TResult? Function(String message)? error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult Function(String fileName)? importing,
     TResult Function(String message)? error,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(FilesInitial value) initial,
@@ -57,8 +64,7 @@ mixin _$FilesState {
     required TResult Function(FilesLoaded value) loaded,
     required TResult Function(FilesImporting value) importing,
     required TResult Function(FilesError value) error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(FilesInitial value)? initial,
@@ -66,8 +72,7 @@ mixin _$FilesState {
     TResult? Function(FilesLoaded value)? loaded,
     TResult? Function(FilesImporting value)? importing,
     TResult? Function(FilesError value)? error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(FilesInitial value)? initial,
@@ -76,15 +81,15 @@ mixin _$FilesState {
     TResult Function(FilesImporting value)? importing,
     TResult Function(FilesError value)? error,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $FilesStateCopyWith<$Res> {
   factory $FilesStateCopyWith(
-          FilesState value, $Res Function(FilesState) then) =
-      _$FilesStateCopyWithImpl<$Res, FilesState>;
+    FilesState value,
+    $Res Function(FilesState) then,
+  ) = _$FilesStateCopyWithImpl<$Res, FilesState>;
 }
 
 /// @nodoc
@@ -101,8 +106,9 @@ class _$FilesStateCopyWithImpl<$Res, $Val extends FilesState>
 /// @nodoc
 abstract class _$$FilesInitialImplCopyWith<$Res> {
   factory _$$FilesInitialImplCopyWith(
-          _$FilesInitialImpl value, $Res Function(_$FilesInitialImpl) then) =
-      __$$FilesInitialImplCopyWithImpl<$Res>;
+    _$FilesInitialImpl value,
+    $Res Function(_$FilesInitialImpl) then,
+  ) = __$$FilesInitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -110,8 +116,9 @@ class __$$FilesInitialImplCopyWithImpl<$Res>
     extends _$FilesStateCopyWithImpl<$Res, _$FilesInitialImpl>
     implements _$$FilesInitialImplCopyWith<$Res> {
   __$$FilesInitialImplCopyWithImpl(
-      _$FilesInitialImpl _value, $Res Function(_$FilesInitialImpl) _then)
-      : super(_value, _then);
+    _$FilesInitialImpl _value,
+    $Res Function(_$FilesInitialImpl) _then,
+  ) : super(_value, _then);
 }
 
 /// @nodoc
@@ -138,9 +145,12 @@ class _$FilesInitialImpl implements FilesInitial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)
-        loaded,
+    required TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )
+    loaded,
     required TResult Function(String fileName) importing,
     required TResult Function(String message) error,
   }) {
@@ -152,9 +162,12 @@ class _$FilesInitialImpl implements FilesInitial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult? Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult? Function(String fileName)? importing,
     TResult? Function(String message)? error,
   }) {
@@ -166,9 +179,12 @@ class _$FilesInitialImpl implements FilesInitial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult Function(String fileName)? importing,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -227,8 +243,9 @@ abstract class FilesInitial implements FilesState {
 /// @nodoc
 abstract class _$$FilesLoadingImplCopyWith<$Res> {
   factory _$$FilesLoadingImplCopyWith(
-          _$FilesLoadingImpl value, $Res Function(_$FilesLoadingImpl) then) =
-      __$$FilesLoadingImplCopyWithImpl<$Res>;
+    _$FilesLoadingImpl value,
+    $Res Function(_$FilesLoadingImpl) then,
+  ) = __$$FilesLoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -236,8 +253,9 @@ class __$$FilesLoadingImplCopyWithImpl<$Res>
     extends _$FilesStateCopyWithImpl<$Res, _$FilesLoadingImpl>
     implements _$$FilesLoadingImplCopyWith<$Res> {
   __$$FilesLoadingImplCopyWithImpl(
-      _$FilesLoadingImpl _value, $Res Function(_$FilesLoadingImpl) _then)
-      : super(_value, _then);
+    _$FilesLoadingImpl _value,
+    $Res Function(_$FilesLoadingImpl) _then,
+  ) : super(_value, _then);
 }
 
 /// @nodoc
@@ -264,9 +282,12 @@ class _$FilesLoadingImpl implements FilesLoading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)
-        loaded,
+    required TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )
+    loaded,
     required TResult Function(String fileName) importing,
     required TResult Function(String message) error,
   }) {
@@ -278,9 +299,12 @@ class _$FilesLoadingImpl implements FilesLoading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult? Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult? Function(String fileName)? importing,
     TResult? Function(String message)? error,
   }) {
@@ -292,9 +316,12 @@ class _$FilesLoadingImpl implements FilesLoading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult Function(String fileName)? importing,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -353,14 +380,15 @@ abstract class FilesLoading implements FilesState {
 /// @nodoc
 abstract class _$$FilesLoadedImplCopyWith<$Res> {
   factory _$$FilesLoadedImplCopyWith(
-          _$FilesLoadedImpl value, $Res Function(_$FilesLoadedImpl) then) =
-      __$$FilesLoadedImplCopyWithImpl<$Res>;
+    _$FilesLoadedImpl value,
+    $Res Function(_$FilesLoadedImpl) then,
+  ) = __$$FilesLoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call(
-      {List<SecureFileEntity> files,
-      ViewMode viewMode,
-      String searchQuery,
-      SortStrategy? sortStrategy});
+  $Res call({
+    List<SecureFileEntity> files,
+    String searchQuery,
+    SortStrategy? sortStrategy,
+  });
 }
 
 /// @nodoc
@@ -368,47 +396,47 @@ class __$$FilesLoadedImplCopyWithImpl<$Res>
     extends _$FilesStateCopyWithImpl<$Res, _$FilesLoadedImpl>
     implements _$$FilesLoadedImplCopyWith<$Res> {
   __$$FilesLoadedImplCopyWithImpl(
-      _$FilesLoadedImpl _value, $Res Function(_$FilesLoadedImpl) _then)
-      : super(_value, _then);
+    _$FilesLoadedImpl _value,
+    $Res Function(_$FilesLoadedImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? files = null,
-    Object? viewMode = null,
     Object? searchQuery = null,
     Object? sortStrategy = freezed,
   }) {
-    return _then(_$FilesLoadedImpl(
-      files: null == files
-          ? _value._files
-          : files // ignore: cast_nullable_to_non_nullable
-              as List<SecureFileEntity>,
-      viewMode: null == viewMode
-          ? _value.viewMode
-          : viewMode // ignore: cast_nullable_to_non_nullable
-              as ViewMode,
-      searchQuery: null == searchQuery
-          ? _value.searchQuery
-          : searchQuery // ignore: cast_nullable_to_non_nullable
-              as String,
-      sortStrategy: freezed == sortStrategy
-          ? _value.sortStrategy
-          : sortStrategy // ignore: cast_nullable_to_non_nullable
-              as SortStrategy?,
-    ));
+    return _then(
+      _$FilesLoadedImpl(
+        files:
+            null == files
+                ? _value._files
+                : files // ignore: cast_nullable_to_non_nullable
+                    as List<SecureFileEntity>,
+        searchQuery:
+            null == searchQuery
+                ? _value.searchQuery
+                : searchQuery // ignore: cast_nullable_to_non_nullable
+                    as String,
+        sortStrategy:
+            freezed == sortStrategy
+                ? _value.sortStrategy
+                : sortStrategy // ignore: cast_nullable_to_non_nullable
+                    as SortStrategy?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$FilesLoadedImpl implements FilesLoaded {
-  const _$FilesLoadedImpl(
-      {required final List<SecureFileEntity> files,
-      this.viewMode = ViewMode.list,
-      this.searchQuery = '',
-      this.sortStrategy})
-      : _files = files;
+  const _$FilesLoadedImpl({
+    required final List<SecureFileEntity> files,
+    this.searchQuery = '',
+    this.sortStrategy,
+  }) : _files = files;
 
   final List<SecureFileEntity> _files;
   @override
@@ -420,16 +448,13 @@ class _$FilesLoadedImpl implements FilesLoaded {
 
   @override
   @JsonKey()
-  final ViewMode viewMode;
-  @override
-  @JsonKey()
   final String searchQuery;
   @override
   final SortStrategy? sortStrategy;
 
   @override
   String toString() {
-    return 'FilesState.loaded(files: $files, viewMode: $viewMode, searchQuery: $searchQuery, sortStrategy: $sortStrategy)';
+    return 'FilesState.loaded(files: $files, searchQuery: $searchQuery, sortStrategy: $sortStrategy)';
   }
 
   @override
@@ -438,8 +463,6 @@ class _$FilesLoadedImpl implements FilesLoaded {
         (other.runtimeType == runtimeType &&
             other is _$FilesLoadedImpl &&
             const DeepCollectionEquality().equals(other._files, _files) &&
-            (identical(other.viewMode, viewMode) ||
-                other.viewMode == viewMode) &&
             (identical(other.searchQuery, searchQuery) ||
                 other.searchQuery == searchQuery) &&
             (identical(other.sortStrategy, sortStrategy) ||
@@ -448,11 +471,11 @@ class _$FilesLoadedImpl implements FilesLoaded {
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(_files),
-      viewMode,
-      searchQuery,
-      sortStrategy);
+    runtimeType,
+    const DeepCollectionEquality().hash(_files),
+    searchQuery,
+    sortStrategy,
+  );
 
   @JsonKey(ignore: true)
   @override
@@ -465,13 +488,16 @@ class _$FilesLoadedImpl implements FilesLoaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)
-        loaded,
+    required TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )
+    loaded,
     required TResult Function(String fileName) importing,
     required TResult Function(String message) error,
   }) {
-    return loaded(files, viewMode, searchQuery, sortStrategy);
+    return loaded(files, searchQuery, sortStrategy);
   }
 
   @override
@@ -479,13 +505,16 @@ class _$FilesLoadedImpl implements FilesLoaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult? Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult? Function(String fileName)? importing,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(files, viewMode, searchQuery, sortStrategy);
+    return loaded?.call(files, searchQuery, sortStrategy);
   }
 
   @override
@@ -493,15 +522,18 @@ class _$FilesLoadedImpl implements FilesLoaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult Function(String fileName)? importing,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(files, viewMode, searchQuery, sortStrategy);
+      return loaded(files, searchQuery, sortStrategy);
     }
     return orElse();
   }
@@ -548,14 +580,13 @@ class _$FilesLoadedImpl implements FilesLoaded {
 }
 
 abstract class FilesLoaded implements FilesState {
-  const factory FilesLoaded(
-      {required final List<SecureFileEntity> files,
-      final ViewMode viewMode,
-      final String searchQuery,
-      final SortStrategy? sortStrategy}) = _$FilesLoadedImpl;
+  const factory FilesLoaded({
+    required final List<SecureFileEntity> files,
+    final String searchQuery,
+    final SortStrategy? sortStrategy,
+  }) = _$FilesLoadedImpl;
 
   List<SecureFileEntity> get files;
-  ViewMode get viewMode;
   String get searchQuery;
   SortStrategy? get sortStrategy;
   @JsonKey(ignore: true)
@@ -565,9 +596,10 @@ abstract class FilesLoaded implements FilesState {
 
 /// @nodoc
 abstract class _$$FilesImportingImplCopyWith<$Res> {
-  factory _$$FilesImportingImplCopyWith(_$FilesImportingImpl value,
-          $Res Function(_$FilesImportingImpl) then) =
-      __$$FilesImportingImplCopyWithImpl<$Res>;
+  factory _$$FilesImportingImplCopyWith(
+    _$FilesImportingImpl value,
+    $Res Function(_$FilesImportingImpl) then,
+  ) = __$$FilesImportingImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String fileName});
 }
@@ -577,20 +609,22 @@ class __$$FilesImportingImplCopyWithImpl<$Res>
     extends _$FilesStateCopyWithImpl<$Res, _$FilesImportingImpl>
     implements _$$FilesImportingImplCopyWith<$Res> {
   __$$FilesImportingImplCopyWithImpl(
-      _$FilesImportingImpl _value, $Res Function(_$FilesImportingImpl) _then)
-      : super(_value, _then);
+    _$FilesImportingImpl _value,
+    $Res Function(_$FilesImportingImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? fileName = null,
-  }) {
-    return _then(_$FilesImportingImpl(
-      fileName: null == fileName
-          ? _value.fileName
-          : fileName // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+  $Res call({Object? fileName = null}) {
+    return _then(
+      _$FilesImportingImpl(
+        fileName:
+            null == fileName
+                ? _value.fileName
+                : fileName // ignore: cast_nullable_to_non_nullable
+                    as String,
+      ),
+    );
   }
 }
 
@@ -624,16 +658,21 @@ class _$FilesImportingImpl implements FilesImporting {
   @pragma('vm:prefer-inline')
   _$$FilesImportingImplCopyWith<_$FilesImportingImpl> get copyWith =>
       __$$FilesImportingImplCopyWithImpl<_$FilesImportingImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)
-        loaded,
+    required TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )
+    loaded,
     required TResult Function(String fileName) importing,
     required TResult Function(String message) error,
   }) {
@@ -645,9 +684,12 @@ class _$FilesImportingImpl implements FilesImporting {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult? Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult? Function(String fileName)? importing,
     TResult? Function(String message)? error,
   }) {
@@ -659,9 +701,12 @@ class _$FilesImportingImpl implements FilesImporting {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult Function(String fileName)? importing,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -726,8 +771,9 @@ abstract class FilesImporting implements FilesState {
 /// @nodoc
 abstract class _$$FilesErrorImplCopyWith<$Res> {
   factory _$$FilesErrorImplCopyWith(
-          _$FilesErrorImpl value, $Res Function(_$FilesErrorImpl) then) =
-      __$$FilesErrorImplCopyWithImpl<$Res>;
+    _$FilesErrorImpl value,
+    $Res Function(_$FilesErrorImpl) then,
+  ) = __$$FilesErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String message});
 }
@@ -737,20 +783,22 @@ class __$$FilesErrorImplCopyWithImpl<$Res>
     extends _$FilesStateCopyWithImpl<$Res, _$FilesErrorImpl>
     implements _$$FilesErrorImplCopyWith<$Res> {
   __$$FilesErrorImplCopyWithImpl(
-      _$FilesErrorImpl _value, $Res Function(_$FilesErrorImpl) _then)
-      : super(_value, _then);
+    _$FilesErrorImpl _value,
+    $Res Function(_$FilesErrorImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? message = null,
-  }) {
-    return _then(_$FilesErrorImpl(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+  $Res call({Object? message = null}) {
+    return _then(
+      _$FilesErrorImpl(
+        message:
+            null == message
+                ? _value.message
+                : message // ignore: cast_nullable_to_non_nullable
+                    as String,
+      ),
+    );
   }
 }
 
@@ -789,9 +837,12 @@ class _$FilesErrorImpl implements FilesError {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)
-        loaded,
+    required TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )
+    loaded,
     required TResult Function(String fileName) importing,
     required TResult Function(String message) error,
   }) {
@@ -803,9 +854,12 @@ class _$FilesErrorImpl implements FilesError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult? Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult? Function(String fileName)? importing,
     TResult? Function(String message)? error,
   }) {
@@ -817,9 +871,12 @@ class _$FilesErrorImpl implements FilesError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<SecureFileEntity> files, ViewMode viewMode,
-            String searchQuery, SortStrategy? sortStrategy)?
-        loaded,
+    TResult Function(
+      List<SecureFileEntity> files,
+      String searchQuery,
+      SortStrategy? sortStrategy,
+    )?
+    loaded,
     TResult Function(String fileName)? importing,
     TResult Function(String message)? error,
     required TResult orElse(),

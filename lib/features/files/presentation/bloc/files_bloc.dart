@@ -31,7 +31,6 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     _setupHandlers();
   }
 
-  ViewMode _currentViewMode = ViewMode.list;
   SortStrategy _currentSortStrategy = SortByDate();
 
   void _setupHandlers() {
@@ -40,7 +39,6 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     on<FileDeleteRequested>(_onDelete);
     on<FileSearchRequested>(_onSearch);
     on<FileSearchCleared>(_onSearchCleared);
-    on<ViewModeToggled>(_onViewModeToggled);
     on<SortStrategyChanged>(_onSortStrategyChanged);
     on<UndoRequested>(_onUndo);
     on<RedoRequested>(_onRedo);
@@ -61,13 +59,7 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
 
     final files = result.value ?? [];
     final sorted = _currentSortStrategy.sort(files);
-    emit(
-      FilesState.loaded(
-        files: sorted,
-        viewMode: _currentViewMode,
-        sortStrategy: _currentSortStrategy,
-      ),
-    );
+    emit(FilesState.loaded(files: sorted, sortStrategy: _currentSortStrategy));
   }
 
   Future<void> _onImport(
@@ -167,7 +159,6 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     emit(
       FilesState.loaded(
         files: sorted,
-        viewMode: _currentViewMode,
         searchQuery: event.query,
         sortStrategy: _currentSortStrategy,
       ),
@@ -179,16 +170,6 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     Emitter<FilesState> emit,
   ) async {
     add(FilesLoadRequested());
-  }
-
-  void _onViewModeToggled(ViewModeToggled event, Emitter<FilesState> emit) {
-    _currentViewMode =
-        _currentViewMode == ViewMode.list ? ViewMode.grid : ViewMode.list;
-
-    final currentState = state;
-    if (currentState is FilesLoaded) {
-      emit(currentState.copyWith(viewMode: _currentViewMode));
-    }
   }
 
   void _onSortStrategyChanged(

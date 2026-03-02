@@ -33,18 +33,12 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "add": MessageLookupByLibrary.simpleMessage("Add"),
-    "addTag": MessageLookupByLibrary.simpleMessage("Add Tag"),
-    "addTagChip": MessageLookupByLibrary.simpleMessage("Add tag"),
     "allFilesEncrypted": MessageLookupByLibrary.simpleMessage(
       "All files encrypted!",
     ),
     "appTitle": MessageLookupByLibrary.simpleMessage("Secure App"),
     "benchmarkTitle": MessageLookupByLibrary.simpleMessage(
       "Benchmark: Dart vs C (FFI)",
-    ),
-    "biometricReason": MessageLookupByLibrary.simpleMessage(
-      "Confirm to unlock File Secure",
     ),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "changePin": MessageLookupByLibrary.simpleMessage("Change PIN"),
@@ -80,7 +74,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "logOutTitle": MessageLookupByLibrary.simpleMessage("Log out?"),
     "newFolder": MessageLookupByLibrary.simpleMessage("New Folder"),
-    "newName": MessageLookupByLibrary.simpleMessage("New name"),
     "newPin": MessageLookupByLibrary.simpleMessage("New PIN"),
     "newSubfolder": MessageLookupByLibrary.simpleMessage("New Subfolder"),
     "noFilesYet": MessageLookupByLibrary.simpleMessage("No files yet"),
@@ -92,8 +85,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "preparing": MessageLookupByLibrary.simpleMessage("Preparing..."),
     "recentFiles": MessageLookupByLibrary.simpleMessage("Recent Files"),
-    "rename": MessageLookupByLibrary.simpleMessage("Rename"),
-    "renameFile": MessageLookupByLibrary.simpleMessage("Rename file"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "searchFiles": MessageLookupByLibrary.simpleMessage("Search files..."),
@@ -128,12 +119,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Something went wrong",
     ),
     "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
-    "tagName": MessageLookupByLibrary.simpleMessage("Tag name"),
     "tags": MessageLookupByLibrary.simpleMessage("Tags"),
     "tapToImport": MessageLookupByLibrary.simpleMessage(
       "Tap + to import and encrypt your first file",
     ),
     "undo": MessageLookupByLibrary.simpleMessage("Undo"),
-    "wrongPin": MessageLookupByLibrary.simpleMessage("Wrong PIN"),
   };
 }

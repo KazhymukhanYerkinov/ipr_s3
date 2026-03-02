@@ -13,10 +13,7 @@ import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 
 @lazySingleton
 class FoldersService
-    implements
-        GetFoldersBehavior,
-        CreateFolderBehavior,
-        DeleteFolderBehavior {
+    implements GetFoldersBehavior, CreateFolderBehavior, DeleteFolderBehavior {
   final FoldersLocalSource _foldersSource;
   final FilesLocalSource _filesSource;
   final _logger = SecureLogger();
@@ -91,5 +88,4 @@ class FoldersService
     logger: _logger,
     errorMessage: 'Failed to delete folder',
   );
-
 }

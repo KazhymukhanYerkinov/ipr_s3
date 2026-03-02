@@ -208,32 +208,12 @@ class GeneratedLocalization {
     );
   }
 
-  /// `Wrong PIN`
-  String get wrongPin {
-    return Intl.message(
-      'Wrong PIN',
-      name: 'wrongPin',
-      desc: 'Error message when PIN is incorrect',
-      args: [],
-    );
-  }
-
   /// `PINs don't match. Try again`
   String get pinMismatch {
     return Intl.message(
       'PINs don\'t match. Try again',
       name: 'pinMismatch',
       desc: 'Error when confirmation PIN doesn\'t match',
-      args: [],
-    );
-  }
-
-  /// `Confirm to unlock File Secure`
-  String get biometricReason {
-    return Intl.message(
-      'Confirm to unlock File Secure',
-      name: 'biometricReason',
-      desc: 'Reason string shown during biometric prompt',
       args: [],
     );
   }
@@ -628,41 +608,6 @@ class GeneratedLocalization {
     );
   }
 
-  /// `Add Tag`
-  String get addTag {
-    return Intl.message(
-      'Add Tag',
-      name: 'addTag',
-      desc: 'Add tag dialog title',
-      args: [],
-    );
-  }
-
-  /// `Tag name`
-  String get tagName {
-    return Intl.message(
-      'Tag name',
-      name: 'tagName',
-      desc: 'Tag name text field hint',
-      args: [],
-    );
-  }
-
-  /// `Add`
-  String get add {
-    return Intl.message('Add', name: 'add', desc: 'Add button label', args: []);
-  }
-
-  /// `Add tag`
-  String get addTagChip {
-    return Intl.message(
-      'Add tag',
-      name: 'addTagChip',
-      desc: 'Add tag action chip label',
-      args: [],
-    );
-  }
-
   /// `Benchmark: Dart vs C (FFI)`
   String get benchmarkTitle {
     return Intl.message(
@@ -690,36 +635,6 @@ class GeneratedLocalization {
       name: 'fileDeleted',
       desc: 'SnackBar message after file deletion',
       args: [fileName],
-    );
-  }
-
-  /// `Rename`
-  String get rename {
-    return Intl.message(
-      'Rename',
-      name: 'rename',
-      desc: 'Rename action label',
-      args: [],
-    );
-  }
-
-  /// `Rename file`
-  String get renameFile {
-    return Intl.message(
-      'Rename file',
-      name: 'renameFile',
-      desc: 'Rename file dialog title',
-      args: [],
-    );
-  }
-
-  /// `New name`
-  String get newName {
-    return Intl.message(
-      'New name',
-      name: 'newName',
-      desc: 'New name text field hint',
-      args: [],
     );
   }
 

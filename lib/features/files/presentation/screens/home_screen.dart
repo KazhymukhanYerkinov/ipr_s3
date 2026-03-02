@@ -14,7 +14,6 @@ import 'package:ipr_s3/features/files/presentation/bloc/files_event.dart';
 import 'package:ipr_s3/features/files/presentation/bloc/files_state.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/empty_state.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/file_grid.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/file_list_view.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/search_bar_widget.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/sort_dropdown.dart';
 import 'package:ipr_s3/features/folders/domain/behaviors/get_folders_behavior.dart';
@@ -46,20 +45,6 @@ class _HomeView extends StatelessWidget {
         title: Text(l.fileSecure),
         actions: [
           SortDropdown(),
-          BlocSelector<FilesBloc, FilesState, ViewMode?>(
-            selector: (state) => state is FilesLoaded ? state.viewMode : null,
-            builder: (context, viewMode) {
-              return IconButton(
-                onPressed:
-                    () => context.read<FilesBloc>().add(ViewModeToggled()),
-                icon: Icon(
-                  viewMode == ViewMode.grid
-                      ? Icons.view_list_rounded
-                      : Icons.grid_view_rounded,
-                ),
-              );
-            },
-          ),
           PopupMenuButton<String>(
             onSelected: (value) {
               switch (value) {
@@ -128,21 +113,9 @@ class _HomeView extends StatelessWidget {
                   FilesImporting(:final fileName) => LoadingStateView(
                     message: l.encryptingFile(fileName),
                   ),
-                  FilesLoaded(:final files, :final viewMode) =>
+                  FilesLoaded(:final files) =>
                     files.isEmpty
                         ? EmptyState(theme: theme)
-                        : viewMode == ViewMode.list
-                        ? FileListView(
-                          files: files,
-                          onFileTap:
-                              (file) => context.pushRoute(
-                                FileViewerRoute(
-                                  fileId: file.id,
-                                  fileName: file.name,
-                                ),
-                              ),
-                          onFileDelete: (file) => _confirmDelete(context, file),
-                        )
                         : FileGrid(
                           files: files,
                           onFileTap:

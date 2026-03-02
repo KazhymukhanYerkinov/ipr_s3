@@ -13,11 +13,8 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
   final CreateFolderUseCase _createFolder;
   final DeleteFolderUseCase _deleteFolder;
 
-  FoldersBloc(
-    this._getFoldersBehavior,
-    this._createFolder,
-    this._deleteFolder,
-  ) : super(const FoldersState.initial()) {
+  FoldersBloc(this._getFoldersBehavior, this._createFolder, this._deleteFolder)
+    : super(const FoldersState.initial()) {
     _setupHandlers();
   }
 
@@ -62,5 +59,4 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
       error: (f) => emit(FoldersState.error(message: f.message)),
     );
   }
-
 }

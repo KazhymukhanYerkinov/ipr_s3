@@ -12,7 +12,8 @@ part of 'folders_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$FoldersState {
@@ -22,16 +23,14 @@ mixin _$FoldersState {
     required TResult Function() loading,
     required TResult Function(List<FolderItem> folders) loaded,
     required TResult Function(String message) error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(List<FolderItem> folders)? loaded,
     TResult? Function(String message)? error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
@@ -39,24 +38,21 @@ mixin _$FoldersState {
     TResult Function(List<FolderItem> folders)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(FoldersInitial value) initial,
     required TResult Function(FoldersLoading value) loading,
     required TResult Function(FoldersLoaded value) loaded,
     required TResult Function(FoldersError value) error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(FoldersInitial value)? initial,
     TResult? Function(FoldersLoading value)? loading,
     TResult? Function(FoldersLoaded value)? loaded,
     TResult? Function(FoldersError value)? error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(FoldersInitial value)? initial,
@@ -64,15 +60,15 @@ mixin _$FoldersState {
     TResult Function(FoldersLoaded value)? loaded,
     TResult Function(FoldersError value)? error,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $FoldersStateCopyWith<$Res> {
   factory $FoldersStateCopyWith(
-          FoldersState value, $Res Function(FoldersState) then) =
-      _$FoldersStateCopyWithImpl<$Res, FoldersState>;
+    FoldersState value,
+    $Res Function(FoldersState) then,
+  ) = _$FoldersStateCopyWithImpl<$Res, FoldersState>;
 }
 
 /// @nodoc
@@ -88,9 +84,10 @@ class _$FoldersStateCopyWithImpl<$Res, $Val extends FoldersState>
 
 /// @nodoc
 abstract class _$$FoldersInitialImplCopyWith<$Res> {
-  factory _$$FoldersInitialImplCopyWith(_$FoldersInitialImpl value,
-          $Res Function(_$FoldersInitialImpl) then) =
-      __$$FoldersInitialImplCopyWithImpl<$Res>;
+  factory _$$FoldersInitialImplCopyWith(
+    _$FoldersInitialImpl value,
+    $Res Function(_$FoldersInitialImpl) then,
+  ) = __$$FoldersInitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -98,8 +95,9 @@ class __$$FoldersInitialImplCopyWithImpl<$Res>
     extends _$FoldersStateCopyWithImpl<$Res, _$FoldersInitialImpl>
     implements _$$FoldersInitialImplCopyWith<$Res> {
   __$$FoldersInitialImplCopyWithImpl(
-      _$FoldersInitialImpl _value, $Res Function(_$FoldersInitialImpl) _then)
-      : super(_value, _then);
+    _$FoldersInitialImpl _value,
+    $Res Function(_$FoldersInitialImpl) _then,
+  ) : super(_value, _then);
 }
 
 /// @nodoc
@@ -202,9 +200,10 @@ abstract class FoldersInitial implements FoldersState {
 
 /// @nodoc
 abstract class _$$FoldersLoadingImplCopyWith<$Res> {
-  factory _$$FoldersLoadingImplCopyWith(_$FoldersLoadingImpl value,
-          $Res Function(_$FoldersLoadingImpl) then) =
-      __$$FoldersLoadingImplCopyWithImpl<$Res>;
+  factory _$$FoldersLoadingImplCopyWith(
+    _$FoldersLoadingImpl value,
+    $Res Function(_$FoldersLoadingImpl) then,
+  ) = __$$FoldersLoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -212,8 +211,9 @@ class __$$FoldersLoadingImplCopyWithImpl<$Res>
     extends _$FoldersStateCopyWithImpl<$Res, _$FoldersLoadingImpl>
     implements _$$FoldersLoadingImplCopyWith<$Res> {
   __$$FoldersLoadingImplCopyWithImpl(
-      _$FoldersLoadingImpl _value, $Res Function(_$FoldersLoadingImpl) _then)
-      : super(_value, _then);
+    _$FoldersLoadingImpl _value,
+    $Res Function(_$FoldersLoadingImpl) _then,
+  ) : super(_value, _then);
 }
 
 /// @nodoc
@@ -317,8 +317,9 @@ abstract class FoldersLoading implements FoldersState {
 /// @nodoc
 abstract class _$$FoldersLoadedImplCopyWith<$Res> {
   factory _$$FoldersLoadedImplCopyWith(
-          _$FoldersLoadedImpl value, $Res Function(_$FoldersLoadedImpl) then) =
-      __$$FoldersLoadedImplCopyWithImpl<$Res>;
+    _$FoldersLoadedImpl value,
+    $Res Function(_$FoldersLoadedImpl) then,
+  ) = __$$FoldersLoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({List<FolderItem> folders});
 }
@@ -328,20 +329,22 @@ class __$$FoldersLoadedImplCopyWithImpl<$Res>
     extends _$FoldersStateCopyWithImpl<$Res, _$FoldersLoadedImpl>
     implements _$$FoldersLoadedImplCopyWith<$Res> {
   __$$FoldersLoadedImplCopyWithImpl(
-      _$FoldersLoadedImpl _value, $Res Function(_$FoldersLoadedImpl) _then)
-      : super(_value, _then);
+    _$FoldersLoadedImpl _value,
+    $Res Function(_$FoldersLoadedImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? folders = null,
-  }) {
-    return _then(_$FoldersLoadedImpl(
-      folders: null == folders
-          ? _value._folders
-          : folders // ignore: cast_nullable_to_non_nullable
-              as List<FolderItem>,
-    ));
+  $Res call({Object? folders = null}) {
+    return _then(
+      _$FoldersLoadedImpl(
+        folders:
+            null == folders
+                ? _value._folders
+                : folders // ignore: cast_nullable_to_non_nullable
+                    as List<FolderItem>,
+      ),
+    );
   }
 }
 
@@ -349,7 +352,7 @@ class __$$FoldersLoadedImplCopyWithImpl<$Res>
 
 class _$FoldersLoadedImpl implements FoldersLoaded {
   const _$FoldersLoadedImpl({required final List<FolderItem> folders})
-      : _folders = folders;
+    : _folders = folders;
 
   final List<FolderItem> _folders;
   @override
@@ -470,8 +473,9 @@ abstract class FoldersLoaded implements FoldersState {
 /// @nodoc
 abstract class _$$FoldersErrorImplCopyWith<$Res> {
   factory _$$FoldersErrorImplCopyWith(
-          _$FoldersErrorImpl value, $Res Function(_$FoldersErrorImpl) then) =
-      __$$FoldersErrorImplCopyWithImpl<$Res>;
+    _$FoldersErrorImpl value,
+    $Res Function(_$FoldersErrorImpl) then,
+  ) = __$$FoldersErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String message});
 }
@@ -481,20 +485,22 @@ class __$$FoldersErrorImplCopyWithImpl<$Res>
     extends _$FoldersStateCopyWithImpl<$Res, _$FoldersErrorImpl>
     implements _$$FoldersErrorImplCopyWith<$Res> {
   __$$FoldersErrorImplCopyWithImpl(
-      _$FoldersErrorImpl _value, $Res Function(_$FoldersErrorImpl) _then)
-      : super(_value, _then);
+    _$FoldersErrorImpl _value,
+    $Res Function(_$FoldersErrorImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? message = null,
-  }) {
-    return _then(_$FoldersErrorImpl(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+  $Res call({Object? message = null}) {
+    return _then(
+      _$FoldersErrorImpl(
+        message:
+            null == message
+                ? _value.message
+                : message // ignore: cast_nullable_to_non_nullable
+                    as String,
+      ),
+    );
   }
 }
 

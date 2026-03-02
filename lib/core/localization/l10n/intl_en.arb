@@ -299,26 +299,6 @@
     "description": "Search bar hint text"
   },
 
-  "addTag": "Add Tag",
-  "@addTag": {
-    "description": "Add tag dialog title"
-  },
-
-  "tagName": "Tag name",
-  "@tagName": {
-    "description": "Tag name text field hint"
-  },
-
-  "add": "Add",
-  "@add": {
-    "description": "Add button label"
-  },
-
-  "addTagChip": "Add tag",
-  "@addTagChip": {
-    "description": "Add tag action chip label"
-  },
-
   "benchmarkTitle": "Benchmark: Dart vs C (FFI)",
   "@benchmarkTitle": {
     "description": "Benchmark screen app bar title"

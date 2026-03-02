@@ -2,17 +2,14 @@ import 'dart:typed_data';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:ipr_s3/core/collections/tag.dart';
 import 'package:ipr_s3/core/di/injection.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
 import 'package:ipr_s3/core/widgets/error_state_view.dart';
 import 'package:ipr_s3/core/widgets/loading_state_view.dart';
-import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/decrypt_file.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/get_files.dart';
 import 'package:ipr_s3/features/files/presentation/widgets/previews/file_preview_factory.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/tag_chips_widget.dart';
 
 @RoutePage()
 class FileViewerScreen extends StatefulWidget {
@@ -119,36 +116,9 @@ class _FileViewerScreenState extends State<FileViewerScreen> {
     }
 
     if (_file != null && _decryptedBytes != null) {
-      return Column(
-        children: [
-          Expanded(
-            child: FilePreviewFactory.create(
-              file: _file!,
-              bytes: _decryptedBytes!,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: TagChipsWidget(
-              tags: _file!.tags.map(Tag.new).toSet(),
-              onTagsChanged: _onTagsChanged,
-            ),
-          ),
-        ],
-      );
+      return FilePreviewFactory.create(file: _file!, bytes: _decryptedBytes!);
     }
 
     return const SizedBox.shrink();
-  }
-
-  Future<void> _onTagsChanged(Set<Tag> tags) async {
-    if (_file == null) return;
-    final tagStrings = tags.map((t) => t.name).toList();
-    final updated = _file!.copyWith(
-      tags: tagStrings,
-      updatedAt: DateTime.now(),
-    );
-    await getIt<FilesLocalSource>().save(updated);
-    setState(() => _file = updated);
   }
 }

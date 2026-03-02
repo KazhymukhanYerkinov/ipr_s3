@@ -22,8 +22,6 @@ final class FileSearchRequested extends FilesEvent {
 
 final class FileSearchCleared extends FilesEvent {}
 
-final class ViewModeToggled extends FilesEvent {}
-
 final class SortStrategyChanged extends FilesEvent {
   final SortStrategy strategy;
   SortStrategyChanged(this.strategy);
