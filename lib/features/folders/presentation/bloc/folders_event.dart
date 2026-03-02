@@ -12,9 +12,3 @@ final class FolderDeleteRequested extends FoldersEvent {
   final String folderId;
   FolderDeleteRequested(this.folderId);
 }
-
-final class FileMovedToFolder extends FoldersEvent {
-  final String fileId;
-  final String? folderId;
-  FileMovedToFolder({required this.fileId, this.folderId});
-}

@@ -8,7 +8,6 @@ import 'package:ipr_s3/features/folders/data/sources/folders_local_source.dart';
 import 'package:ipr_s3/features/folders/domain/behaviors/create_folder_behavior.dart';
 import 'package:ipr_s3/features/folders/domain/behaviors/delete_folder_behavior.dart';
 import 'package:ipr_s3/features/folders/domain/behaviors/get_folders_behavior.dart';
-import 'package:ipr_s3/features/folders/domain/behaviors/move_file_to_folder_behavior.dart';
 import 'package:ipr_s3/features/folders/domain/models/file_item.dart';
 import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 
@@ -17,8 +16,7 @@ class FoldersService
     implements
         GetFoldersBehavior,
         CreateFolderBehavior,
-        DeleteFolderBehavior,
-        MoveFileToFolderBehavior {
+        DeleteFolderBehavior {
   final FoldersLocalSource _foldersSource;
   final FilesLocalSource _filesSource;
   final _logger = SecureLogger();
@@ -94,23 +92,4 @@ class FoldersService
     errorMessage: 'Failed to delete folder',
   );
 
-  @override
-  Future<Result<void>> moveFileToFolder({
-    required String fileId,
-    required String? folderId,
-  }) async {
-    try {
-      final file = await _filesSource.getById(fileId);
-      if (file == null) {
-        return ErrorResult(const FileFailure(message: 'File not found'));
-      }
-      final updated = file.copyWith(folderId: folderId);
-      await _filesSource.save(updated);
-      _logger.info('File moved to folder');
-      return SuccessResult(null);
-    } catch (e, st) {
-      _logger.error('Failed to move file', e, st);
-      return ErrorResult(const FileFailure(message: 'Failed to move file'));
-    }
-  }
 }

@@ -3,7 +3,6 @@ import 'package:ipr_s3/features/folders/data/services/folders_service.dart';
 import 'package:ipr_s3/features/folders/domain/behaviors/create_folder_behavior.dart';
 import 'package:ipr_s3/features/folders/domain/behaviors/delete_folder_behavior.dart';
 import 'package:ipr_s3/features/folders/domain/behaviors/get_folders_behavior.dart';
-import 'package:ipr_s3/features/folders/domain/behaviors/move_file_to_folder_behavior.dart';
 
 @module
 abstract class FoldersModule {
@@ -15,8 +14,4 @@ abstract class FoldersModule {
 
   @factoryMethod
   DeleteFolderBehavior deleteFolderBehavior(FoldersService service) => service;
-
-  @factoryMethod
-  MoveFileToFolderBehavior moveFileToFolderBehavior(FoldersService service) =>
-      service;
 }

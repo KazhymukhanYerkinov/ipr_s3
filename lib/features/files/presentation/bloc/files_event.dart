@@ -29,18 +29,6 @@ final class SortStrategyChanged extends FilesEvent {
   SortStrategyChanged(this.strategy);
 }
 
-final class FileMoveRequested extends FilesEvent {
-  final SecureFileEntity file;
-  final String? targetFolderId;
-  FileMoveRequested(this.file, this.targetFolderId);
-}
-
-final class FileRenameRequested extends FilesEvent {
-  final SecureFileEntity file;
-  final String newName;
-  FileRenameRequested(this.file, this.newName);
-}
-
 final class UndoRequested extends FilesEvent {}
 
 final class RedoRequested extends FilesEvent {}

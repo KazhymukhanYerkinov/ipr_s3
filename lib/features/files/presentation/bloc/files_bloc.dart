@@ -4,8 +4,6 @@ import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
 import 'package:ipr_s3/features/files/domain/commands/command_manager.dart';
 import 'package:ipr_s3/features/files/domain/commands/delete_file_command.dart';
-import 'package:ipr_s3/features/files/domain/commands/move_file_command.dart';
-import 'package:ipr_s3/features/files/domain/commands/rename_file_command.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_by_date.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_strategy.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/get_files.dart';
@@ -44,8 +42,6 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     on<FileSearchCleared>(_onSearchCleared);
     on<ViewModeToggled>(_onViewModeToggled);
     on<SortStrategyChanged>(_onSortStrategyChanged);
-    on<FileMoveRequested>(_onMove);
-    on<FileRenameRequested>(_onRename);
     on<UndoRequested>(_onUndo);
     on<RedoRequested>(_onRedo);
   }
@@ -123,34 +119,6 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
       emit,
       () => _commandManager.execute(command),
       'Failed to delete file',
-    );
-  }
-
-  Future<void> _onMove(
-    FileMoveRequested event,
-    Emitter<FilesState> emit,
-  ) async {
-    final command = MoveFileCommand(
-      _localSource,
-      event.file,
-      event.targetFolderId,
-    );
-    await _runCommand(
-      emit,
-      () => _commandManager.execute(command),
-      'Failed to move file',
-    );
-  }
-
-  Future<void> _onRename(
-    FileRenameRequested event,
-    Emitter<FilesState> emit,
-  ) async {
-    final command = RenameFileCommand(_localSource, event.file, event.newName);
-    await _runCommand(
-      emit,
-      () => _commandManager.execute(command),
-      'Failed to rename file',
     );
   }
 

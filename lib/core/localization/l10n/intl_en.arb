@@ -76,19 +76,9 @@
     "description": "Set PIN screen subtitle — first step"
   },
 
-  "wrongPin": "Wrong PIN",
-  "@wrongPin": {
-    "description": "Error message when PIN is incorrect"
-  },
-
   "pinMismatch": "PINs don't match. Try again",
   "@pinMismatch": {
     "description": "Error when confirmation PIN doesn't match"
-  },
-
-  "biometricReason": "Confirm to unlock File Secure",
-  "@biometricReason": {
-    "description": "Reason string shown during biometric prompt"
   },
 
   "fileSecure": "File Secure",
@@ -347,21 +337,6 @@
         "type": "String"
       }
     }
-  },
-
-  "rename": "Rename",
-  "@rename": {
-    "description": "Rename action label"
-  },
-
-  "renameFile": "Rename file",
-  "@renameFile": {
-    "description": "Rename file dialog title"
-  },
-
-  "newName": "New name",
-  "@newName": {
-    "description": "New name text field hint"
   },
 
   "tags": "Tags",
