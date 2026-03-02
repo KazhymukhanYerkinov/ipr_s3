@@ -10,8 +10,8 @@ import 'package:ipr_s3/features/files/domain/use_cases/get_files.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/import_file.dart';
 import 'package:ipr_s3/features/files/domain/use_cases/search_files.dart';
 import 'package:ipr_s3/features/files/domain/utils/file_type_resolver.dart';
-import 'package:ipr_s3/features/files/presentation/bloc/files_event.dart';
-import 'package:ipr_s3/features/files/presentation/bloc/files_state.dart';
+import 'package:ipr_s3/features/files/presentation/files/bloc/files_event.dart';
+import 'package:ipr_s3/features/files/presentation/files/bloc/files_state.dart';
 
 @injectable
 class FilesBloc extends Bloc<FilesEvent, FilesState> {
@@ -59,7 +59,14 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
 
     final files = result.value ?? [];
     final sorted = _currentSortStrategy.sort(files);
-    emit(FilesState.loaded(files: sorted, sortStrategy: _currentSortStrategy));
+    emit(
+      FilesState.loaded(
+        files: sorted,
+        sortStrategy: _currentSortStrategy,
+        canUndo: _commandManager.canUndo,
+        canRedo: _commandManager.canRedo,
+      ),
+    );
   }
 
   Future<void> _onImport(
@@ -116,6 +123,16 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     try {
       final command = DeleteFileCommand(_localSource, event.file);
       await _commandManager.execute(command);
+
+      final afterDelete = state;
+      if (afterDelete is FilesLoaded) {
+        emit(
+          afterDelete.copyWith(
+            canUndo: _commandManager.canUndo,
+            canRedo: _commandManager.canRedo,
+          ),
+        );
+      }
     } catch (e) {
       await _silentReload(emit);
     }
@@ -155,7 +172,14 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
 
     final files = result.value ?? [];
     final sorted = _currentSortStrategy.sort(files);
-    emit(FilesState.loaded(files: sorted, sortStrategy: _currentSortStrategy));
+    emit(
+      FilesState.loaded(
+        files: sorted,
+        sortStrategy: _currentSortStrategy,
+        canUndo: _commandManager.canUndo,
+        canRedo: _commandManager.canRedo,
+      ),
+    );
   }
 
   Future<void> _onSearch(
@@ -182,6 +206,8 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
         files: sorted,
         searchQuery: event.query,
         sortStrategy: _currentSortStrategy,
+        canUndo: _commandManager.canUndo,
+        canRedo: _commandManager.canRedo,
       ),
     );
   }

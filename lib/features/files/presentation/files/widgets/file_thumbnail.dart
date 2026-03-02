@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ipr_s3/core/di/injection.dart';
 import 'package:ipr_s3/features/files/data/services/file_encryption_service.dart';
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/file_icon.dart';
+import 'package:ipr_s3/features/files/presentation/files/widgets/file_icon.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 class FileThumbnail extends StatefulWidget {

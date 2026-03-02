@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ipr_s3/core/utils/format_utils.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/file_icon.dart';
+import 'package:ipr_s3/features/files/presentation/files/widgets/file_icon.dart';
 import 'package:ipr_s3/features/folders/domain/models/file_item.dart';
 
 class FileNodeTile extends StatelessWidget {

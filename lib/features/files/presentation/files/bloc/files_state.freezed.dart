@@ -25,6 +25,8 @@ mixin _$FilesState {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )
     loaded,
     required TResult Function(String fileName) importing,
@@ -38,6 +40,8 @@ mixin _$FilesState {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult? Function(String fileName)? importing,
@@ -51,6 +55,8 @@ mixin _$FilesState {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult Function(String fileName)? importing,
@@ -149,6 +155,8 @@ class _$FilesInitialImpl implements FilesInitial {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )
     loaded,
     required TResult Function(String fileName) importing,
@@ -166,6 +174,8 @@ class _$FilesInitialImpl implements FilesInitial {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult? Function(String fileName)? importing,
@@ -183,6 +193,8 @@ class _$FilesInitialImpl implements FilesInitial {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult Function(String fileName)? importing,
@@ -286,6 +298,8 @@ class _$FilesLoadingImpl implements FilesLoading {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )
     loaded,
     required TResult Function(String fileName) importing,
@@ -303,6 +317,8 @@ class _$FilesLoadingImpl implements FilesLoading {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult? Function(String fileName)? importing,
@@ -320,6 +336,8 @@ class _$FilesLoadingImpl implements FilesLoading {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult Function(String fileName)? importing,
@@ -388,6 +406,8 @@ abstract class _$$FilesLoadedImplCopyWith<$Res> {
     List<SecureFileEntity> files,
     String searchQuery,
     SortStrategy? sortStrategy,
+    bool canUndo,
+    bool canRedo,
   });
 }
 
@@ -406,6 +426,8 @@ class __$$FilesLoadedImplCopyWithImpl<$Res>
     Object? files = null,
     Object? searchQuery = null,
     Object? sortStrategy = freezed,
+    Object? canUndo = null,
+    Object? canRedo = null,
   }) {
     return _then(
       _$FilesLoadedImpl(
@@ -424,6 +446,16 @@ class __$$FilesLoadedImplCopyWithImpl<$Res>
                 ? _value.sortStrategy
                 : sortStrategy // ignore: cast_nullable_to_non_nullable
                     as SortStrategy?,
+        canUndo:
+            null == canUndo
+                ? _value.canUndo
+                : canUndo // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        canRedo:
+            null == canRedo
+                ? _value.canRedo
+                : canRedo // ignore: cast_nullable_to_non_nullable
+                    as bool,
       ),
     );
   }
@@ -436,6 +468,8 @@ class _$FilesLoadedImpl implements FilesLoaded {
     required final List<SecureFileEntity> files,
     this.searchQuery = '',
     this.sortStrategy,
+    this.canUndo = false,
+    this.canRedo = false,
   }) : _files = files;
 
   final List<SecureFileEntity> _files;
@@ -451,10 +485,16 @@ class _$FilesLoadedImpl implements FilesLoaded {
   final String searchQuery;
   @override
   final SortStrategy? sortStrategy;
+  @override
+  @JsonKey()
+  final bool canUndo;
+  @override
+  @JsonKey()
+  final bool canRedo;
 
   @override
   String toString() {
-    return 'FilesState.loaded(files: $files, searchQuery: $searchQuery, sortStrategy: $sortStrategy)';
+    return 'FilesState.loaded(files: $files, searchQuery: $searchQuery, sortStrategy: $sortStrategy, canUndo: $canUndo, canRedo: $canRedo)';
   }
 
   @override
@@ -466,7 +506,9 @@ class _$FilesLoadedImpl implements FilesLoaded {
             (identical(other.searchQuery, searchQuery) ||
                 other.searchQuery == searchQuery) &&
             (identical(other.sortStrategy, sortStrategy) ||
-                other.sortStrategy == sortStrategy));
+                other.sortStrategy == sortStrategy) &&
+            (identical(other.canUndo, canUndo) || other.canUndo == canUndo) &&
+            (identical(other.canRedo, canRedo) || other.canRedo == canRedo));
   }
 
   @override
@@ -475,6 +517,8 @@ class _$FilesLoadedImpl implements FilesLoaded {
     const DeepCollectionEquality().hash(_files),
     searchQuery,
     sortStrategy,
+    canUndo,
+    canRedo,
   );
 
   @JsonKey(ignore: true)
@@ -492,12 +536,14 @@ class _$FilesLoadedImpl implements FilesLoaded {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )
     loaded,
     required TResult Function(String fileName) importing,
     required TResult Function(String message) error,
   }) {
-    return loaded(files, searchQuery, sortStrategy);
+    return loaded(files, searchQuery, sortStrategy, canUndo, canRedo);
   }
 
   @override
@@ -509,12 +555,14 @@ class _$FilesLoadedImpl implements FilesLoaded {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult? Function(String fileName)? importing,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(files, searchQuery, sortStrategy);
+    return loaded?.call(files, searchQuery, sortStrategy, canUndo, canRedo);
   }
 
   @override
@@ -526,6 +574,8 @@ class _$FilesLoadedImpl implements FilesLoaded {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult Function(String fileName)? importing,
@@ -533,7 +583,7 @@ class _$FilesLoadedImpl implements FilesLoaded {
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(files, searchQuery, sortStrategy);
+      return loaded(files, searchQuery, sortStrategy, canUndo, canRedo);
     }
     return orElse();
   }
@@ -584,11 +634,15 @@ abstract class FilesLoaded implements FilesState {
     required final List<SecureFileEntity> files,
     final String searchQuery,
     final SortStrategy? sortStrategy,
+    final bool canUndo,
+    final bool canRedo,
   }) = _$FilesLoadedImpl;
 
   List<SecureFileEntity> get files;
   String get searchQuery;
   SortStrategy? get sortStrategy;
+  bool get canUndo;
+  bool get canRedo;
   @JsonKey(ignore: true)
   _$$FilesLoadedImplCopyWith<_$FilesLoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -671,6 +725,8 @@ class _$FilesImportingImpl implements FilesImporting {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )
     loaded,
     required TResult Function(String fileName) importing,
@@ -688,6 +744,8 @@ class _$FilesImportingImpl implements FilesImporting {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult? Function(String fileName)? importing,
@@ -705,6 +763,8 @@ class _$FilesImportingImpl implements FilesImporting {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult Function(String fileName)? importing,
@@ -841,6 +901,8 @@ class _$FilesErrorImpl implements FilesError {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )
     loaded,
     required TResult Function(String fileName) importing,
@@ -858,6 +920,8 @@ class _$FilesErrorImpl implements FilesError {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult? Function(String fileName)? importing,
@@ -875,6 +939,8 @@ class _$FilesErrorImpl implements FilesError {
       List<SecureFileEntity> files,
       String searchQuery,
       SortStrategy? sortStrategy,
+      bool canUndo,
+      bool canRedo,
     )?
     loaded,
     TResult Function(String fileName)? importing,

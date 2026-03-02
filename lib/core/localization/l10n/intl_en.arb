@@ -309,6 +309,21 @@
     "description": "Undo action label"
   },
 
+  "redo": "Redo",
+  "@redo": {
+    "description": "Redo action label"
+  },
+
+  "actionUndone": "Action undone",
+  "@actionUndone": {
+    "description": "SnackBar message after undo"
+  },
+
+  "actionRedone": "Action redone",
+  "@actionRedone": {
+    "description": "SnackBar message after redo"
+  },
+
   "fileDeleted": "\"{fileName}\" deleted",
   "@fileDeleted": {
     "description": "SnackBar message after file deletion",

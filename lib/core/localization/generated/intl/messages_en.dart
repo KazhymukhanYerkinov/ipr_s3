@@ -124,5 +124,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tap + to import and encrypt your first file",
     ),
     "undo": MessageLookupByLibrary.simpleMessage("Undo"),
+    "redo": MessageLookupByLibrary.simpleMessage("Redo"),
+    "actionRedone": MessageLookupByLibrary.simpleMessage("Action redone"),
+    "actionUndone": MessageLookupByLibrary.simpleMessage("Action undone"),
   };
 }

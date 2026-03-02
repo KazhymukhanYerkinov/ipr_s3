@@ -628,6 +628,36 @@ class GeneratedLocalization {
     );
   }
 
+  /// `Redo`
+  String get redo {
+    return Intl.message(
+      'Redo',
+      name: 'redo',
+      desc: 'Redo action label',
+      args: [],
+    );
+  }
+
+  /// `Action undone`
+  String get actionUndone {
+    return Intl.message(
+      'Action undone',
+      name: 'actionUndone',
+      desc: 'SnackBar message after undo',
+      args: [],
+    );
+  }
+
+  /// `Action redone`
+  String get actionRedone {
+    return Intl.message(
+      'Action redone',
+      name: 'actionRedone',
+      desc: 'SnackBar message after redo',
+      args: [],
+    );
+  }
+
   /// `"{fileName}" deleted`
   String fileDeleted(String fileName) {
     return Intl.message(

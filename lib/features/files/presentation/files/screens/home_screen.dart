@@ -9,14 +9,14 @@ import 'package:ipr_s3/core/widgets/destructive_dialog.dart';
 import 'package:ipr_s3/core/widgets/error_state_view.dart';
 import 'package:ipr_s3/core/widgets/loading_state_view.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
-import 'package:ipr_s3/features/files/presentation/bloc/files_bloc.dart';
-import 'package:ipr_s3/features/files/presentation/bloc/files_event.dart';
-import 'package:ipr_s3/features/files/presentation/bloc/files_state.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/empty_state.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/file_grid.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/search_bar_widget.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/sort_dropdown.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/folder_picker_sheet.dart';
+import 'package:ipr_s3/features/files/presentation/files/bloc/files_bloc.dart';
+import 'package:ipr_s3/features/files/presentation/files/bloc/files_event.dart';
+import 'package:ipr_s3/features/files/presentation/files/bloc/files_state.dart';
+import 'package:ipr_s3/features/files/presentation/files/widgets/empty_state.dart';
+import 'package:ipr_s3/features/files/presentation/files/widgets/file_grid.dart';
+import 'package:ipr_s3/features/files/presentation/files/widgets/search_bar_widget.dart';
+import 'package:ipr_s3/features/files/presentation/files/widgets/sort_dropdown.dart';
+import 'package:ipr_s3/features/files/presentation/files/widgets/folder_picker_sheet.dart';
 
 @RoutePage()
 class HomeScreen extends StatelessWidget {
@@ -43,6 +43,47 @@ class _HomeView extends StatelessWidget {
       appBar: AppBar(
         title: Text(l.fileSecure),
         actions: [
+          BlocSelector<FilesBloc, FilesState, ({bool canUndo, bool canRedo})>(
+            selector:
+                (state) => switch (state) {
+                  FilesLoaded(:final canUndo, :final canRedo) => (
+                    canUndo: canUndo,
+                    canRedo: canRedo,
+                  ),
+                  _ => (canUndo: false, canRedo: false),
+                },
+            builder: (context, record) {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.undo_rounded),
+                    tooltip: l.undo,
+                    onPressed:
+                        record.canUndo
+                            ? () {
+                              final bloc = context.read<FilesBloc>();
+                              bloc.add(UndoRequested());
+                              _showUndoneSnackBar(context, bloc);
+                            }
+                            : null,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.redo_rounded),
+                    tooltip: l.redo,
+                    onPressed:
+                        record.canRedo
+                            ? () {
+                              final bloc = context.read<FilesBloc>();
+                              bloc.add(RedoRequested());
+                              _showRedoneSnackBar(context, bloc);
+                            }
+                            : null,
+                  ),
+                ],
+              );
+            },
+          ),
           SortDropdown(),
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -174,13 +215,54 @@ class _HomeView extends StatelessWidget {
 
     final bloc = context.read<FilesBloc>();
     bloc.add(FileDeleteRequested(file));
+    _showDeletedSnackBar(context, bloc, file);
+  }
 
+  void _showDeletedSnackBar(
+    BuildContext context,
+    FilesBloc bloc,
+    SecureFileEntity file,
+  ) {
+    final l = context.locale;
     context.showFloatingSnackBar(
       l.fileDeleted(file.name),
       duration: const Duration(seconds: 5),
       action: SnackBarAction(
         label: l.undo,
-        onPressed: () => bloc.add(UndoRequested()),
+        onPressed: () {
+          bloc.add(UndoRequested());
+          if (context.mounted) _showUndoneSnackBar(context, bloc);
+        },
+      ),
+    );
+  }
+
+  void _showUndoneSnackBar(BuildContext context, FilesBloc bloc) {
+    final l = context.locale;
+    context.showFloatingSnackBar(
+      l.actionUndone,
+      duration: const Duration(seconds: 5),
+      action: SnackBarAction(
+        label: l.redo,
+        onPressed: () {
+          bloc.add(RedoRequested());
+          if (context.mounted) _showRedoneSnackBar(context, bloc);
+        },
+      ),
+    );
+  }
+
+  void _showRedoneSnackBar(BuildContext context, FilesBloc bloc) {
+    final l = context.locale;
+    context.showFloatingSnackBar(
+      l.actionRedone,
+      duration: const Duration(seconds: 5),
+      action: SnackBarAction(
+        label: l.undo,
+        onPressed: () {
+          bloc.add(UndoRequested());
+          if (context.mounted) _showUndoneSnackBar(context, bloc);
+        },
       ),
     );
   }

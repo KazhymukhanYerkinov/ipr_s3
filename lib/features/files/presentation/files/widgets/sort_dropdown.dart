@@ -5,8 +5,8 @@ import 'package:ipr_s3/features/files/domain/strategies/sort_by_name.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_by_size.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_by_type.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_strategy.dart';
-import 'package:ipr_s3/features/files/presentation/bloc/files_bloc.dart';
-import 'package:ipr_s3/features/files/presentation/bloc/files_event.dart';
+import 'package:ipr_s3/features/files/presentation/files/bloc/files_bloc.dart';
+import 'package:ipr_s3/features/files/presentation/files/bloc/files_event.dart';
 
 class SortDropdown extends StatelessWidget {
   const SortDropdown({super.key});

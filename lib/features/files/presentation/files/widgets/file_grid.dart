@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/grid_card.dart';
+import 'package:ipr_s3/features/files/presentation/files/widgets/grid_card.dart';
 
 class FileGrid extends StatelessWidget {
   final List<SecureFileEntity> files;

@@ -2,10 +2,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/previews/image_preview.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/previews/pdf_preview.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/previews/text_preview.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/previews/unknown_preview.dart';
+import 'package:ipr_s3/features/files/presentation/file_viewer/widgets/previews/image_preview.dart';
+import 'package:ipr_s3/features/files/presentation/file_viewer/widgets/previews/pdf_preview.dart';
+import 'package:ipr_s3/features/files/presentation/file_viewer/widgets/previews/text_preview.dart';
+import 'package:ipr_s3/features/files/presentation/file_viewer/widgets/previews/unknown_preview.dart';
 
 abstract class FilePreviewFactory {
   static Widget create({

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:ipr_s3/features/files/presentation/widgets/previews/error_placeholder.dart';
+import 'package:ipr_s3/features/files/presentation/file_viewer/widgets/previews/error_placeholder.dart';
 
 class ImagePreview extends StatelessWidget {
   final Uint8List bytes;

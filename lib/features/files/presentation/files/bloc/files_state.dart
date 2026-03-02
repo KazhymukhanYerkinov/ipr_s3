@@ -12,6 +12,8 @@ sealed class FilesState with _$FilesState {
     required List<SecureFileEntity> files,
     @Default('') String searchQuery,
     SortStrategy? sortStrategy,
+    @Default(false) bool canUndo,
+    @Default(false) bool canRedo,
   }) = FilesLoaded;
   const factory FilesState.importing({required String fileName}) =
       FilesImporting;

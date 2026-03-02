@@ -85,8 +85,10 @@ import 'package:ipr_s3/features/files/domain/use_cases/import_file.dart'
     as _i188;
 import 'package:ipr_s3/features/files/domain/use_cases/search_files.dart'
     as _i787;
-import 'package:ipr_s3/features/files/presentation/bloc/files_bloc.dart'
-    as _i288;
+import 'package:ipr_s3/features/files/presentation/file_viewer/bloc/file_viewer_bloc.dart'
+    as _i784;
+import 'package:ipr_s3/features/files/presentation/files/bloc/files_bloc.dart'
+    as _i478;
 import 'package:ipr_s3/features/folders/config/folders_module.dart' as _i13;
 import 'package:ipr_s3/features/folders/data/services/folders_service.dart'
     as _i191;
@@ -283,8 +285,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i246.DeleteFolderUseCase>(),
       ),
     );
-    gh.factory<_i288.FilesBloc>(
-      () => _i288.FilesBloc(
+    gh.factory<_i478.FilesBloc>(
+      () => _i478.FilesBloc(
         gh<_i942.GetFilesUseCase>(),
         gh<_i188.ImportFileUseCase>(),
         gh<_i787.SearchFilesUseCase>(),
@@ -301,6 +303,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i712.SetPinUseCase>(),
         gh<_i262.VerifyPinUseCase>(),
         gh<_i139.AuthenticateBiometricsUseCase>(),
+      ),
+    );
+    gh.factory<_i784.FileViewerBloc>(
+      () => _i784.FileViewerBloc(
+        gh<_i943.FilesLocalSource>(),
+        gh<_i166.DecryptFileUseCase>(),
       ),
     );
     return this;
