@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 class SearchRequest {
@@ -52,8 +51,6 @@ void _searchIsolateEntry(SendPort mainSendPort) {
 
 @lazySingleton
 class FileSearchService {
-  final _logger = SecureLogger();
-
   Isolate? _isolate;
   SendPort? _workerSendPort;
   ReceivePort? _mainReceivePort;
@@ -82,7 +79,6 @@ class FileSearchService {
     });
 
     _workerSendPort = await completer.future;
-    _logger.info('Search isolate initialized with bidirectional communication');
   }
 
   Future<List<SecureFileEntity>> search(
@@ -141,6 +137,5 @@ class FileSearchService {
     _resultController.close();
     _isolate = null;
     _workerSendPort = null;
-    _logger.info('Search isolate disposed');
   }
 }

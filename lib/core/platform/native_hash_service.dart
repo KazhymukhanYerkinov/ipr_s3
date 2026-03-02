@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/core/security/secure_logger.dart';
 
 typedef NativeCrc32 = Uint32 Function(Pointer<Uint8>, Int32);
 typedef NativeDjb2 = Uint32 Function(Pointer<Utf8>);
@@ -16,8 +15,6 @@ typedef DartCountBytes = int Function(Pointer<Uint8>, int, int);
 
 @lazySingleton
 class NativeHashService {
-  final _logger = SecureLogger();
-
   late final DartCrc32 _crc32;
   late final DartDjb2 _djb2Hash;
   late final DartCountBytes _countBytes;
@@ -40,8 +37,6 @@ class NativeHashService {
     _countBytes = lib.lookupFunction<NativeCountBytes, DartCountBytes>(
       'native_count_bytes',
     );
-
-    _logger.info('Native hash library loaded successfully');
   }
 
   int crc32(Uint8List data) {

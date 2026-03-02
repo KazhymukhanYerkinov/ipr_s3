@@ -83,22 +83,11 @@ void main() {
   group('signOut', () {
     test('should return success on successful sign-out', () async {
       when(() => mockRemoteSource.signOut()).thenAnswer((_) async {});
-      when(() => mockLocalSource.deleteToken()).thenAnswer((_) async {});
 
       final result = await authService.signOut();
 
       expect(result.isSuccess, true);
       verify(() => mockRemoteSource.signOut()).called(1);
-      verify(() => mockLocalSource.deleteToken()).called(1);
-    });
-
-    test('should delete local token on sign-out', () async {
-      when(() => mockRemoteSource.signOut()).thenAnswer((_) async {});
-      when(() => mockLocalSource.deleteToken()).thenAnswer((_) async {});
-
-      await authService.signOut();
-
-      verify(() => mockLocalSource.deleteToken()).called(1);
     });
 
     test('should return AuthFailure when remote sign-out throws', () async {
@@ -111,18 +100,6 @@ void main() {
       expect(result.isError, true);
       expect(result.failure, isA<AuthFailure>());
       expect(result.failure?.message, 'Failed to sign out');
-    });
-
-    test('should return AuthFailure when local deleteToken throws', () async {
-      when(() => mockRemoteSource.signOut()).thenAnswer((_) async {});
-      when(
-        () => mockLocalSource.deleteToken(),
-      ).thenThrow(Exception('Storage error'));
-
-      final result = await authService.signOut();
-
-      expect(result.isError, true);
-      expect(result.failure, isA<AuthFailure>());
     });
   });
 

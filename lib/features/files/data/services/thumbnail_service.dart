@@ -34,7 +34,6 @@ class ThumbnailService {
   final _logger = SecureLogger();
 
   Future<Uint8List?> create(Uint8List imageBytes) async {
-    _logger.info('Generating thumbnail in background isolate');
     try {
       return await compute(
         generateThumbnail,

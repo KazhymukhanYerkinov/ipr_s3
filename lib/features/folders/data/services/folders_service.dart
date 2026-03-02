@@ -70,7 +70,6 @@ class FoldersService
         createdAt: DateTime.now(),
       );
       await _foldersSource.save(folder);
-      _logger.info('Folder created');
       return folder;
     },
     onError: () => const CacheFailure(message: 'Failed to create folder'),
@@ -82,7 +81,6 @@ class FoldersService
   Future<Result<void>> deleteFolder(String folderId) => runGuarded(
     action: () async {
       await _foldersSource.delete(folderId);
-      _logger.info('Folder deleted');
     },
     onError: () => const CacheFailure(message: 'Failed to delete folder'),
     logger: _logger,

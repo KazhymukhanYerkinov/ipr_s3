@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:ipr_s3/core/security/encryption_helper.dart';
-import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/data/dtos/secure_file_dto.dart';
 import 'package:ipr_s3/features/files/data/mappers/secure_file_mapper.dart';
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
@@ -15,7 +14,6 @@ class FilesLocalSourceImpl implements FilesLocalSource {
   static const _boxName = 'secure_files';
 
   final EncryptionHelper _encryptionHelper;
-  final _logger = SecureLogger();
 
   FilesLocalSourceImpl(this._encryptionHelper);
 
@@ -43,7 +41,6 @@ class FilesLocalSourceImpl implements FilesLocalSource {
     );
     final dto = SecureFileDto.fromEntity(entity);
     await box.put(entity.id, dto);
-    _logger.info('File metadata saved: [REDACTED_PATH]');
   }
 
   @override
@@ -60,7 +57,6 @@ class FilesLocalSourceImpl implements FilesLocalSource {
         await _deleteFileIfExists(thumbPath);
       }
       await box.delete(id);
-      _logger.info('File deleted: [REDACTED_PATH]');
     }
   }
 
@@ -70,7 +66,6 @@ class FilesLocalSourceImpl implements FilesLocalSource {
     final fileName = 'enc_$fileId';
     final file = File('${dir.path}/$fileName');
     await file.writeAsBytes(data);
-    _logger.info('Encrypted file saved: [REDACTED_PATH]');
     return fileName;
   }
 

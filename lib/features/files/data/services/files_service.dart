@@ -102,7 +102,6 @@ class FilesService
       );
 
       await _localSource.save(entity);
-      _logger.info('File imported successfully');
       return SuccessResult(entity);
     } catch (e, stackTrace) {
       _logger.error('Failed to import file', e, stackTrace);
@@ -137,7 +136,6 @@ class FilesService
       }
 
       final decryptedBytes = await _encryptionService.decrypt(encryptedBytes);
-      _logger.info('File decrypted successfully');
       return SuccessResult(decryptedBytes);
     } on EncryptionKeyLostException {
       _logger.error('Encryption key lost — cannot decrypt file');

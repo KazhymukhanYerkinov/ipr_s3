@@ -135,10 +135,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i681.ThumbnailService>(() => _i681.ThumbnailService());
     gh.lazySingleton<_i458.CommandManager>(() => _i458.CommandManager());
     gh.lazySingleton<_i910.AuthLocalSource>(
-      () => _i910.AuthLocalSourceImpl(
-        gh<_i558.FlutterSecureStorage>(),
-        gh<_i152.LocalAuthentication>(),
-      ),
+      () => _i910.AuthLocalSourceImpl(gh<_i152.LocalAuthentication>()),
     );
     gh.lazySingleton<_i107.PinManager>(
       () => _i107.PinManager(gh<_i558.FlutterSecureStorage>()),

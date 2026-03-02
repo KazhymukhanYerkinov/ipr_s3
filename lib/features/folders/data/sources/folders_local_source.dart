@@ -1,6 +1,5 @@
 import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/security/encryption_helper.dart';
-import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/folders/data/dtos/folder_dto.dart';
 import 'package:ipr_s3/features/folders/data/mappers/folder_mapper.dart';
 import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
@@ -16,7 +15,6 @@ class FoldersLocalSourceImpl implements FoldersLocalSource {
   static const _boxName = 'folders';
 
   final EncryptionHelper _encryptionHelper;
-  final _logger = SecureLogger();
 
   FoldersLocalSourceImpl(this._encryptionHelper);
 
@@ -58,7 +56,6 @@ class FoldersLocalSourceImpl implements FoldersLocalSource {
   Future<void> save(FolderItem folder) async {
     final box = await _encryptionHelper.openEncryptedBox<FolderDto>(_boxName);
     await box.put(folder.id, folder.toDto());
-    _logger.info('Folder saved: ${folder.name}');
   }
 
   @override
@@ -71,7 +68,5 @@ class FoldersLocalSourceImpl implements FoldersLocalSource {
     for (final child in childDtos) {
       await delete(child.id);
     }
-
-    _logger.info('Folder deleted with children');
   }
 }

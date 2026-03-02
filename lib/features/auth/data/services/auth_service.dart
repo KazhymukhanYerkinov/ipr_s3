@@ -35,7 +35,6 @@ class AuthService
   Future<Result<UserEntity>> signInWithGoogle() => runGuarded(
     action: () async {
       final user = await _authRemoteSource.signInWithGoogle();
-      _logger.info('User signed in successfully');
       return user;
     },
     onError: () => const AuthFailure(message: 'Failed to sign in'),
@@ -47,8 +46,6 @@ class AuthService
   Future<Result<void>> signOut() => runGuarded(
     action: () async {
       await _authRemoteSource.signOut();
-      await _authLocalSource.deleteToken();
-      _logger.info('User signed out successfully');
     },
     onError: () => const AuthFailure(message: 'Failed to sign out'),
     logger: _logger,
@@ -75,7 +72,6 @@ class AuthService
   Future<Result<void>> setPin(String pin) => runGuarded(
     action: () async {
       await _pinManager.setPin(pin);
-      _logger.info('PIN set successfully');
     },
     onError: () => const AuthFailure(message: 'Failed to set PIN'),
     logger: _logger,

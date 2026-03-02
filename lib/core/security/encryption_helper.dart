@@ -35,7 +35,6 @@ class EncryptionHelper {
       key: StorageKeys.encryptionKey,
       value: base64Url.encode(newKey),
     );
-    _logger.info('New encryption key generated (first launch)');
     return Uint8List.fromList(newKey);
   }
 

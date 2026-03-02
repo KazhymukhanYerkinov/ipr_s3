@@ -2,7 +2,6 @@ import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/security/encryption_helper.dart';
-import 'package:ipr_s3/core/security/secure_logger.dart';
 
 class EncryptionParams {
   final Uint8List data;
@@ -42,20 +41,15 @@ Uint8List decryptBytes(EncryptionParams params) {
 @lazySingleton
 class FileEncryptionService {
   final EncryptionHelper _encryptionHelper;
-  final _logger = SecureLogger();
 
   FileEncryptionService(this._encryptionHelper);
 
   Future<Uint8List> encrypt(Uint8List data) async {
-    _logger.info('Encrypting ${data.length} bytes in background isolate');
     final key = await _encryptionHelper.getEncryptionKey();
     return compute(encryptBytes, EncryptionParams(data: data, key: key));
   }
 
   Future<Uint8List> decrypt(Uint8List encryptedData) async {
-    _logger.info(
-      'Decrypting ${encryptedData.length} bytes in background isolate',
-    );
     final key = await _encryptionHelper.getEncryptionKey();
     return compute(
       decryptBytes,

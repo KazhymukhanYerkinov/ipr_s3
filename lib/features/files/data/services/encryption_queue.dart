@@ -30,7 +30,6 @@ class EncryptionQueue {
   void enqueue(FileTask task) {
     _queue.addLast(task);
     _totalEnqueued++;
-    _logger.info('Enqueued file for encryption: [REDACTED_PATH]');
 
     if (!_isProcessing) {
       _processQueue();
@@ -42,7 +41,6 @@ class EncryptionQueue {
       _queue.addLast(task);
     }
     _totalEnqueued += tasks.length;
-    _logger.info('Enqueued ${tasks.length} files for encryption');
 
     if (!_isProcessing) {
       _processQueue();
@@ -56,7 +54,6 @@ class EncryptionQueue {
 
     while (_queue.isNotEmpty) {
       final task = _queue.removeFirst();
-      _logger.info('Processing encryption task: [REDACTED_PATH]');
 
       try {
         final encrypted = await _encryptionService.encrypt(task.data);
@@ -97,7 +94,6 @@ class EncryptionQueue {
     _queue.clear();
     _totalEnqueued = 0;
     _completedCount = 0;
-    _logger.info('Encryption queue cleared');
   }
 
   void dispose() {
