@@ -56,8 +56,6 @@ import 'package:ipr_s3/features/auth/presentation/bloc/auth_bloc.dart' as _i541;
 import 'package:ipr_s3/features/benchmark/presentation/bloc/benchmark_bloc.dart'
     as _i870;
 import 'package:ipr_s3/features/files/config/files_module.dart' as _i594;
-import 'package:ipr_s3/features/files/data/services/encryption_queue.dart'
-    as _i462;
 import 'package:ipr_s3/features/files/data/services/file_encryption_service.dart'
     as _i78;
 import 'package:ipr_s3/features/files/data/services/file_search_service.dart'
@@ -163,9 +161,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i851.DeviceInfoChannel>(),
         gh<_i107.PinManager>(),
       ),
-    );
-    gh.lazySingleton<_i462.EncryptionQueue>(
-      () => _i462.EncryptionQueue(gh<_i78.FileEncryptionService>()),
     );
     gh.lazySingleton<_i943.FilesLocalSource>(
       () => _i332.FilesLocalSourceImpl(gh<_i564.EncryptionHelper>()),

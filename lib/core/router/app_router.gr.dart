@@ -163,22 +163,6 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [ImportProgressScreen]
-class ImportProgressRoute extends PageRouteInfo<void> {
-  const ImportProgressRoute({List<PageRouteInfo>? children})
-    : super(ImportProgressRoute.name, initialChildren: children);
-
-  static const String name = 'ImportProgressRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      return const ImportProgressScreen();
-    },
-  );
-}
-
-/// generated route for
 /// [LockScreen]
 class LockRoute extends PageRouteInfo<void> {
   const LockRoute({List<PageRouteInfo>? children})
