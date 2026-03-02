@@ -4,10 +4,7 @@ import 'package:ipr_s3/core/localization/localization_x.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_bloc.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_event.dart';
 
-Future<void> showCreateFolderDialog(
-  BuildContext context, {
-  String? parentId,
-}) {
+Future<void> showCreateFolderDialog(BuildContext context, {String? parentId}) {
   final l = context.locale;
   final controller = TextEditingController();
 

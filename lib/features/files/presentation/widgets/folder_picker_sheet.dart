@@ -90,11 +90,7 @@ class FolderPickerSheet extends StatelessWidget {
     );
   }
 
-  void _flatten(
-    List<FolderItem> folders,
-    List<_FlatFolder> result,
-    int depth,
-  ) {
+  void _flatten(List<FolderItem> folders, List<_FlatFolder> result, int depth) {
     for (final folder in folders) {
       result.add(_FlatFolder(folder: folder, depth: depth));
       final subFolders = folder.children.whereType<FolderItem>().toList();

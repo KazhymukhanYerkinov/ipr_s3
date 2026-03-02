@@ -49,10 +49,8 @@ class _FolderTreeView extends StatelessWidget {
               folders: folders,
               onFolderDelete: (folder) => _confirmDelete(context, folder),
               onAddSubfolder:
-                  (folder) => showCreateFolderDialog(
-                    context,
-                    parentId: folder.id,
-                  ),
+                  (folder) =>
+                      showCreateFolderDialog(context, parentId: folder.id),
             ),
             FoldersError() => ErrorStateView(
               message: l.somethingWentWrong,

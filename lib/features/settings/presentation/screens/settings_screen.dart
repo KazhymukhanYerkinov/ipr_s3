@@ -116,5 +116,4 @@ class _SettingsView extends StatelessWidget {
 
     context.read<AuthBloc>().add(SignOutRequested());
   }
-
 }

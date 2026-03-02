@@ -16,8 +16,9 @@ abstract class FilePreviewFactory {
       FileType.image => ImagePreview(bytes: bytes),
       FileType.pdf => PdfPreview(bytes: bytes),
       FileType.text => TextPreview(bytes: bytes),
-      FileType.video || FileType.audio || FileType.unknown =>
-        UnknownPreview(file: file),
+      FileType.video ||
+      FileType.audio ||
+      FileType.unknown => UnknownPreview(file: file),
     };
   }
 }
