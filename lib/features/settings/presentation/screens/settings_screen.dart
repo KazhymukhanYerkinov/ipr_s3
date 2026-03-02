@@ -13,6 +13,7 @@ import 'package:ipr_s3/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:ipr_s3/features/settings/presentation/bloc/settings_event.dart';
 import 'package:ipr_s3/features/settings/presentation/bloc/settings_state.dart';
 import 'package:ipr_s3/features/settings/presentation/widgets/device_info_card.dart';
+import 'package:ipr_s3/features/settings/presentation/widgets/change_pin_dialog.dart';
 import 'package:ipr_s3/features/settings/presentation/widgets/section_header.dart';
 import 'package:ipr_s3/features/settings/presentation/widgets/security_card.dart';
 
@@ -71,7 +72,7 @@ class _SettingsView extends StatelessWidget {
                   SecurityCard(
                     hasPin: hasPin,
                     theme: theme,
-                    onChangePin: () => _showChangePinDialog(context),
+                    onChangePin: () => showChangePinDialog(context),
                   ),
                   const SizedBox(height: 32),
                   SizedBox(
@@ -116,63 +117,4 @@ class _SettingsView extends StatelessWidget {
     context.read<AuthBloc>().add(SignOutRequested());
   }
 
-  void _showChangePinDialog(BuildContext context) {
-    final l = context.locale;
-    final oldPinController = TextEditingController();
-    final newPinController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(l.changePin),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: oldPinController,
-                obscureText: true,
-                keyboardType: TextInputType.number,
-                maxLength: 4,
-                decoration: InputDecoration(
-                  labelText: l.currentPin,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: newPinController,
-                obscureText: true,
-                keyboardType: TextInputType.number,
-                maxLength: 4,
-                decoration: InputDecoration(
-                  labelText: l.newPin,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l.cancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                final oldPin = oldPinController.text.trim();
-                final newPin = newPinController.text.trim();
-                if (oldPin.length == 4 && newPin.length == 4) {
-                  context.read<SettingsBloc>().add(
-                    PinChangeRequested(oldPin: oldPin, newPin: newPin),
-                  );
-                  Navigator.pop(dialogContext);
-                }
-              },
-              child: Text(l.save),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }

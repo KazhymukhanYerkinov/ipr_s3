@@ -12,17 +12,12 @@ abstract class FilePreviewFactory {
     required SecureFileEntity file,
     required Uint8List bytes,
   }) {
-    switch (file.type) {
-      case FileType.image:
-        return ImagePreview(bytes: bytes);
-      case FileType.pdf:
-        return PdfPreview(bytes: bytes);
-      case FileType.text:
-        return TextPreview(bytes: bytes);
-      case FileType.video:
-      case FileType.audio:
-      case FileType.unknown:
-        return UnknownPreview(file: file);
-    }
+    return switch (file.type) {
+      FileType.image => ImagePreview(bytes: bytes),
+      FileType.pdf => PdfPreview(bytes: bytes),
+      FileType.text => TextPreview(bytes: bytes),
+      FileType.video || FileType.audio || FileType.unknown =>
+        UnknownPreview(file: file),
+    };
   }
 }

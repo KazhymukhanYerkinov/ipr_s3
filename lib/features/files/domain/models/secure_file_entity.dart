@@ -1,4 +1,6 @@
-enum FileType { image, pdf, text, video, audio, unknown }
+import 'package:ipr_s3/features/files/domain/models/file_type.dart';
+
+export 'file_type.dart';
 
 class SecureFileEntity {
   final String id;

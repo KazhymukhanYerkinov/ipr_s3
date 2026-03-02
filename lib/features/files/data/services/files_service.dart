@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
+import 'package:ipr_s3/core/error/exceptions.dart';
 import 'package:ipr_s3/core/error/failures.dart';
 import 'package:ipr_s3/core/platform/native_hash_service.dart';
 import 'package:ipr_s3/core/result/result.dart';

@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/constants/storage_keys.dart';
-import 'package:ipr_s3/core/error/failures.dart';
+import 'package:ipr_s3/core/error/exceptions.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:path_provider/path_provider.dart';
 

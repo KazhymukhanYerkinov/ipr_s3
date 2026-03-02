@@ -11,6 +11,7 @@ import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_bloc.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_event.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_state.dart';
+import 'package:ipr_s3/features/folders/presentation/widgets/create_folder_dialog.dart';
 import 'package:ipr_s3/features/folders/presentation/widgets/folder_tree_widget.dart';
 
 @RoutePage()
@@ -48,7 +49,10 @@ class _FolderTreeView extends StatelessWidget {
               folders: folders,
               onFolderDelete: (folder) => _confirmDelete(context, folder),
               onAddSubfolder:
-                  (folder) => _showCreateDialog(context, parentId: folder.id),
+                  (folder) => showCreateFolderDialog(
+                    context,
+                    parentId: folder.id,
+                  ),
             ),
             FoldersError() => ErrorStateView(
               message: l.somethingWentWrong,
@@ -60,50 +64,9 @@ class _FolderTreeView extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showCreateDialog(context),
+        onPressed: () => showCreateFolderDialog(context),
         child: const Icon(Icons.create_new_folder_rounded),
       ),
-    );
-  }
-
-  void _showCreateDialog(BuildContext context, {String? parentId}) {
-    final l = context.locale;
-    final controller = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(parentId != null ? l.newSubfolder : l.newFolder),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            decoration: InputDecoration(
-              hintText: l.folderName,
-              border: const OutlineInputBorder(),
-            ),
-            textCapitalization: TextCapitalization.sentences,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l.cancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                final name = controller.text.trim();
-                if (name.isNotEmpty) {
-                  context.read<FoldersBloc>().add(
-                    FolderCreateRequested(name: name, parentId: parentId),
-                  );
-                  Navigator.pop(dialogContext);
-                }
-              },
-              child: Text(l.create),
-            ),
-          ],
-        );
-      },
     );
   }
 

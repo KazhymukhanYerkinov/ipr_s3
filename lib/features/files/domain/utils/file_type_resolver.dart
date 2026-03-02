@@ -1,4 +1,4 @@
-import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/models/file_type.dart';
 
 abstract class FileTypeResolver {
   static const _imageExtensions = {'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'};

@@ -1,42 +1,14 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:typed_data';
 
 import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
+import 'package:ipr_s3/features/files/data/models/file_task.dart';
+import 'package:ipr_s3/features/files/data/models/queue_progress.dart';
 import 'package:ipr_s3/features/files/data/services/file_encryption_service.dart';
 
-class FileTask {
-  final String fileId;
-  final String fileName;
-  final Uint8List data;
-
-  const FileTask({
-    required this.fileId,
-    required this.fileName,
-    required this.data,
-  });
-}
-
-class QueueProgress {
-  final String fileId;
-  final String fileName;
-  final int completedCount;
-  final int totalCount;
-  final bool isComplete;
-  final Uint8List? encryptedData;
-
-  const QueueProgress({
-    required this.fileId,
-    required this.fileName,
-    required this.completedCount,
-    required this.totalCount,
-    required this.isComplete,
-    this.encryptedData,
-  });
-
-  double get progress => totalCount > 0 ? completedCount / totalCount : 0;
-}
+export 'package:ipr_s3/features/files/data/models/file_task.dart';
+export 'package:ipr_s3/features/files/data/models/queue_progress.dart';
 
 @lazySingleton
 class EncryptionQueue {
