@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:ipr_s3/core/di/injection.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
-import 'package:ipr_s3/features/folders/domain/behaviors/get_folders_behavior.dart';
 import 'package:ipr_s3/features/folders/domain/models/folder_item.dart';
 
 class FolderPickerSheet extends StatelessWidget {
   final ThemeData theme;
+  final Future<List<FolderItem>> Function() onLoadFolders;
 
-  const FolderPickerSheet({super.key, required this.theme});
+  const FolderPickerSheet({
+    super.key,
+    required this.theme,
+    required this.onLoadFolders,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +39,8 @@ class FolderPickerSheet extends StatelessWidget {
             title: Text(l.noFolder),
             onTap: () => Navigator.pop(context, ''),
           ),
-          FutureBuilder(
-            future: getIt<GetFoldersBehavior>().getFolders(),
+          FutureBuilder<List<FolderItem>>(
+            future: onLoadFolders(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Padding(
@@ -52,7 +55,7 @@ class FolderPickerSheet extends StatelessWidget {
                 );
               }
 
-              final folders = snapshot.data?.value ?? <FolderItem>[];
+              final folders = snapshot.data ?? <FolderItem>[];
 
               if (folders.isEmpty) {
                 return const SizedBox.shrink();

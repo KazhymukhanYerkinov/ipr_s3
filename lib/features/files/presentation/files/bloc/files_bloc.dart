@@ -1,7 +1,6 @@
-import 'package:file_picker/file_picker.dart' as picker;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
+import 'package:ipr_s3/features/files/domain/behaviors/file_storage_behavior.dart';
 import 'package:ipr_s3/features/files/domain/commands/command_manager.dart';
 import 'package:ipr_s3/features/files/domain/commands/delete_file_command.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_by_date.dart';
@@ -19,14 +18,14 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
   final ImportFileUseCase _importFileUseCase;
   final SearchFilesUseCase _searchFilesUseCase;
   final CommandManager _commandManager;
-  final FilesLocalSource _localSource;
+  final FileStorageBehavior _fileStorage;
 
   FilesBloc(
     this._getFilesUseCase,
     this._importFileUseCase,
     this._searchFilesUseCase,
     this._commandManager,
-    this._localSource,
+    this._fileStorage,
   ) : super(const FilesState.initial()) {
     _setupHandlers();
   }
@@ -73,40 +72,25 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     FileImportRequested event,
     Emitter<FilesState> emit,
   ) async {
-    try {
-      final result = await picker.FilePicker.platform.pickFiles(
-        type: picker.FileType.any,
-        withData: true,
-      );
+    emit(FilesState.importing(fileName: event.name));
 
-      if (result == null || result.files.isEmpty) return;
+    final fileType = FileTypeResolver.fromExtension(event.extension);
+    final importResult = await _importFileUseCase(
+      ImportFileParams(
+        name: event.name,
+        bytes: event.bytes,
+        type: fileType,
+        folderId: event.folderId,
+      ),
+    );
 
-      final pickedFile = result.files.first;
-      if (pickedFile.bytes == null) return;
-
-      final name = pickedFile.name;
-      emit(FilesState.importing(fileName: name));
-
-      final fileType = FileTypeResolver.fromExtension(pickedFile.extension);
-      final importResult = await _importFileUseCase(
-        ImportFileParams(
-          name: name,
-          bytes: pickedFile.bytes!,
-          type: fileType,
-          folderId: event.folderId,
-        ),
-      );
-
-      final failure = importResult.failure;
-      if (failure != null) {
-        emit(FilesState.error(message: failure.message));
-        return;
-      }
-
-      await _silentReload(emit);
-    } catch (e) {
-      emit(FilesState.error(message: 'Failed to pick file: $e'));
+    final failure = importResult.failure;
+    if (failure != null) {
+      emit(FilesState.error(message: failure.message));
+      return;
     }
+
+    await _silentReload(emit);
   }
 
   Future<void> _onDelete(
@@ -121,7 +105,7 @@ class FilesBloc extends Bloc<FilesEvent, FilesState> {
     }
 
     try {
-      final command = DeleteFileCommand(_localSource, event.file);
+      final command = DeleteFileCommand(_fileStorage, event.file);
       await _commandManager.execute(command);
 
       final afterDelete = state;

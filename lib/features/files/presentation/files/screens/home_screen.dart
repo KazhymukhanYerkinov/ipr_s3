@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:file_picker/file_picker.dart' as picker;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
@@ -12,11 +13,13 @@ import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/presentation/files/bloc/files_bloc.dart';
 import 'package:ipr_s3/features/files/presentation/files/bloc/files_event.dart';
 import 'package:ipr_s3/features/files/presentation/files/bloc/files_state.dart';
+import 'package:ipr_s3/features/files/presentation/files/bloc/thumbnail_cubit.dart';
 import 'package:ipr_s3/features/files/presentation/files/widgets/empty_state.dart';
 import 'package:ipr_s3/features/files/presentation/files/widgets/file_grid.dart';
+import 'package:ipr_s3/features/files/presentation/files/widgets/folder_picker_sheet.dart';
 import 'package:ipr_s3/features/files/presentation/files/widgets/search_bar_widget.dart';
 import 'package:ipr_s3/features/files/presentation/files/widgets/sort_dropdown.dart';
-import 'package:ipr_s3/features/files/presentation/files/widgets/folder_picker_sheet.dart';
+import 'package:ipr_s3/features/folders/domain/use_cases/get_folders.dart';
 
 @RoutePage()
 class HomeScreen extends StatelessWidget {
@@ -24,8 +27,13 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<FilesBloc>()..add(FilesLoadRequested()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => getIt<FilesBloc>()..add(FilesLoadRequested()),
+        ),
+        BlocProvider(create: (_) => getIt<ThumbnailCubit>()),
+      ],
       child: const _HomeView(),
     );
   }
@@ -194,12 +202,35 @@ class _HomeView extends StatelessWidget {
       context: context,
       builder: (sheetContext) {
         final theme = Theme.of(sheetContext);
-        return FolderPickerSheet(theme: theme);
+        return FolderPickerSheet(
+          theme: theme,
+          onLoadFolders: () async {
+            final result = await getIt<GetFoldersUseCase>()();
+            return result.value ?? [];
+          },
+        );
       },
     );
 
     if (folderId == null) return;
-    bloc.add(FileImportRequested(folderId: folderId.isEmpty ? null : folderId));
+
+    final result = await picker.FilePicker.platform.pickFiles(
+      type: picker.FileType.any,
+      withData: true,
+    );
+
+    if (result == null || result.files.isEmpty) return;
+    final pickedFile = result.files.first;
+    if (pickedFile.bytes == null) return;
+
+    bloc.add(
+      FileImportRequested(
+        name: pickedFile.name,
+        bytes: pickedFile.bytes!,
+        extension: pickedFile.extension,
+        folderId: folderId.isEmpty ? null : folderId,
+      ),
+    );
   }
 
   void _confirmDelete(BuildContext context, SecureFileEntity file) async {

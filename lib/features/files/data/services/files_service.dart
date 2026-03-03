@@ -4,16 +4,17 @@ import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 import 'package:ipr_s3/core/error/exceptions.dart';
 import 'package:ipr_s3/core/error/failures.dart';
-import 'package:ipr_s3/core/platform/native_hash_service.dart';
+import 'package:ipr_s3/core/platform/native_hash_behavior.dart';
 import 'package:ipr_s3/core/result/result.dart';
 import 'package:ipr_s3/core/security/secure_logger.dart';
 import 'package:ipr_s3/features/files/data/services/file_encryption_service.dart';
 import 'package:ipr_s3/features/files/data/services/file_search_service.dart';
 import 'package:ipr_s3/features/files/data/services/thumbnail_service.dart';
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
+import 'package:ipr_s3/features/files/domain/behaviors/decrypt_file_behavior.dart';
+import 'package:ipr_s3/features/files/domain/behaviors/get_file_by_id_behavior.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/get_files_behavior.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/import_file_behavior.dart';
-import 'package:ipr_s3/features/files/domain/behaviors/decrypt_file_behavior.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/search_files_behavior.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
@@ -21,6 +22,7 @@ import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 class FilesService
     implements
         GetFilesBehavior,
+        GetFileByIdBehavior,
         ImportFileBehavior,
         DecryptFileBehavior,
         SearchFilesBehavior {
@@ -28,7 +30,7 @@ class FilesService
   final FileEncryptionService _encryptionService;
   final ThumbnailService _thumbnailService;
   final FileSearchService _searchService;
-  final NativeHashService _nativeHashService;
+  final NativeHashBehavior _nativeHashService;
   final _logger = SecureLogger();
   final _uuid = const Uuid();
 
@@ -55,6 +57,20 @@ class FilesService
     } catch (e, stackTrace) {
       _logger.error('Failed to get files', e, stackTrace);
       return ErrorResult(const CacheFailure(message: 'Failed to load files'));
+    }
+  }
+
+  @override
+  Future<Result<SecureFileEntity>> getFileById(String fileId) async {
+    try {
+      final entity = await _localSource.getById(fileId);
+      if (entity == null) {
+        return ErrorResult(const FileFailure(message: 'File not found'));
+      }
+      return SuccessResult(entity);
+    } catch (e, stackTrace) {
+      _logger.error('Failed to get file by id', e, stackTrace);
+      return ErrorResult(const CacheFailure(message: 'Failed to load file'));
     }
   }
 

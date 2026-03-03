@@ -11,6 +11,7 @@ import 'package:ipr_s3/features/auth/domain/behaviors/has_pin_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/set_pin_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/sign_in_with_google_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/sign_out_behavior.dart';
+import 'package:ipr_s3/features/auth/domain/behaviors/delete_pin_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/verify_pin_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/models/user.dart';
 
@@ -23,6 +24,7 @@ class AuthService
         HasPinBehavior,
         SetPinBehavior,
         VerifyPinBehavior,
+        DeletePinBehavior,
         AuthenticateWithBiometricsBehavior {
   final AuthLocalSource _authLocalSource;
   final AuthRemoteSource _authRemoteSource;
@@ -84,6 +86,16 @@ class AuthService
     onError: () => const AuthFailure(message: 'Failed to verify PIN'),
     logger: _logger,
     errorMessage: 'Verify PIN failed',
+  );
+
+  @override
+  Future<Result<void>> deletePin() => runGuarded(
+    action: () async {
+      await _pinManager.deletePin();
+    },
+    onError: () => const AuthFailure(message: 'Failed to delete PIN'),
+    logger: _logger,
+    errorMessage: 'Delete PIN failed',
   );
 
   @override

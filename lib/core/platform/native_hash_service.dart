@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ipr_s3/core/platform/native_hash_behavior.dart';
 
 typedef NativeCrc32 = Uint32 Function(Pointer<Uint8>, Int32);
 typedef NativeDjb2 = Uint32 Function(Pointer<Utf8>);
@@ -13,8 +14,8 @@ typedef DartCrc32 = int Function(Pointer<Uint8>, int);
 typedef DartDjb2 = int Function(Pointer<Utf8>);
 typedef DartCountBytes = int Function(Pointer<Uint8>, int, int);
 
-@lazySingleton
-class NativeHashService {
+@LazySingleton(as: NativeHashBehavior)
+class NativeHashService implements NativeHashBehavior {
   late final DartCrc32 _crc32;
   late final DartDjb2 _djb2Hash;
   late final DartCountBytes _countBytes;
@@ -39,6 +40,7 @@ class NativeHashService {
     );
   }
 
+  @override
   int crc32(Uint8List data) {
     final pointer = malloc<Uint8>(data.length);
     try {
@@ -49,6 +51,7 @@ class NativeHashService {
     }
   }
 
+  @override
   int djb2Hash(String input) {
     final pointer = input.toNativeUtf8();
     try {
@@ -58,6 +61,7 @@ class NativeHashService {
     }
   }
 
+  @override
   int countBytes(Uint8List data, int target) {
     final pointer = malloc<Uint8>(data.length);
     try {

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 import 'package:ipr_s3/features/files/domain/strategies/sort_strategy.dart';
 
@@ -6,8 +8,17 @@ sealed class FilesEvent {}
 final class FilesLoadRequested extends FilesEvent {}
 
 final class FileImportRequested extends FilesEvent {
+  final String name;
+  final Uint8List bytes;
+  final String? extension;
   final String? folderId;
-  FileImportRequested({this.folderId});
+
+  FileImportRequested({
+    required this.name,
+    required this.bytes,
+    this.extension,
+    this.folderId,
+  });
 }
 
 final class FileDeleteRequested extends FilesEvent {

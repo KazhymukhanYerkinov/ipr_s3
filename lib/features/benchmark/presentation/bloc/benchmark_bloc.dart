@@ -3,17 +3,16 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/core/platform/native_hash_service.dart';
+import 'package:ipr_s3/core/platform/native_hash_behavior.dart';
 import 'package:ipr_s3/features/benchmark/domain/models/benchmark_result.dart';
 import 'package:ipr_s3/features/benchmark/presentation/bloc/benchmark_event.dart';
 import 'package:ipr_s3/features/benchmark/presentation/bloc/benchmark_state.dart';
 
 @injectable
 class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
-  final NativeHashService _nativeHashService;
+  final NativeHashBehavior _nativeHash;
 
-  BenchmarkBloc(this._nativeHashService)
-    : super(const BenchmarkState.initial()) {
+  BenchmarkBloc(this._nativeHash) : super(const BenchmarkState.initial()) {
     _setupHandlers();
   }
 
@@ -129,7 +128,7 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
 
   int _benchmarkNativeCrc32(Uint8List data) {
     final stopwatch = Stopwatch()..start();
-    _nativeHashService.crc32(data);
+    _nativeHash.crc32(data);
     stopwatch.stop();
     return stopwatch.elapsedMilliseconds;
   }
@@ -144,7 +143,7 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
   int _benchmarkDjb2Hash() {
     final stopwatch = Stopwatch()..start();
     for (var i = 0; i < 100000; i++) {
-      _nativeHashService.djb2Hash('benchmark-test-string-$i');
+      _nativeHash.djb2Hash('benchmark-test-string-$i');
     }
     stopwatch.stop();
     return stopwatch.elapsedMilliseconds;
@@ -152,7 +151,7 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
 
   int _benchmarkCountBytes(Uint8List data) {
     final stopwatch = Stopwatch()..start();
-    _nativeHashService.countBytes(data, 0);
+    _nativeHash.countBytes(data, 0);
     stopwatch.stop();
     return stopwatch.elapsedMilliseconds;
   }

@@ -1,15 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ipr_s3/features/files/domain/behaviors/get_files_behavior.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
+import 'package:ipr_s3/features/files/domain/use_cases/get_files.dart';
 import 'package:ipr_s3/features/stats/presentation/bloc/stats_event.dart';
 import 'package:ipr_s3/features/stats/presentation/bloc/stats_state.dart';
 
 @injectable
 class StatsBloc extends Bloc<StatsEvent, StatsState> {
-  final GetFilesBehavior _getFilesBehavior;
+  final GetFilesUseCase _getFiles;
 
-  StatsBloc(this._getFilesBehavior) : super(const StatsState.initial()) {
+  StatsBloc(this._getFiles) : super(const StatsState.initial()) {
     _setupHandlers();
   }
 
@@ -23,7 +23,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
   ) async {
     emit(const StatsState.loading());
 
-    final result = await _getFilesBehavior.getFiles();
+    final result = await _getFiles();
     if (result.isError) {
       emit(StatsState.error(message: result.failure!.message));
       return;

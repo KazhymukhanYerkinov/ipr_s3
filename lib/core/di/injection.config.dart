@@ -14,7 +14,9 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:ipr_s3/core/di/register_module.dart' as _i345;
+import 'package:ipr_s3/core/platform/device_info_behavior.dart' as _i139;
 import 'package:ipr_s3/core/platform/device_info_channel.dart' as _i851;
+import 'package:ipr_s3/core/platform/native_hash_behavior.dart' as _i942;
 import 'package:ipr_s3/core/platform/native_hash_service.dart' as _i865;
 import 'package:ipr_s3/core/security/encryption_helper.dart' as _i564;
 import 'package:ipr_s3/core/security/pin_manager.dart' as _i107;
@@ -26,6 +28,8 @@ import 'package:ipr_s3/features/auth/data/sources/auth_remote_source.dart'
     as _i1012;
 import 'package:ipr_s3/features/auth/domain/behaviors/authenticate_with_biometrics_behavior.dart'
     as _i710;
+import 'package:ipr_s3/features/auth/domain/behaviors/delete_pin_behavior.dart'
+    as _i1004;
 import 'package:ipr_s3/features/auth/domain/behaviors/get_current_user_behavior.dart'
     as _i342;
 import 'package:ipr_s3/features/auth/domain/behaviors/has_pin_behavior.dart'
@@ -46,6 +50,8 @@ import 'package:ipr_s3/features/auth/domain/use_cases/auth_sign_out_use_case.dar
     as _i296;
 import 'package:ipr_s3/features/auth/domain/use_cases/authenticate_biometrics_use_case.dart'
     as _i139;
+import 'package:ipr_s3/features/auth/domain/use_cases/delete_pin_use_case.dart'
+    as _i696;
 import 'package:ipr_s3/features/auth/domain/use_cases/has_pin_use_case.dart'
     as _i411;
 import 'package:ipr_s3/features/auth/domain/use_cases/set_pin_use_case.dart'
@@ -62,6 +68,8 @@ import 'package:ipr_s3/features/files/data/services/file_search_service.dart'
     as _i424;
 import 'package:ipr_s3/features/files/data/services/files_service.dart'
     as _i879;
+import 'package:ipr_s3/features/files/data/services/thumbnail_cache_service.dart'
+    as _i461;
 import 'package:ipr_s3/features/files/data/services/thumbnail_service.dart'
     as _i681;
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart'
@@ -70,25 +78,37 @@ import 'package:ipr_s3/features/files/data/sources/files_local_source_impl.dart'
     as _i332;
 import 'package:ipr_s3/features/files/domain/behaviors/decrypt_file_behavior.dart'
     as _i331;
+import 'package:ipr_s3/features/files/domain/behaviors/file_storage_behavior.dart'
+    as _i815;
+import 'package:ipr_s3/features/files/domain/behaviors/get_file_by_id_behavior.dart'
+    as _i900;
 import 'package:ipr_s3/features/files/domain/behaviors/get_files_behavior.dart'
     as _i570;
 import 'package:ipr_s3/features/files/domain/behaviors/import_file_behavior.dart'
     as _i20;
+import 'package:ipr_s3/features/files/domain/behaviors/load_thumbnail_behavior.dart'
+    as _i354;
 import 'package:ipr_s3/features/files/domain/behaviors/search_files_behavior.dart'
     as _i279;
 import 'package:ipr_s3/features/files/domain/commands/command_manager.dart'
     as _i458;
 import 'package:ipr_s3/features/files/domain/use_cases/decrypt_file.dart'
     as _i166;
+import 'package:ipr_s3/features/files/domain/use_cases/get_file_by_id.dart'
+    as _i624;
 import 'package:ipr_s3/features/files/domain/use_cases/get_files.dart' as _i942;
 import 'package:ipr_s3/features/files/domain/use_cases/import_file.dart'
     as _i188;
+import 'package:ipr_s3/features/files/domain/use_cases/load_thumbnail.dart'
+    as _i1037;
 import 'package:ipr_s3/features/files/domain/use_cases/search_files.dart'
     as _i787;
 import 'package:ipr_s3/features/files/presentation/file_viewer/bloc/file_viewer_bloc.dart'
     as _i784;
 import 'package:ipr_s3/features/files/presentation/files/bloc/files_bloc.dart'
     as _i478;
+import 'package:ipr_s3/features/files/presentation/files/bloc/thumbnail_cubit.dart'
+    as _i983;
 import 'package:ipr_s3/features/folders/config/folders_module.dart' as _i13;
 import 'package:ipr_s3/features/folders/data/services/folders_service.dart'
     as _i191;
@@ -104,6 +124,8 @@ import 'package:ipr_s3/features/folders/domain/use_cases/create_folder.dart'
     as _i327;
 import 'package:ipr_s3/features/folders/domain/use_cases/delete_folder.dart'
     as _i246;
+import 'package:ipr_s3/features/folders/domain/use_cases/get_folders.dart'
+    as _i473;
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_bloc.dart'
     as _i134;
 import 'package:ipr_s3/features/settings/presentation/bloc/settings_bloc.dart'
@@ -121,19 +143,19 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
     final foldersModule = _$FoldersModule();
-    final filesModule = _$FilesModule();
     final authModule = _$AuthModule();
+    final filesModule = _$FilesModule();
     gh.lazySingleton<_i59.FirebaseAuth>(() => registerModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => registerModule.googleSignIn);
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => registerModule.secureStorage,
     );
     gh.lazySingleton<_i152.LocalAuthentication>(() => registerModule.localAuth);
-    gh.lazySingleton<_i851.DeviceInfoChannel>(() => _i851.DeviceInfoChannel());
-    gh.lazySingleton<_i865.NativeHashService>(() => _i865.NativeHashService());
     gh.lazySingleton<_i424.FileSearchService>(() => _i424.FileSearchService());
     gh.lazySingleton<_i681.ThumbnailService>(() => _i681.ThumbnailService());
     gh.lazySingleton<_i458.CommandManager>(() => _i458.CommandManager());
+    gh.lazySingleton<_i942.NativeHashBehavior>(() => _i865.NativeHashService());
+    gh.lazySingleton<_i139.DeviceInfoBehavior>(() => _i851.DeviceInfoChannel());
     gh.lazySingleton<_i910.AuthLocalSource>(
       () => _i910.AuthLocalSourceImpl(gh<_i152.LocalAuthentication>()),
     );
@@ -146,11 +168,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i57.FoldersLocalSource>(
       () => _i57.FoldersLocalSourceImpl(gh<_i564.EncryptionHelper>()),
     );
+    gh.factory<_i870.BenchmarkBloc>(
+      () => _i870.BenchmarkBloc(gh<_i942.NativeHashBehavior>()),
+    );
     gh.lazySingleton<_i78.FileEncryptionService>(
       () => _i78.FileEncryptionService(gh<_i564.EncryptionHelper>()),
-    );
-    gh.factory<_i870.BenchmarkBloc>(
-      () => _i870.BenchmarkBloc(gh<_i865.NativeHashService>()),
     );
     gh.lazySingleton<_i1012.AuthRemoteSource>(
       () => _i1012.AuthRemoteSourceImpl(
@@ -158,23 +180,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i116.GoogleSignIn>(),
       ),
     );
-    gh.factory<_i789.SettingsBloc>(
-      () => _i789.SettingsBloc(
-        gh<_i851.DeviceInfoChannel>(),
-        gh<_i107.PinManager>(),
-      ),
-    );
     gh.lazySingleton<_i943.FilesLocalSource>(
       () => _i332.FilesLocalSourceImpl(gh<_i564.EncryptionHelper>()),
-    );
-    gh.lazySingleton<_i879.FilesService>(
-      () => _i879.FilesService(
-        gh<_i943.FilesLocalSource>(),
-        gh<_i78.FileEncryptionService>(),
-        gh<_i681.ThumbnailService>(),
-        gh<_i424.FileSearchService>(),
-        gh<_i865.NativeHashService>(),
-      ),
     );
     gh.lazySingleton<_i77.AuthService>(
       () => _i77.AuthService(
@@ -198,17 +205,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i559.DeleteFolderBehavior>(
       () => foldersModule.deleteFolderBehavior(gh<_i191.FoldersService>()),
     );
-    gh.factory<_i570.GetFilesBehavior>(
-      () => filesModule.getFilesBehavior(gh<_i879.FilesService>()),
-    );
-    gh.factory<_i20.ImportFileBehavior>(
-      () => filesModule.importFileBehavior(gh<_i879.FilesService>()),
-    );
-    gh.factory<_i331.DecryptFileBehavior>(
-      () => filesModule.decryptFileBehavior(gh<_i879.FilesService>()),
-    );
-    gh.factory<_i279.SearchFilesBehavior>(
-      () => filesModule.searchFilesBehavior(gh<_i879.FilesService>()),
+    gh.lazySingleton<_i354.LoadThumbnailBehavior>(
+      () => _i461.ThumbnailCacheService(
+        gh<_i943.FilesLocalSource>(),
+        gh<_i78.FileEncryptionService>(),
+      ),
     );
     gh.factory<_i342.GetCurrentUserBehavior>(
       () => authModule.getCurrentUserBehavior(gh<_i77.AuthService>()),
@@ -228,12 +229,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i692.VerifyPinBehavior>(
       () => authModule.verifyPinBehavior(gh<_i77.AuthService>()),
     );
+    gh.factory<_i1004.DeletePinBehavior>(
+      () => authModule.deletePinBehavior(gh<_i77.AuthService>()),
+    );
     gh.factory<_i710.AuthenticateWithBiometricsBehavior>(
       () =>
           authModule.authenticateWithBiometricsBehavior(gh<_i77.AuthService>()),
-    );
-    gh.factory<_i188.ImportFileUseCase>(
-      () => _i188.ImportFileUseCase(gh<_i20.ImportFileBehavior>()),
     );
     gh.factory<_i246.DeleteFolderUseCase>(
       () => _i246.DeleteFolderUseCase(gh<_i559.DeleteFolderBehavior>()),
@@ -241,8 +242,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i712.SetPinUseCase>(
       () => _i712.SetPinUseCase(gh<_i503.SetPinBehavior>()),
     );
+    gh.factory<_i696.DeletePinUseCase>(
+      () => _i696.DeletePinUseCase(gh<_i1004.DeletePinBehavior>()),
+    );
     gh.factory<_i411.HasPinUseCase>(
       () => _i411.HasPinUseCase(gh<_i664.HasPinBehavior>()),
+    );
+    gh.factory<_i815.FileStorageBehavior>(
+      () => filesModule.fileStorageBehavior(gh<_i943.FilesLocalSource>()),
     );
     gh.factory<_i327.CreateFolderUseCase>(
       () => _i327.CreateFolderUseCase(gh<_i19.CreateFolderBehavior>()),
@@ -252,11 +259,17 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i310.SignInWithGoogleBehavior>(),
       ),
     );
-    gh.factory<_i942.GetFilesUseCase>(
-      () => _i942.GetFilesUseCase(gh<_i570.GetFilesBehavior>()),
-    );
     gh.factory<_i262.VerifyPinUseCase>(
       () => _i262.VerifyPinUseCase(gh<_i692.VerifyPinBehavior>()),
+    );
+    gh.lazySingleton<_i879.FilesService>(
+      () => _i879.FilesService(
+        gh<_i943.FilesLocalSource>(),
+        gh<_i78.FileEncryptionService>(),
+        gh<_i681.ThumbnailService>(),
+        gh<_i424.FileSearchService>(),
+        gh<_i942.NativeHashBehavior>(),
+      ),
     );
     gh.factory<_i254.AuthGetCurrentUserUseCase>(
       () => _i254.AuthGetCurrentUserUseCase(gh<_i342.GetCurrentUserBehavior>()),
@@ -264,14 +277,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i296.AuthSignOutUseCase>(
       () => _i296.AuthSignOutUseCase(gh<_i369.SignOutBehavior>()),
     );
-    gh.factory<_i166.DecryptFileUseCase>(
-      () => _i166.DecryptFileUseCase(gh<_i331.DecryptFileBehavior>()),
+    gh.factory<_i473.GetFoldersUseCase>(
+      () => _i473.GetFoldersUseCase(gh<_i152.GetFoldersBehavior>()),
     );
-    gh.factory<_i243.StatsBloc>(
-      () => _i243.StatsBloc(gh<_i570.GetFilesBehavior>()),
+    gh.factory<_i570.GetFilesBehavior>(
+      () => filesModule.getFilesBehavior(gh<_i879.FilesService>()),
     );
-    gh.factory<_i787.SearchFilesUseCase>(
-      () => _i787.SearchFilesUseCase(gh<_i279.SearchFilesBehavior>()),
+    gh.factory<_i900.GetFileByIdBehavior>(
+      () => filesModule.getFileByIdBehavior(gh<_i879.FilesService>()),
+    );
+    gh.factory<_i20.ImportFileBehavior>(
+      () => filesModule.importFileBehavior(gh<_i879.FilesService>()),
+    );
+    gh.factory<_i331.DecryptFileBehavior>(
+      () => filesModule.decryptFileBehavior(gh<_i879.FilesService>()),
+    );
+    gh.factory<_i279.SearchFilesBehavior>(
+      () => filesModule.searchFilesBehavior(gh<_i879.FilesService>()),
     );
     gh.factory<_i139.AuthenticateBiometricsUseCase>(
       () => _i139.AuthenticateBiometricsUseCase(
@@ -280,18 +302,27 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i134.FoldersBloc>(
       () => _i134.FoldersBloc(
-        gh<_i152.GetFoldersBehavior>(),
+        gh<_i473.GetFoldersUseCase>(),
         gh<_i327.CreateFolderUseCase>(),
         gh<_i246.DeleteFolderUseCase>(),
       ),
     );
-    gh.factory<_i478.FilesBloc>(
-      () => _i478.FilesBloc(
-        gh<_i942.GetFilesUseCase>(),
-        gh<_i188.ImportFileUseCase>(),
-        gh<_i787.SearchFilesUseCase>(),
-        gh<_i458.CommandManager>(),
-        gh<_i943.FilesLocalSource>(),
+    gh.factory<_i1037.LoadThumbnailUseCase>(
+      () => _i1037.LoadThumbnailUseCase(gh<_i354.LoadThumbnailBehavior>()),
+    );
+    gh.factory<_i983.ThumbnailCubit>(
+      () => _i983.ThumbnailCubit(gh<_i1037.LoadThumbnailUseCase>()),
+    );
+    gh.factory<_i188.ImportFileUseCase>(
+      () => _i188.ImportFileUseCase(gh<_i20.ImportFileBehavior>()),
+    );
+    gh.factory<_i789.SettingsBloc>(
+      () => _i789.SettingsBloc(
+        gh<_i139.DeviceInfoBehavior>(),
+        gh<_i411.HasPinUseCase>(),
+        gh<_i262.VerifyPinUseCase>(),
+        gh<_i712.SetPinUseCase>(),
+        gh<_i696.DeletePinUseCase>(),
       ),
     );
     gh.factory<_i541.AuthBloc>(
@@ -305,10 +336,34 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i139.AuthenticateBiometricsUseCase>(),
       ),
     );
+    gh.factory<_i624.GetFileByIdUseCase>(
+      () => _i624.GetFileByIdUseCase(gh<_i900.GetFileByIdBehavior>()),
+    );
+    gh.factory<_i942.GetFilesUseCase>(
+      () => _i942.GetFilesUseCase(gh<_i570.GetFilesBehavior>()),
+    );
+    gh.factory<_i166.DecryptFileUseCase>(
+      () => _i166.DecryptFileUseCase(gh<_i331.DecryptFileBehavior>()),
+    );
+    gh.factory<_i787.SearchFilesUseCase>(
+      () => _i787.SearchFilesUseCase(gh<_i279.SearchFilesBehavior>()),
+    );
     gh.factory<_i784.FileViewerBloc>(
       () => _i784.FileViewerBloc(
-        gh<_i943.FilesLocalSource>(),
+        gh<_i624.GetFileByIdUseCase>(),
         gh<_i166.DecryptFileUseCase>(),
+      ),
+    );
+    gh.factory<_i243.StatsBloc>(
+      () => _i243.StatsBloc(gh<_i942.GetFilesUseCase>()),
+    );
+    gh.factory<_i478.FilesBloc>(
+      () => _i478.FilesBloc(
+        gh<_i942.GetFilesUseCase>(),
+        gh<_i188.ImportFileUseCase>(),
+        gh<_i787.SearchFilesUseCase>(),
+        gh<_i458.CommandManager>(),
+        gh<_i815.FileStorageBehavior>(),
       ),
     );
     return this;
@@ -319,6 +374,6 @@ class _$RegisterModule extends _i345.RegisterModule {}
 
 class _$FoldersModule extends _i13.FoldersModule {}
 
-class _$FilesModule extends _i594.FilesModule {}
-
 class _$AuthModule extends _i691.AuthModule {}
+
+class _$FilesModule extends _i594.FilesModule {}

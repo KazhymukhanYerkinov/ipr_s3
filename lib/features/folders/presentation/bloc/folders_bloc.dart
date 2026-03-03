@@ -3,17 +3,17 @@ import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/core/result/result.dart';
 import 'package:ipr_s3/features/folders/domain/use_cases/create_folder.dart';
 import 'package:ipr_s3/features/folders/domain/use_cases/delete_folder.dart';
-import 'package:ipr_s3/features/folders/domain/behaviors/get_folders_behavior.dart';
+import 'package:ipr_s3/features/folders/domain/use_cases/get_folders.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_event.dart';
 import 'package:ipr_s3/features/folders/presentation/bloc/folders_state.dart';
 
 @injectable
 class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
-  final GetFoldersBehavior _getFoldersBehavior;
+  final GetFoldersUseCase _getFolders;
   final CreateFolderUseCase _createFolder;
   final DeleteFolderUseCase _deleteFolder;
 
-  FoldersBloc(this._getFoldersBehavior, this._createFolder, this._deleteFolder)
+  FoldersBloc(this._getFolders, this._createFolder, this._deleteFolder)
     : super(const FoldersState.initial()) {
     _setupHandlers();
   }
@@ -29,7 +29,7 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
     Emitter<FoldersState> emit,
   ) async {
     emit(const FoldersState.loading());
-    final result = await _getFoldersBehavior.getFolders();
+    final result = await _getFolders();
     result.when(
       success: (folders) => emit(FoldersState.loaded(folders: folders)),
       error: (f) => emit(FoldersState.error(message: f.message)),

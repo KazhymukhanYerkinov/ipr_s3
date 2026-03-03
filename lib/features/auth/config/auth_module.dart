@@ -6,6 +6,7 @@ import 'package:ipr_s3/features/auth/domain/behaviors/has_pin_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/set_pin_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/sign_in_with_google_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/sign_out_behavior.dart';
+import 'package:ipr_s3/features/auth/domain/behaviors/delete_pin_behavior.dart';
 import 'package:ipr_s3/features/auth/domain/behaviors/verify_pin_behavior.dart';
 
 @module
@@ -29,6 +30,9 @@ abstract class AuthModule {
 
   @factoryMethod
   VerifyPinBehavior verifyPinBehavior(AuthService authService) => authService;
+
+  @factoryMethod
+  DeletePinBehavior deletePinBehavior(AuthService authService) => authService;
 
   @factoryMethod
   AuthenticateWithBiometricsBehavior authenticateWithBiometricsBehavior(
