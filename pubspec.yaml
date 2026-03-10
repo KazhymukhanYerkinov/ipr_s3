@@ -89,6 +89,7 @@ dependencies:
 
   # FFI — calling native C functions from Dart
   ffi: ^2.1.3
+  pdfx: ^2.9.2
 
 dev_dependencies:
   flutter_test:

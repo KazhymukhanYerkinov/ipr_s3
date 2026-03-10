@@ -26,7 +26,7 @@ class EncryptionHelper {
     }
 
     if (await _hasExistingEncryptedData()) {
-      _logger.error('Encryption key lost — encrypted data exists on disk');
+      _logger.error('Encryption key lost - encrypted data exists on disk');
       throw const EncryptionKeyLostException();
     }
 
@@ -46,13 +46,13 @@ class EncryptionHelper {
   Future<bool> _hasExistingEncryptedData() async {
     final appDir = await getApplicationDocumentsDirectory();
 
-    final secureDir = Directory('${appDir.path}/secure_files');
+    final secureDir = Directory('${appDir.path}/${StorageKeys.secureFilesDir}');
     if (await secureDir.exists()) {
       final contents = secureDir.listSync();
       if (contents.isNotEmpty) return true;
     }
 
-    final hiveFile = File('${appDir.path}/secure_files.hive');
+    final hiveFile = File('${appDir.path}/${StorageKeys.secureFilesBox}.hive');
     if (await hiveFile.exists()) return true;
 
     return false;

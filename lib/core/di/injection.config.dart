@@ -74,8 +74,8 @@ import 'package:ipr_s3/features/files/data/services/thumbnail_service.dart'
     as _i681;
 import 'package:ipr_s3/features/files/data/sources/files_local_source.dart'
     as _i943;
-import 'package:ipr_s3/features/files/data/sources/files_local_source_impl.dart'
-    as _i332;
+import 'package:ipr_s3/features/files/data/sources/hive_files_local_source.dart'
+    as _i91;
 import 'package:ipr_s3/features/files/domain/behaviors/decrypt_file_behavior.dart'
     as _i331;
 import 'package:ipr_s3/features/files/domain/behaviors/file_storage_behavior.dart'
@@ -142,9 +142,9 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
+    final filesModule = _$FilesModule();
     final foldersModule = _$FoldersModule();
     final authModule = _$AuthModule();
-    final filesModule = _$FilesModule();
     gh.lazySingleton<_i59.FirebaseAuth>(() => registerModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => registerModule.googleSignIn);
     gh.lazySingleton<_i558.FlutterSecureStorage>(
@@ -171,8 +171,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i870.BenchmarkBloc>(
       () => _i870.BenchmarkBloc(gh<_i942.NativeHashBehavior>()),
     );
+    gh.lazySingleton<_i943.FilesLocalSource>(
+      () => _i91.HiveFilesLocalSource(gh<_i564.EncryptionHelper>()),
+    );
     gh.lazySingleton<_i78.FileEncryptionService>(
       () => _i78.FileEncryptionService(gh<_i564.EncryptionHelper>()),
+    );
+    gh.factory<_i815.FileStorageBehavior>(
+      () => filesModule.fileStorageBehavior(gh<_i943.FilesLocalSource>()),
     );
     gh.lazySingleton<_i1012.AuthRemoteSource>(
       () => _i1012.AuthRemoteSourceImpl(
@@ -180,8 +186,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i116.GoogleSignIn>(),
       ),
     );
-    gh.lazySingleton<_i943.FilesLocalSource>(
-      () => _i332.FilesLocalSourceImpl(gh<_i564.EncryptionHelper>()),
+    gh.lazySingleton<_i879.FilesService>(
+      () => _i879.FilesService(
+        gh<_i943.FilesLocalSource>(),
+        gh<_i78.FileEncryptionService>(),
+        gh<_i681.ThumbnailService>(),
+        gh<_i424.FileSearchService>(),
+        gh<_i942.NativeHashBehavior>(),
+      ),
     );
     gh.lazySingleton<_i77.AuthService>(
       () => _i77.AuthService(
@@ -204,6 +216,21 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i559.DeleteFolderBehavior>(
       () => foldersModule.deleteFolderBehavior(gh<_i191.FoldersService>()),
+    );
+    gh.factory<_i570.GetFilesBehavior>(
+      () => filesModule.getFilesBehavior(gh<_i879.FilesService>()),
+    );
+    gh.factory<_i900.GetFileByIdBehavior>(
+      () => filesModule.getFileByIdBehavior(gh<_i879.FilesService>()),
+    );
+    gh.factory<_i20.ImportFileBehavior>(
+      () => filesModule.importFileBehavior(gh<_i879.FilesService>()),
+    );
+    gh.factory<_i331.DecryptFileBehavior>(
+      () => filesModule.decryptFileBehavior(gh<_i879.FilesService>()),
+    );
+    gh.factory<_i279.SearchFilesBehavior>(
+      () => filesModule.searchFilesBehavior(gh<_i879.FilesService>()),
     );
     gh.lazySingleton<_i354.LoadThumbnailBehavior>(
       () => _i461.ThumbnailCacheService(
@@ -236,6 +263,9 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           authModule.authenticateWithBiometricsBehavior(gh<_i77.AuthService>()),
     );
+    gh.factory<_i188.ImportFileUseCase>(
+      () => _i188.ImportFileUseCase(gh<_i20.ImportFileBehavior>()),
+    );
     gh.factory<_i246.DeleteFolderUseCase>(
       () => _i246.DeleteFolderUseCase(gh<_i559.DeleteFolderBehavior>()),
     );
@@ -248,8 +278,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i411.HasPinUseCase>(
       () => _i411.HasPinUseCase(gh<_i664.HasPinBehavior>()),
     );
-    gh.factory<_i815.FileStorageBehavior>(
-      () => filesModule.fileStorageBehavior(gh<_i943.FilesLocalSource>()),
+    gh.factory<_i624.GetFileByIdUseCase>(
+      () => _i624.GetFileByIdUseCase(gh<_i900.GetFileByIdBehavior>()),
     );
     gh.factory<_i327.CreateFolderUseCase>(
       () => _i327.CreateFolderUseCase(gh<_i19.CreateFolderBehavior>()),
@@ -259,17 +289,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i310.SignInWithGoogleBehavior>(),
       ),
     );
+    gh.factory<_i942.GetFilesUseCase>(
+      () => _i942.GetFilesUseCase(gh<_i570.GetFilesBehavior>()),
+    );
     gh.factory<_i262.VerifyPinUseCase>(
       () => _i262.VerifyPinUseCase(gh<_i692.VerifyPinBehavior>()),
-    );
-    gh.lazySingleton<_i879.FilesService>(
-      () => _i879.FilesService(
-        gh<_i943.FilesLocalSource>(),
-        gh<_i78.FileEncryptionService>(),
-        gh<_i681.ThumbnailService>(),
-        gh<_i424.FileSearchService>(),
-        gh<_i942.NativeHashBehavior>(),
-      ),
     );
     gh.factory<_i254.AuthGetCurrentUserUseCase>(
       () => _i254.AuthGetCurrentUserUseCase(gh<_i342.GetCurrentUserBehavior>()),
@@ -277,23 +301,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i296.AuthSignOutUseCase>(
       () => _i296.AuthSignOutUseCase(gh<_i369.SignOutBehavior>()),
     );
+    gh.factory<_i166.DecryptFileUseCase>(
+      () => _i166.DecryptFileUseCase(gh<_i331.DecryptFileBehavior>()),
+    );
     gh.factory<_i473.GetFoldersUseCase>(
       () => _i473.GetFoldersUseCase(gh<_i152.GetFoldersBehavior>()),
     );
-    gh.factory<_i570.GetFilesBehavior>(
-      () => filesModule.getFilesBehavior(gh<_i879.FilesService>()),
-    );
-    gh.factory<_i900.GetFileByIdBehavior>(
-      () => filesModule.getFileByIdBehavior(gh<_i879.FilesService>()),
-    );
-    gh.factory<_i20.ImportFileBehavior>(
-      () => filesModule.importFileBehavior(gh<_i879.FilesService>()),
-    );
-    gh.factory<_i331.DecryptFileBehavior>(
-      () => filesModule.decryptFileBehavior(gh<_i879.FilesService>()),
-    );
-    gh.factory<_i279.SearchFilesBehavior>(
-      () => filesModule.searchFilesBehavior(gh<_i879.FilesService>()),
+    gh.factory<_i787.SearchFilesUseCase>(
+      () => _i787.SearchFilesUseCase(gh<_i279.SearchFilesBehavior>()),
     );
     gh.factory<_i139.AuthenticateBiometricsUseCase>(
       () => _i139.AuthenticateBiometricsUseCase(
@@ -310,11 +325,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1037.LoadThumbnailUseCase>(
       () => _i1037.LoadThumbnailUseCase(gh<_i354.LoadThumbnailBehavior>()),
     );
+    gh.factory<_i784.FileViewerBloc>(
+      () => _i784.FileViewerBloc(
+        gh<_i624.GetFileByIdUseCase>(),
+        gh<_i166.DecryptFileUseCase>(),
+      ),
+    );
     gh.factory<_i983.ThumbnailCubit>(
       () => _i983.ThumbnailCubit(gh<_i1037.LoadThumbnailUseCase>()),
-    );
-    gh.factory<_i188.ImportFileUseCase>(
-      () => _i188.ImportFileUseCase(gh<_i20.ImportFileBehavior>()),
     );
     gh.factory<_i789.SettingsBloc>(
       () => _i789.SettingsBloc(
@@ -336,24 +354,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i139.AuthenticateBiometricsUseCase>(),
       ),
     );
-    gh.factory<_i624.GetFileByIdUseCase>(
-      () => _i624.GetFileByIdUseCase(gh<_i900.GetFileByIdBehavior>()),
-    );
-    gh.factory<_i942.GetFilesUseCase>(
-      () => _i942.GetFilesUseCase(gh<_i570.GetFilesBehavior>()),
-    );
-    gh.factory<_i166.DecryptFileUseCase>(
-      () => _i166.DecryptFileUseCase(gh<_i331.DecryptFileBehavior>()),
-    );
-    gh.factory<_i787.SearchFilesUseCase>(
-      () => _i787.SearchFilesUseCase(gh<_i279.SearchFilesBehavior>()),
-    );
-    gh.factory<_i784.FileViewerBloc>(
-      () => _i784.FileViewerBloc(
-        gh<_i624.GetFileByIdUseCase>(),
-        gh<_i166.DecryptFileUseCase>(),
-      ),
-    );
     gh.factory<_i243.StatsBloc>(
       () => _i243.StatsBloc(gh<_i942.GetFilesUseCase>()),
     );
@@ -372,8 +372,8 @@ extension GetItInjectableX on _i174.GetIt {
 
 class _$RegisterModule extends _i345.RegisterModule {}
 
+class _$FilesModule extends _i594.FilesModule {}
+
 class _$FoldersModule extends _i13.FoldersModule {}
 
 class _$AuthModule extends _i691.AuthModule {}
-
-class _$FilesModule extends _i594.FilesModule {}

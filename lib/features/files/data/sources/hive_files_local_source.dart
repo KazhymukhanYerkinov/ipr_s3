@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:ipr_s3/core/constants/storage_keys.dart';
 import 'package:ipr_s3/core/security/encryption_helper.dart';
 import 'package:ipr_s3/features/files/data/dtos/secure_file_dto.dart';
 import 'package:ipr_s3/features/files/data/mappers/secure_file_mapper.dart';
@@ -10,12 +11,12 @@ import 'package:ipr_s3/features/files/data/sources/files_local_source.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
 
 @LazySingleton(as: FilesLocalSource)
-class FilesLocalSourceImpl implements FilesLocalSource {
-  static const _boxName = 'secure_files';
+class HiveFilesLocalSource implements FilesLocalSource {
+  static const _boxName = StorageKeys.secureFilesBox;
 
   final EncryptionHelper _encryptionHelper;
 
-  FilesLocalSourceImpl(this._encryptionHelper);
+  HiveFilesLocalSource(this._encryptionHelper);
 
   @override
   Future<List<SecureFileEntity>> getAll() async {
@@ -130,7 +131,7 @@ class FilesLocalSourceImpl implements FilesLocalSource {
 
   Future<Directory> _getSecureDirectory() async {
     final appDir = await getApplicationDocumentsDirectory();
-    final secureDir = Directory('${appDir.path}/secure_files');
+    final secureDir = Directory('${appDir.path}/${StorageKeys.secureFilesDir}');
     if (!await secureDir.exists()) {
       await secureDir.create(recursive: true);
     }
@@ -139,7 +140,7 @@ class FilesLocalSourceImpl implements FilesLocalSource {
 
   Future<Directory> _getThumbnailDirectory() async {
     final appDir = await getApplicationDocumentsDirectory();
-    final thumbDir = Directory('${appDir.path}/thumbnails');
+    final thumbDir = Directory('${appDir.path}/${StorageKeys.thumbnailsDir}');
     if (!await thumbDir.exists()) {
       await thumbDir.create(recursive: true);
     }

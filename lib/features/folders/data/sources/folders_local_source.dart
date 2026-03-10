@@ -1,4 +1,5 @@
 import 'package:injectable/injectable.dart';
+import 'package:ipr_s3/core/constants/storage_keys.dart';
 import 'package:ipr_s3/core/security/encryption_helper.dart';
 import 'package:ipr_s3/features/folders/data/dtos/folder_dto.dart';
 import 'package:ipr_s3/features/folders/data/mappers/folder_mapper.dart';
@@ -12,7 +13,7 @@ abstract class FoldersLocalSource {
 
 @LazySingleton(as: FoldersLocalSource)
 class FoldersLocalSourceImpl implements FoldersLocalSource {
-  static const _boxName = 'folders';
+  static const _boxName = StorageKeys.foldersBox;
 
   final EncryptionHelper _encryptionHelper;
 

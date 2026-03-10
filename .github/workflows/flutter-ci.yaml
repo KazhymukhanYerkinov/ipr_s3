@@ -35,7 +35,7 @@ jobs:
       # Клонирует репозиторий на раннер
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # SonarCloud нужна полная git-история
+          fetch-depth: 0
 
       # Устанавливает и кэширует Flutter SDK нужной версии
       - name: Setup Flutter
