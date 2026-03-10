@@ -3,19 +3,25 @@ import 'dart:isolate';
 
 import 'package:injectable/injectable.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
+import 'package:uuid/uuid.dart';
 
-class SearchRequest {
+class _SearchRequest {
+  final String requestId;
   final String query;
-  final List<Map<String, dynamic>> filesData;
+  final List<SecureFileEntity> files;
 
-  const SearchRequest({required this.query, required this.filesData});
+  const _SearchRequest({
+    required this.requestId,
+    required this.query,
+    required this.files,
+  });
 }
 
-class SearchResult {
-  final String query;
-  final List<Map<String, dynamic>> matchedFiles;
+class _SearchResult {
+  final String requestId;
+  final List<SecureFileEntity> matchedFiles;
 
-  const SearchResult({required this.query, required this.matchedFiles});
+  const _SearchResult({required this.requestId, required this.matchedFiles});
 }
 
 void _searchIsolateEntry(SendPort mainSendPort) {
@@ -23,28 +29,21 @@ void _searchIsolateEntry(SendPort mainSendPort) {
   mainSendPort.send(workerReceivePort.sendPort);
 
   workerReceivePort.listen((message) {
-    if (message is SearchRequest) {
+    if (message is _SearchRequest) {
       final query = message.query.toLowerCase();
 
       final matched =
-          message.filesData.where((fileData) {
-            final name = (fileData['name'] as String? ?? '').toLowerCase();
-            final tags = (fileData['tags'] as List<dynamic>? ?? []).map(
-              (t) => t.toString().toLowerCase(),
+          message.files.where((file) {
+            final nameMatch = file.name.toLowerCase().contains(query);
+            final tagMatch = file.tags.any(
+              (tag) => tag.toLowerCase().contains(query),
             );
-
-            return name.contains(query) ||
-                tags.any((tag) => tag.contains(query));
+            return nameMatch || tagMatch;
           }).toList();
 
       mainSendPort.send(
-        SearchResult(query: message.query, matchedFiles: matched),
+        _SearchResult(requestId: message.requestId, matchedFiles: matched),
       );
-    }
-
-    if (message == 'close') {
-      workerReceivePort.close();
-      Isolate.exit();
     }
   });
 }
@@ -55,25 +54,33 @@ class FileSearchService {
   SendPort? _workerSendPort;
   ReceivePort? _mainReceivePort;
   StreamSubscription? _subscription;
-  final _resultController = StreamController<SearchResult>.broadcast();
+  final _resultController = StreamController<_SearchResult>.broadcast();
+  final _uuid = const Uuid();
 
-  Stream<SearchResult> get results => _resultController.stream;
+  static const _searchTimeout = Duration(seconds: 10);
 
   Future<void> initialize() async {
     if (_isolate != null) return;
 
     _mainReceivePort = ReceivePort();
+
+    final errorPort = ReceivePort();
     _isolate = await Isolate.spawn(
       _searchIsolateEntry,
       _mainReceivePort!.sendPort,
+      onError: errorPort.sendPort,
     );
+
+    errorPort.listen((error) {
+      _resultController.addError(Exception('Search isolate error: $error'));
+    });
 
     final completer = Completer<SendPort>();
 
     _subscription = _mainReceivePort!.listen((message) {
       if (message is SendPort && !completer.isCompleted) {
         completer.complete(message);
-      } else if (message is SearchResult) {
+      } else if (message is _SearchResult) {
         _resultController.add(message);
       }
     });
@@ -87,50 +94,20 @@ class FileSearchService {
   ) async {
     await initialize();
 
-    final filesData =
-        files
-            .map(
-              (f) => {
-                'id': f.id,
-                'name': f.name,
-                'typeIndex': f.type.index,
-                'size': f.size,
-                'encryptedPath': f.encryptedPath,
-                'thumbnailPath': f.thumbnailPath,
-                'createdAt': f.createdAt.toIso8601String(),
-                'updatedAt': f.updatedAt.toIso8601String(),
-                'tags': f.tags,
-                'folderId': f.folderId,
-              },
-            )
-            .toList();
+    final requestId = _uuid.v4();
 
-    _workerSendPort!.send(SearchRequest(query: query, filesData: filesData));
-
-    final result = await _resultController.stream.firstWhere(
-      (r) => r.query == query,
+    _workerSendPort!.send(
+      _SearchRequest(requestId: requestId, query: query, files: files),
     );
 
-    return result.matchedFiles.map(_mapToEntity).toList();
-  }
+    final result = await _resultController.stream
+        .firstWhere((r) => r.requestId == requestId)
+        .timeout(_searchTimeout);
 
-  SecureFileEntity _mapToEntity(Map<String, dynamic> data) {
-    return SecureFileEntity(
-      id: data['id'] as String,
-      name: data['name'] as String,
-      type: FileType.values[data['typeIndex'] as int],
-      size: data['size'] as int,
-      encryptedPath: data['encryptedPath'] as String,
-      thumbnailPath: data['thumbnailPath'] as String?,
-      createdAt: DateTime.parse(data['createdAt'] as String),
-      updatedAt: DateTime.parse(data['updatedAt'] as String),
-      tags: List<String>.from(data['tags'] as List),
-      folderId: data['folderId'] as String?,
-    );
+    return result.matchedFiles;
   }
 
   void dispose() {
-    _workerSendPort?.send('close');
     _subscription?.cancel();
     _mainReceivePort?.close();
     _isolate?.kill(priority: Isolate.immediate);
