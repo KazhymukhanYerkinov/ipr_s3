@@ -8,20 +8,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-/**
- * MethodChannel для передачи информации об устройстве в Flutter.
- *
- * Канал: "com.filesecure/device_info"
- * Методы:
- *   - getBatteryLevel  → Int (0-100) или error("UNAVAILABLE")
- *   - getFreeStorage   → Long (байты свободного места)
- *   - getTotalStorage  → Long (байты общего места)
- *
- * Почему MethodChannel, а не Dart-пакет:
- * - BatteryManager и StatFs — нативные Android API
- * - Даёт точные данные без промежуточных абстракций
- * - Демонстрация Цели 7 ИПР (платформенные каналы)
- */
+
 class MainActivity : FlutterActivity() {
     companion object {
         private const val CHANNEL = "com.filesecure/device_info"
@@ -43,7 +30,6 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    /** Возвращает уровень заряда батареи (0-100). Использует BatteryManager. */
     private fun handleGetBatteryLevel(result: MethodChannel.Result) {
         try {
             val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
@@ -64,7 +50,6 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    /** Возвращает количество свободных байт на устройстве. */
     private fun handleGetFreeStorage(result: MethodChannel.Result) {
         try {
             val stat = StatFs(Environment.getDataDirectory().path)
@@ -75,7 +60,6 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    /** Возвращает общий объём хранилища в байтах. */
     private fun handleGetTotalStorage(result: MethodChannel.Result) {
         try {
             val stat = StatFs(Environment.getDataDirectory().path)

@@ -1,18 +1,6 @@
 import Flutter
 import UIKit
 
-/// MethodChannel для передачи информации об устройстве в Flutter.
-///
-/// Канал: "com.filesecure/device_info"
-/// Методы:
-///   - getBatteryLevel  → Int (0-100) или FlutterError
-///   - getFreeStorage   → Int64 (байты свободного места)
-///   - getTotalStorage  → Int64 (байты общего места)
-///
-/// Почему MethodChannel, а не Dart-пакет:
-/// - UIDevice.batteryLevel и FileManager — нативные iOS API
-/// - Даёт точные данные без промежуточных абстракций
-/// - Демонстрация Цели 7 ИПР (платформенные каналы)
 @main
 @objc class AppDelegate: FlutterAppDelegate {
     private let channelName = "com.filesecure/device_info"
@@ -45,9 +33,6 @@ import UIKit
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
-    /// Возвращает уровень заряда батареи (0-100).
-    /// UIDevice.batteryLevel возвращает Float 0.0-1.0, умножаем на 100.
-    /// isBatteryMonitoringEnabled нужно включить перед чтением.
     private func handleGetBatteryLevel(result: @escaping FlutterResult) {
         UIDevice.current.isBatteryMonitoringEnabled = true
         let level = UIDevice.current.batteryLevel
@@ -63,8 +48,6 @@ import UIKit
         }
     }
 
-    /// Возвращает количество свободных байт на устройстве.
-    /// FileManager.attributesOfFileSystem читает метаданные FS.
     private func handleGetFreeStorage(result: @escaping FlutterResult) {
         do {
             let attrs = try FileManager.default.attributesOfFileSystem(
@@ -88,7 +71,6 @@ import UIKit
         }
     }
 
-    /// Возвращает общий объём хранилища в байтах.
     private func handleGetTotalStorage(result: @escaping FlutterResult) {
         do {
             let attrs = try FileManager.default.attributesOfFileSystem(

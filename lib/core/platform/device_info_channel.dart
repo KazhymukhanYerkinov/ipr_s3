@@ -9,21 +9,19 @@ class DeviceInfoChannel implements DeviceInfoBehavior {
   final _logger = SecureLogger();
 
   @override
-  Future<int?> getBatteryLevel() =>
-      _invokeInt('getBatteryLevel', 'Battery level');
+  Future<int?> getBatteryLevel() => _invokeInt('getBatteryLevel');
 
   @override
-  Future<int?> getFreeStorage() => _invokeInt('getFreeStorage', 'Free storage');
+  Future<int?> getFreeStorage() => _invokeInt('getFreeStorage');
 
   @override
-  Future<int?> getTotalStorage() =>
-      _invokeInt('getTotalStorage', 'Total storage');
+  Future<int?> getTotalStorage() => _invokeInt('getTotalStorage');
 
-  Future<int?> _invokeInt(String method, String label) async {
+  Future<int?> _invokeInt(String method) async {
     try {
       return await _channel.invokeMethod<int>(method);
     } on PlatformException catch (e) {
-      _logger.warning('$label unavailable: ${e.code}');
+      _logger.warning(e.code);
       return null;
     } on MissingPluginException {
       _logger.warning('MethodChannel not available (platform unsupported)');
