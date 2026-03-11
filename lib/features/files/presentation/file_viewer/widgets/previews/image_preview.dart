@@ -10,6 +10,8 @@ class ImagePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width.toInt();
+
     return InteractiveViewer(
       minScale: 0.5,
       maxScale: 4.0,
@@ -17,6 +19,7 @@ class ImagePreview extends StatelessWidget {
         child: Image.memory(
           bytes,
           fit: BoxFit.contain,
+          cacheWidth: screenWidth * 2,
           errorBuilder: (_, __, ___) => const ErrorPlaceholder(),
         ),
       ),

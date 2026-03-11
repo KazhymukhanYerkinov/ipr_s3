@@ -45,6 +45,7 @@ class _FileViewerView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(fileName)),
       body: BlocBuilder<FileViewerBloc, FileViewerState>(
+        buildWhen: (prev, curr) => prev.runtimeType != curr.runtimeType,
         builder: (context, state) {
           return switch (state) {
             FileViewerInitial() => const SizedBox.shrink(),

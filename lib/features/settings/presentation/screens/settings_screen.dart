@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipr_s3/core/di/injection.dart';
 import 'package:ipr_s3/core/extensions/snack_bar_x.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
+import 'package:ipr_s3/core/router/app_router.dart';
 import 'package:ipr_s3/core/widgets/destructive_dialog.dart';
 import 'package:ipr_s3/core/widgets/error_state_view.dart';
 import 'package:ipr_s3/core/widgets/loading_state_view.dart';
@@ -73,6 +74,17 @@ class _SettingsView extends StatelessWidget {
                     hasPin: hasPin,
                     theme: theme,
                     onChangePin: () => showChangePinDialog(context),
+                  ),
+                  const SizedBox(height: 24),
+                  SectionHeader(title: l.benchmarkTitle, theme: theme),
+                  const SizedBox(height: 8),
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.speed),
+                      title: Text(l.benchmarkTitle),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => context.pushRoute(const BenchmarkRoute()),
+                    ),
                   ),
                   const SizedBox(height: 32),
                   SizedBox(

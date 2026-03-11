@@ -13,26 +13,39 @@ class PdfPreview extends StatefulWidget {
 }
 
 class _PdfPreviewState extends State<PdfPreview> {
-  late final PdfControllerPinch _controller;
+  PdfControllerPinch? _controller;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _controller = PdfControllerPinch(
-      document: PdfDocument.openData(widget.bytes),
-    );
+    _initPdf();
+  }
+
+  Future<void> _initPdf() async {
+    final document = await PdfDocument.openData(widget.bytes);
+    if (mounted) {
+      setState(() {
+        _controller = PdfControllerPinch(document: Future.value(document));
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading || _controller == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return PdfViewPinch(
-      controller: _controller,
+      controller: _controller!,
       builders: PdfViewPinchBuilders<DefaultBuilderOptions>(
         options: const DefaultBuilderOptions(),
         documentLoaderBuilder:
