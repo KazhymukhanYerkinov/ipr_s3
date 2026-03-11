@@ -14,6 +14,12 @@ class CommandManager {
   bool get canUndo => _undoStack.isNotEmpty;
   bool get canRedo => _redoStack.isNotEmpty;
 
+  List<String> get undoDescriptions =>
+      _undoStack.map((e) => e.command.description).toList();
+
+  List<String> get redoDescriptions =>
+      _redoStack.map((e) => e.command.description).toList();
+
   Future<void> execute(FileCommand command) async {
     await command.execute();
     _undoStack.add(CommandEntry(command));
