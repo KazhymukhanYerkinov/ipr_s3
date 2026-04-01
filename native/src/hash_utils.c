@@ -15,8 +15,6 @@ static void build_crc32_table(void) {
     table_ready = 1;
 }
 
-/// CRC32 using a 256-entry lookup table.
-/// One table lookup per byte instead of 8 shifts per byte (bit-at-a-time).
 uint32_t native_crc32(const uint8_t* data, int32_t length) {
     if (!table_ready) {
         build_crc32_table();

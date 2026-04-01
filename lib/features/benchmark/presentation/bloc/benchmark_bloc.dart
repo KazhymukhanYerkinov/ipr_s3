@@ -122,8 +122,6 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
   }
 }
 
-/// Dart CRC32 — bit-at-a-time (no lookup table), same algorithm the old C code
-/// used. This is intentionally kept naive so the C lookup-table version wins.
 int _dartCrc32(Uint8List data) {
   var crc = 0xFFFFFFFF;
   for (var i = 0; i < data.length; i++) {
