@@ -33,6 +33,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "actionRedone": MessageLookupByLibrary.simpleMessage("Action redone"),
+    "actionUndone": MessageLookupByLibrary.simpleMessage("Action undone"),
     "allFilesEncrypted": MessageLookupByLibrary.simpleMessage(
       "All files encrypted!",
     ),
@@ -85,6 +87,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "preparing": MessageLookupByLibrary.simpleMessage("Preparing..."),
     "recentFiles": MessageLookupByLibrary.simpleMessage("Recent Files"),
+    "redo": MessageLookupByLibrary.simpleMessage("Redo"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "searchFiles": MessageLookupByLibrary.simpleMessage("Search files..."),
@@ -124,8 +127,5 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tap + to import and encrypt your first file",
     ),
     "undo": MessageLookupByLibrary.simpleMessage("Undo"),
-    "redo": MessageLookupByLibrary.simpleMessage("Redo"),
-    "actionRedone": MessageLookupByLibrary.simpleMessage("Action redone"),
-    "actionUndone": MessageLookupByLibrary.simpleMessage("Action undone"),
   };
 }
