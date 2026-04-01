@@ -22,21 +22,6 @@ class InitialView extends StatelessWidget {
               color: theme.colorScheme.primary,
             ),
             const SizedBox(height: 24),
-            Text(
-              'CRC32 Performance Benchmark',
-              style: theme.textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Compares pure Dart CRC32 implementation against native C via FFI '
-              'on 1 MB, 5 MB, and 10 MB of random data.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
             FilledButton.icon(
               onPressed:
                   () => context.read<BenchmarkBloc>().add(

@@ -47,35 +47,6 @@ class ResultsView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Card(
-          color: theme.colorScheme.primaryContainer,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'How it works',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '• Dart CRC32 — pure Dart loop on the main thread\n'
-                  '• C (FFI) — native C function called via dart:ffi\n'
-                  '• C + Isolate — same Dart CRC32 running in compute()\n\n'
-                  'FFI calls are synchronous and avoid GC pauses,\n'
-                  'giving consistent speedup on large data.',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
         Center(
           child: FilledButton.tonal(
             onPressed:

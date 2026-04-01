@@ -8,6 +8,8 @@ import 'package:ipr_s3/features/benchmark/domain/models/benchmark_result.dart';
 import 'package:ipr_s3/features/benchmark/presentation/bloc/benchmark_event.dart';
 import 'package:ipr_s3/features/benchmark/presentation/bloc/benchmark_state.dart';
 
+const _iterations = 3;
+
 @injectable
 class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
   final NativeHashBehavior _nativeHash;
@@ -33,6 +35,10 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
       for (final sizeMb in sizes) {
         final data = _generateTestData(sizeMb * 1024 * 1024);
 
+        // --- Warmup: one untimed run of each to avoid JIT/cold-start bias ---
+        _dartCrc32(data);
+        _nativeHash.crc32(data);
+
         emit(
           BenchmarkState.running(
             currentTask: 'Dart CRC32 — ${sizeMb}MB',
@@ -40,7 +46,7 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
             totalSteps: totalSteps,
           ),
         );
-        final dartMs = await _benchmarkDartCrc32(data);
+        final dartMs = _benchmarkDartCrc32(data);
         completedSteps++;
 
         emit(
@@ -55,12 +61,12 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
 
         emit(
           BenchmarkState.running(
-            currentTask: 'C (FFI) + Isolate CRC32 — ${sizeMb}MB',
+            currentTask: 'C (FFI) + Isolate — ${sizeMb}MB',
             completedSteps: completedSteps,
             totalSteps: totalSteps,
           ),
         );
-        final isolateMs = await _benchmarkIsolateCrc32(data);
+        final isolateMs = await _benchmarkNativeIsolateCrc32(data);
         completedSteps++;
 
         results.add(
@@ -88,32 +94,37 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
     return data;
   }
 
-  Future<int> _benchmarkDartCrc32(Uint8List data) async {
+  int _benchmarkDartCrc32(Uint8List data) {
     final stopwatch = Stopwatch()..start();
-    _dartCrc32Impl(data);
+    for (var i = 0; i < _iterations; i++) {
+      _dartCrc32(data);
+    }
     stopwatch.stop();
-    return stopwatch.elapsedMilliseconds;
+    return stopwatch.elapsedMilliseconds ~/ _iterations;
   }
 
   int _benchmarkNativeCrc32(Uint8List data) {
     final stopwatch = Stopwatch()..start();
-    _nativeHash.crc32(data);
+    for (var i = 0; i < _iterations; i++) {
+      _nativeHash.crc32(data);
+    }
     stopwatch.stop();
-    return stopwatch.elapsedMilliseconds;
+    return stopwatch.elapsedMilliseconds ~/ _iterations;
   }
 
-  Future<int> _benchmarkIsolateCrc32(Uint8List data) async {
+  Future<int> _benchmarkNativeIsolateCrc32(Uint8List data) async {
     final stopwatch = Stopwatch()..start();
-    await compute(_crc32, data);
+    for (var i = 0; i < _iterations; i++) {
+      await _nativeHash.crc32InIsolate(data);
+    }
     stopwatch.stop();
-    return stopwatch.elapsedMilliseconds;
+    return stopwatch.elapsedMilliseconds ~/ _iterations;
   }
-
-  static int _dartCrc32Impl(Uint8List data) => _crc32(data);
 }
 
-/// Shared CRC32 implementation used both on main thread and in isolate.
-int _crc32(Uint8List data) {
+/// Dart CRC32 — bit-at-a-time (no lookup table), same algorithm the old C code
+/// used. This is intentionally kept naive so the C lookup-table version wins.
+int _dartCrc32(Uint8List data) {
   var crc = 0xFFFFFFFF;
   for (var i = 0; i < data.length; i++) {
     crc ^= data[i];
