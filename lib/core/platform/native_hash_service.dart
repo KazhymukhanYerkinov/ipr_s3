@@ -1,6 +1,5 @@
 import 'dart:ffi';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
@@ -10,11 +9,6 @@ import 'package:ipr_s3/core/platform/native_hash_behavior.dart';
 typedef NativeCrc32 = Uint32 Function(Pointer<Uint8>, Int32);
 typedef DartCrc32 = int Function(Pointer<Uint8>, int);
 
-/// Runs native CRC32 inside an isolate via [compute].
-///
-/// Each isolate has its own heap, so we open [DynamicLibrary] and look up
-/// the C function from scratch. The library open cost is negligible compared
-/// to the actual hash computation on multi-MB inputs.
 int _nativeCrc32InIsolate(Uint8List data) {
   final DynamicLibrary lib;
   if (Platform.isAndroid) {
@@ -36,11 +30,6 @@ int _nativeCrc32InIsolate(Uint8List data) {
   }
 }
 
-/// Provides CRC32 hashing via a native C library loaded through dart:ffi.
-///
-/// On Android the shared library `libhash_utils.so` is loaded at runtime.
-/// On iOS the C code is statically linked into the binary and accessed
-/// via [DynamicLibrary.process].
 @LazySingleton(as: NativeHashBehavior)
 class NativeHashService implements NativeHashBehavior {
   late final DartCrc32 _crc32;
