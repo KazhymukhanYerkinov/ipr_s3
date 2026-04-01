@@ -6,12 +6,14 @@ class PinKeyboard extends StatelessWidget {
   final ValueChanged<int> onDigitPressed;
   final VoidCallback onBackspacePressed;
   final VoidCallback? onBiometricPressed;
+  final IconData biometricIcon;
 
   const PinKeyboard({
     super.key,
     required this.onDigitPressed,
     required this.onBackspacePressed,
     this.onBiometricPressed,
+    this.biometricIcon = Icons.fingerprint,
   });
 
   @override
@@ -52,7 +54,7 @@ class PinKeyboard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         if (onBiometricPressed != null)
-          ActionButton(icon: Icons.fingerprint, onPressed: onBiometricPressed!)
+          ActionButton(icon: biometricIcon, onPressed: onBiometricPressed!)
         else
           const SizedBox(width: 72, height: 72),
         DigitButton(digit: 0, onPressed: () => onDigitPressed(0)),

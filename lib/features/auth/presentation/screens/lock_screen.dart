@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:ipr_s3/core/extensions/snack_bar_x.dart';
 import 'package:ipr_s3/core/localization/localization_x.dart';
 import 'package:ipr_s3/core/widgets/shake_widget.dart';
@@ -24,14 +25,30 @@ class _LockScreenState extends State<LockScreen>
   static const _pinLength = 4;
 
   String _enteredPin = '';
+  IconData _biometricIcon = Icons.fingerprint;
 
   @override
   void initState() {
     super.initState();
     initShakeAnimation();
+    _detectBiometricType();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AuthBloc>().add(BiometricRequested());
+    });
+  }
+
+  Future<void> _detectBiometricType() async {
+    final localAuth = LocalAuthentication();
+    final biometrics = await localAuth.getAvailableBiometrics();
+
+    if (!mounted) return;
+
+    setState(() {
+      _biometricIcon =
+          biometrics.contains(BiometricType.face)
+              ? Icons.face
+              : Icons.fingerprint;
     });
   }
 
@@ -116,6 +133,7 @@ class _LockScreenState extends State<LockScreen>
                 onDigitPressed: _onDigitPressed,
                 onBackspacePressed: _onBackspacePressed,
                 onBiometricPressed: _onBiometricPressed,
+                biometricIcon: _biometricIcon,
               ),
               const SizedBox(height: 24),
               TextButton.icon(
