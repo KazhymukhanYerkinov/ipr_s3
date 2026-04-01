@@ -9,9 +9,6 @@ import 'package:ipr_s3/core/security/pin_manager.dart';
 import 'package:ipr_s3/features/files/data/dtos/secure_file_dto.dart';
 import 'package:ipr_s3/features/files/domain/commands/command_manager.dart';
 
-/// Registers `dart:developer` service extensions that the
-/// DevTools extension (file_secure_inspector) calls to read
-/// runtime state. Only active in debug/profile mode.
 class DevToolsService {
   final PinManager _pinManager;
   final EncryptionHelper _encryptionHelper;

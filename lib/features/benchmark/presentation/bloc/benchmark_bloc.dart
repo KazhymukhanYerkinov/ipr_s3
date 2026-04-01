@@ -35,7 +35,6 @@ class BenchmarkBloc extends Bloc<BenchmarkEvent, BenchmarkState> {
       for (final sizeMb in sizes) {
         final data = _generateTestData(sizeMb * 1024 * 1024);
 
-        // --- Warmup: one untimed run of each to avoid JIT/cold-start bias ---
         _dartCrc32(data);
         _nativeHash.crc32(data);
 
