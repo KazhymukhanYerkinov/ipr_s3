@@ -25,7 +25,6 @@ mixin _$SettingsState {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )
     loaded,
@@ -39,7 +38,6 @@ mixin _$SettingsState {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )?
     loaded,
@@ -53,7 +51,6 @@ mixin _$SettingsState {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )?
     loaded,
@@ -149,7 +146,6 @@ class _$SettingsInitialImpl implements SettingsInitial {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )
     loaded,
@@ -167,7 +163,6 @@ class _$SettingsInitialImpl implements SettingsInitial {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )?
     loaded,
@@ -185,7 +180,6 @@ class _$SettingsInitialImpl implements SettingsInitial {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )?
     loaded,
@@ -286,7 +280,6 @@ class _$SettingsLoadingImpl implements SettingsLoading {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )
     loaded,
@@ -304,7 +297,6 @@ class _$SettingsLoadingImpl implements SettingsLoading {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )?
     loaded,
@@ -322,7 +314,6 @@ class _$SettingsLoadingImpl implements SettingsLoading {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )?
     loaded,
@@ -388,7 +379,6 @@ abstract class _$$SettingsLoadedImplCopyWith<$Res> {
     int? batteryLevel,
     int? freeStorage,
     int? totalStorage,
-    bool hasPin,
     String message,
   });
 }
@@ -408,7 +398,6 @@ class __$$SettingsLoadedImplCopyWithImpl<$Res>
     Object? batteryLevel = freezed,
     Object? freeStorage = freezed,
     Object? totalStorage = freezed,
-    Object? hasPin = null,
     Object? message = null,
   }) {
     return _then(
@@ -428,11 +417,6 @@ class __$$SettingsLoadedImplCopyWithImpl<$Res>
                 ? _value.totalStorage
                 : totalStorage // ignore: cast_nullable_to_non_nullable
                     as int?,
-        hasPin:
-            null == hasPin
-                ? _value.hasPin
-                : hasPin // ignore: cast_nullable_to_non_nullable
-                    as bool,
         message:
             null == message
                 ? _value.message
@@ -450,7 +434,6 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
     this.batteryLevel,
     this.freeStorage,
     this.totalStorage,
-    required this.hasPin,
     this.message = '',
   });
 
@@ -461,14 +444,12 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
   @override
   final int? totalStorage;
   @override
-  final bool hasPin;
-  @override
   @JsonKey()
   final String message;
 
   @override
   String toString() {
-    return 'SettingsState.loaded(batteryLevel: $batteryLevel, freeStorage: $freeStorage, totalStorage: $totalStorage, hasPin: $hasPin, message: $message)';
+    return 'SettingsState.loaded(batteryLevel: $batteryLevel, freeStorage: $freeStorage, totalStorage: $totalStorage, message: $message)';
   }
 
   @override
@@ -482,7 +463,6 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
                 other.freeStorage == freeStorage) &&
             (identical(other.totalStorage, totalStorage) ||
                 other.totalStorage == totalStorage) &&
-            (identical(other.hasPin, hasPin) || other.hasPin == hasPin) &&
             (identical(other.message, message) || other.message == message));
   }
 
@@ -492,7 +472,6 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
     batteryLevel,
     freeStorage,
     totalStorage,
-    hasPin,
     message,
   );
 
@@ -514,13 +493,12 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )
     loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(batteryLevel, freeStorage, totalStorage, hasPin, message);
+    return loaded(batteryLevel, freeStorage, totalStorage, message);
   }
 
   @override
@@ -532,19 +510,12 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )?
     loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(
-      batteryLevel,
-      freeStorage,
-      totalStorage,
-      hasPin,
-      message,
-    );
+    return loaded?.call(batteryLevel, freeStorage, totalStorage, message);
   }
 
   @override
@@ -556,7 +527,6 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )?
     loaded,
@@ -564,7 +534,7 @@ class _$SettingsLoadedImpl implements SettingsLoaded {
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(batteryLevel, freeStorage, totalStorage, hasPin, message);
+      return loaded(batteryLevel, freeStorage, totalStorage, message);
     }
     return orElse();
   }
@@ -612,14 +582,12 @@ abstract class SettingsLoaded implements SettingsState {
     final int? batteryLevel,
     final int? freeStorage,
     final int? totalStorage,
-    required final bool hasPin,
     final String message,
   }) = _$SettingsLoadedImpl;
 
   int? get batteryLevel;
   int? get freeStorage;
   int? get totalStorage;
-  bool get hasPin;
   String get message;
   @JsonKey(ignore: true)
   _$$SettingsLoadedImplCopyWith<_$SettingsLoadedImpl> get copyWith =>
@@ -699,7 +667,6 @@ class _$SettingsErrorImpl implements SettingsError {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )
     loaded,
@@ -717,7 +684,6 @@ class _$SettingsErrorImpl implements SettingsError {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )?
     loaded,
@@ -735,7 +701,6 @@ class _$SettingsErrorImpl implements SettingsError {
       int? batteryLevel,
       int? freeStorage,
       int? totalStorage,
-      bool hasPin,
       String message,
     )?
     loaded,

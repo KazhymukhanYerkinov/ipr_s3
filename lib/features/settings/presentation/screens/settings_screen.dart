@@ -14,9 +14,7 @@ import 'package:ipr_s3/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:ipr_s3/features/settings/presentation/bloc/settings_event.dart';
 import 'package:ipr_s3/features/settings/presentation/bloc/settings_state.dart';
 import 'package:ipr_s3/features/settings/presentation/widgets/device_info_card.dart';
-import 'package:ipr_s3/features/settings/presentation/widgets/change_pin_dialog.dart';
 import 'package:ipr_s3/features/settings/presentation/widgets/section_header.dart';
-import 'package:ipr_s3/features/settings/presentation/widgets/security_card.dart';
 
 @RoutePage()
 class SettingsScreen extends StatelessWidget {
@@ -54,7 +52,6 @@ class _SettingsView extends StatelessWidget {
               :final batteryLevel,
               :final freeStorage,
               :final totalStorage,
-              :final hasPin,
             ) =>
               ListView(
                 padding: const EdgeInsets.all(16),
@@ -66,14 +63,6 @@ class _SettingsView extends StatelessWidget {
                     freeStorage: freeStorage,
                     totalStorage: totalStorage,
                     theme: theme,
-                  ),
-                  const SizedBox(height: 24),
-                  SectionHeader(title: l.security, theme: theme),
-                  const SizedBox(height: 8),
-                  SecurityCard(
-                    hasPin: hasPin,
-                    theme: theme,
-                    onChangePin: () => showChangePinDialog(context),
                   ),
                   const SizedBox(height: 24),
                   SectionHeader(title: l.benchmarkTitle, theme: theme),

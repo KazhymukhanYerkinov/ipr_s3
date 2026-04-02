@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:injectable/injectable.dart';
-import 'package:uuid/uuid.dart';
 import 'package:ipr_s3/core/error/exceptions.dart';
 import 'package:ipr_s3/core/error/failures.dart';
 import 'package:ipr_s3/core/platform/native_hash_behavior.dart';
@@ -17,6 +16,7 @@ import 'package:ipr_s3/features/files/domain/behaviors/get_files_behavior.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/import_file_behavior.dart';
 import 'package:ipr_s3/features/files/domain/behaviors/search_files_behavior.dart';
 import 'package:ipr_s3/features/files/domain/models/secure_file_entity.dart';
+import 'package:uuid/uuid.dart';
 
 @lazySingleton
 class FilesService

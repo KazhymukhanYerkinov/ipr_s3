@@ -10,7 +10,6 @@ sealed class SettingsState with _$SettingsState {
     int? batteryLevel,
     int? freeStorage,
     int? totalStorage,
-    required bool hasPin,
     @Default('') String message,
   }) = SettingsLoaded;
   const factory SettingsState.error({required String message}) = SettingsError;

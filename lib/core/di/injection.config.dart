@@ -165,6 +165,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i564.EncryptionHelper>(
       () => _i564.EncryptionHelper(gh<_i558.FlutterSecureStorage>()),
     );
+    gh.factory<_i789.SettingsBloc>(
+      () => _i789.SettingsBloc(gh<_i139.DeviceInfoBehavior>()),
+    );
     gh.lazySingleton<_i57.FoldersLocalSource>(
       () => _i57.FoldersLocalSourceImpl(gh<_i564.EncryptionHelper>()),
     );
@@ -333,15 +336,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i983.ThumbnailCubit>(
       () => _i983.ThumbnailCubit(gh<_i1037.LoadThumbnailUseCase>()),
-    );
-    gh.factory<_i789.SettingsBloc>(
-      () => _i789.SettingsBloc(
-        gh<_i139.DeviceInfoBehavior>(),
-        gh<_i411.HasPinUseCase>(),
-        gh<_i262.VerifyPinUseCase>(),
-        gh<_i712.SetPinUseCase>(),
-        gh<_i696.DeletePinUseCase>(),
-      ),
     );
     gh.factory<_i541.AuthBloc>(
       () => _i541.AuthBloc(
